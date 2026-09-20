@@ -1,0 +1,19 @@
+.about__prose {
+  max-width: var(--measure-prose);
+  display: grid;
+  gap: var(--sp-3);
+  color: var(--ink-soft);
+}
+
+.about__prose p {
+  font-size: var(--fs-lead);
+}
+
+/* About is the only prose that runs to the right edge, so on narrow
+   screens its lines would scroll under the docked blob. Keeping a gutter
+   the width of the dock means no line ever passes beneath it. */
+@media (max-width: 759px) {
+  .about__prose {
+    padding-right: var(--sp-6);
+  }
+}

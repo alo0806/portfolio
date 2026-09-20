@@ -1,0 +1,42 @@
+.hero {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding-top: calc(var(--nav-h) + var(--sp-6));
+  padding-bottom: var(--sp-12);
+}
+
+.hero__shell {
+  max-width: 68rem;
+}
+
+.hero__title {
+  font-size: var(--fs-display);
+  max-width: 13ch;
+  margin-bottom: var(--sp-4);
+}
+
+.hero__lead {
+  font-size: var(--fs-lead);
+  color: var(--ink-soft);
+  max-width: 42ch;
+  margin-bottom: var(--sp-3);
+}
+
+.hero__note {
+  font-size: var(--fs-small);
+  color: var(--accent-now-ink);
+}
+
+/* Below 760px the blob sits under the copy rather than beside it, so the
+   hero reserves room for it instead of letting it land on the text. */
+@media (max-width: 759px) {
+  .hero {
+    align-items: flex-start;
+    padding-bottom: calc(var(--sp-20) + var(--sp-8));
+  }
+
+  .hero__title {
+    max-width: 16ch;
+  }
+}
