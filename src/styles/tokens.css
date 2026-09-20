@@ -1,0 +1,144 @@
+/* ─────────────────────────────────────────────────────────────
+   Every color, font, size, radius and spacing value lives here.
+   Nothing else in the codebase should define a raw color.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* Paper + ink */
+  --paper: #f6f1ea;
+  --paper-raised: #fbf8f3;
+  --ink: #262a2e;
+  --ink-soft: #5c5a5e;
+  --ink-faint: #8b8789;
+  --hairline: rgba(38, 42, 46, 0.12);
+  --hairline-strong: rgba(38, 42, 46, 0.2);
+
+  /* Section accents.
+     Each is a pair: the wash (light, for fills) and the ink
+     (darkened, ≥5:1 on --paper, for text / borders / focus). */
+  --rose: #c98e88;
+  --rose-ink: #8e5349;
+  --sage: #9db79a;
+  --sage-ink: #4e6b4b;
+  --sky: #93aec9;
+  --sky-ink: #46658a;
+  --peach: #d9a86c;
+  --peach-ink: #8a5a1e;
+
+  /* Type */
+  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --fs-display: clamp(2.75rem, 8vw, 5.25rem);
+  --fs-h2: clamp(1.875rem, 4vw, 2.75rem);
+  --fs-h3: clamp(1.1875rem, 1.8vw, 1.4375rem);
+  --fs-lead: clamp(1.0625rem, 1.6vw, 1.25rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9375rem;
+  --fs-label: 0.8125rem;
+
+  --lh-tight: 1.06;
+  --lh-snug: 1.28;
+  --lh-body: 1.65;
+  --tracking-label: 0.08em;
+
+  /* Spacing — 8px scale */
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 40px;
+  --sp-6: 48px;
+  --sp-8: 64px;
+  --sp-10: 80px;
+  --sp-12: 96px;
+  --sp-16: 128px;
+  --sp-20: 160px;
+
+  /* Radii */
+  --r-sm: 8px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+  --r-pill: 999px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 180ms;
+  --dur-mid: 420ms;
+  --dur-slow: 1200ms;
+
+  /* Layout */
+  --measure: 1120px;
+  --measure-prose: 62ch;
+  --gutter: clamp(20px, 5vw, 64px);
+  --nav-h: 68px;
+
+  /* Blob — size and dock inset. The blob's *position* is owned by JS
+     (see useBlobState) so drag / keyboard / hop can take it over later. */
+  --blob-size: clamp(128px, 19vw, 200px);
+  --blob-dock-scale: 0.44;
+  --blob-dock-inset: 20px;
+  --blob-pointer: none; /* flipped to `auto` when the blob becomes interactive */
+}
+
+/* ─── Scroll-driven accent ──────────────────────────────────────
+   --accent-now is the single source of truth for "what color is
+   the page right now". ColorWash and Blob both read it and neither
+   knows which section is active.
+
+   Registering it with @property is what makes it interpolate —
+   unregistered custom properties snap instead of transitioning.
+   Browsers without @property support degrade to a snap. */
+
+@property --accent-now {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f6f1ea;
+}
+
+@property --accent-now-ink {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #262a2e;
+}
+
+:root {
+  /* Page starts monochrome; color enters once a section registers. */
+  --accent-now: var(--paper);
+  --accent-now-ink: var(--ink);
+
+  transition:
+    --accent-now var(--dur-slow) var(--ease-soft),
+    --accent-now-ink var(--dur-slow) var(--ease-soft);
+}
+
+/* A narrow screen has no room to spare, so the docked blob gets smaller
+   and tucks further into the corner. */
+@media (max-width: 759px) {
+  :root {
+    --blob-dock-scale: 0.32;
+    --blob-dock-inset: 14px;
+  }
+}
+
+:root[data-section='hero'] {
+  --accent-now: var(--rose);
+  --accent-now-ink: var(--rose-ink);
+}
+
+:root[data-section='projects'] {
+  --accent-now: var(--sage);
+  --accent-now-ink: var(--sage-ink);
+}
+
+:root[data-section='about'] {
+  --accent-now: var(--sky);
+  --accent-now-ink: var(--sky-ink);
+}
+
+:root[data-section='contact'] {
+  --accent-now: var(--peach);
+  --accent-now-ink: var(--peach-ink);
+}
