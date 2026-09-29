@@ -15,6 +15,7 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-body);
+  font-weight: var(--fw-light);
   font-size: var(--fs-body);
   line-height: var(--lh-body);
   font-synthesis: none;
@@ -28,17 +29,18 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 400;
-  line-height: var(--lh-tight);
+  font-weight: var(--fw-thin);
+  line-height: var(--lh-display);
+  letter-spacing: var(--track-display);
   margin: 0;
-  letter-spacing: -0.01em;
 }
 
 p {
   margin: 0;
 }
 
-ul {
+ul,
+ol {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -54,26 +56,85 @@ button {
   color: inherit;
   background: none;
   border: 0;
+  padding: 0;
   cursor: pointer;
 }
 
 ::selection {
   background: var(--accent-now);
-  color: var(--paper);
+  color: var(--paper-raised);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent-now-ink);
-  outline-offset: 3px;
-  border-radius: var(--r-sm);
+  outline: 1px solid var(--accent-now-ink);
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
-/* ─── Shared layout ─────────────────────────────────────────── */
+/* ─── Quiet UI text: thin, small, wide-tracked caps ───────────── */
+
+.ui-label,
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--fw-light);
+  font-size: var(--fs-ui);
+  letter-spacing: var(--track-ui);
+  text-transform: uppercase;
+  line-height: 1.6;
+  color: var(--label);
+}
+
+.eyebrow {
+  margin-bottom: var(--sp-3);
+  transition: color var(--dur-3) var(--ease-in-out);
+}
+
+[data-earned='true'] .eyebrow {
+  color: var(--chapter-ink);
+}
+
+/* ─── Sections, chapters and their settled wash ──────────────── */
 
 .section {
   position: relative;
+  isolation: isolate;
   padding-block: var(--sp-16);
-  scroll-margin-top: var(--nav-h);
+}
+
+/* Narrow screens reserve a taller band above each heading for the
+   chapter's stage (see Stage.css). */
+@media (max-width: 1023px) {
+  .section {
+    padding-top: var(--sp-20);
+  }
+}
+
+/* The pigment a chapter keeps once it has been earned. Two masks,
+   intersected: a soft blurred shape stretched to the section (blur
+   survives stretching), and an unstretched, seamlessly tiling turbulence
+   grain that breaks the edge into blotches at the same scale on every
+   section. Both are static images — nothing is filtered per frame. */
+.section__wash {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--chapter-wash);
+  -webkit-mask-image: url('../assets/wash-shape.svg'),
+    url('../assets/wash-grain.svg');
+  mask-image: url('../assets/wash-shape.svg'), url('../assets/wash-grain.svg');
+  -webkit-mask-size: 100% 100%, 520px 520px;
+  mask-size: 100% 100%, 520px 520px;
+  -webkit-mask-repeat: no-repeat, repeat;
+  mask-repeat: no-repeat, repeat;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  opacity: 0;
+  transition: opacity var(--dur-3) var(--ease-in-out);
+}
+
+.section[data-earned='true'] .section__wash {
+  opacity: var(--wash-opacity);
 }
 
 .shell {
@@ -83,14 +144,36 @@ button {
   padding-inline: var(--gutter);
 }
 
-.eyebrow {
-  font-size: var(--fs-label);
-  font-weight: 500;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--accent-now-ink);
-  margin-bottom: var(--sp-2);
+/* Content on the left, the blob's stage on the right. Below 1024px the
+   stage lifts out of the grid into the band above the heading. */
+.chapter {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--rail-gap);
 }
+
+@media (min-width: 1024px) {
+  .chapter {
+    grid-template-columns: minmax(0, 1fr) var(--rail);
+  }
+}
+
+.section__title {
+  font-size: var(--fs-h2);
+  max-width: 16ch;
+  margin-bottom: var(--sp-6);
+}
+
+.prose {
+  max-width: var(--measure-prose);
+  display: grid;
+  gap: var(--sp-3);
+  color: var(--ink-soft);
+  font-size: var(--fs-lead);
+}
+
+/* ─── Utilities ──────────────────────────────────────────────── */
 
 .skip-link {
   position: absolute;
@@ -99,9 +182,7 @@ button {
   z-index: 100;
   padding: var(--sp-1) var(--sp-2);
   background: var(--paper-raised);
-  border: 1px solid var(--hairline-strong);
-  border-radius: var(--r-sm);
-  font-size: var(--fs-small);
+  border: 1px solid var(--line);
   transform: translateY(-200%);
 }
 
@@ -120,6 +201,7 @@ button {
   white-space: nowrap;
 }
 
+/* Reduced motion: nothing animates, and color arrives instantly. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -131,11 +213,6 @@ button {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-  }
-
-  /* The accent cross-fade is a slow color change, not motion — it is
-     the whole point of the page, so it stays (just shorter). */
-  :root {
-    transition-duration: var(--dur-mid) !important;
+    transition-delay: 0s !important;
   }
 }

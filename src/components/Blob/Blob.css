@@ -1,104 +1,68 @@
-/* The layer never takes pointer events, so the blob can float over
-   anything without stealing a click. --blob-pointer is the single switch
-   that makes the body itself interactive when it gains behavior. */
+/* The drawing layer never takes pointer events; only the circular hit
+   area on the head does, so the blob can't swallow a click anywhere else. */
 
-.blob-layer {
+.blob-svg {
   position: fixed;
   inset: 0;
-  z-index: 5;
-  pointer-events: none;
-  contain: layout style;
-}
-
-.blob-anchor {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--blob-size);
-  height: var(--blob-size);
-  transform-origin: center;
-  will-change: transform;
-}
-
-.blob-body {
-  position: relative;
+  z-index: 20;
   width: 100%;
   height: 100%;
-  background: var(--accent-now);
-  border-radius: 63% 37% 45% 55% / 53% 41% 59% 47%;
-  pointer-events: var(--blob-pointer);
-  animation:
-    blob-wobble 11s var(--ease-soft) infinite,
-    blob-breathe 5.5s var(--ease-soft) infinite;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-1) var(--ease-in-out);
+}
+
+.blob-svg[data-ready='true'] {
+  opacity: 1;
+}
+
+.blob-mass {
+  fill: var(--accent-now);
 }
 
 .blob-eye {
-  position: absolute;
-  top: 37%;
-  width: 22%;
-  height: 26%;
-  background: var(--paper-raised);
-  border-radius: 50%;
-  overflow: hidden;
-  transition: transform 90ms var(--ease-soft);
-}
-
-.blob-eye--left {
-  left: 20%;
-}
-
-.blob-eye--right {
-  right: 20%;
-}
-
-.blob-body[data-blink='true'] .blob-eye {
-  transform: scaleY(0.1);
+  fill: var(--paper-raised);
 }
 
 .blob-pupil {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 44%;
-  height: 44%;
-  margin: -22% 0 0 -22%;
-  background: var(--ink);
+  fill: var(--ink);
+}
+
+.blob-handle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 21;
+  border-radius: 50%;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.blob-handle:active {
+  cursor: grabbing;
+}
+
+.blob-handle:focus-visible {
+  outline: 1px solid var(--accent-now-ink);
+  outline-offset: 12px;
   border-radius: 50%;
 }
 
-@keyframes blob-wobble {
-  0%,
-  100% {
-    border-radius: 63% 37% 45% 55% / 53% 41% 59% 47%;
-  }
-  25% {
-    border-radius: 43% 57% 63% 37% / 59% 53% 47% 41%;
-  }
-  50% {
-    border-radius: 56% 44% 37% 63% / 41% 61% 39% 59%;
-  }
-  75% {
-    border-radius: 37% 63% 55% 45% / 55% 43% 57% 45%;
-  }
+.blob-hint {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 21;
+  margin: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-1) var(--ease-in-out);
 }
 
-@keyframes blob-breathe {
-  0%,
-  100% {
-    scale: 1 1;
-  }
-  50% {
-    scale: 1.025 0.975;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .blob-body {
-    animation: none;
-    border-radius: 52% 48% 47% 53% / 48% 46% 54% 52%;
-  }
-
-  .blob-eye {
-    transition: none;
-  }
+.blob-hint[data-show='true'] {
+  opacity: 1;
 }

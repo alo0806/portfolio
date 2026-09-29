@@ -1,0 +1,51 @@
+.stage-rail {
+  position: relative;
+  pointer-events: none;
+}
+
+/* Desktop: the stage rides down the right rail, pinned to the middle of
+   the viewport while its chapter is on screen. */
+.stage {
+  position: sticky;
+  top: calc(50vh - var(--stage) / 2);
+  width: var(--stage);
+  height: var(--stage);
+  margin-inline: auto;
+}
+
+.stage__home {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+}
+
+.stage-rail--hero {
+  align-self: center;
+}
+
+.stage-rail--hero .stage {
+  --art-stroke: var(--art-stroke-hero);
+  position: relative;
+  top: auto;
+  width: var(--stage-hero);
+  height: var(--stage-hero);
+}
+
+/* Narrow: every chapter stage lifts into the empty band of section
+   padding above its heading, top right, so it never sits on text. */
+@media (max-width: 1023px) {
+  .stage-rail:not(.stage-rail--hero) {
+    position: absolute;
+    top: calc(-1 * var(--stage) - var(--sp-2));
+    right: 0;
+    width: var(--stage);
+    height: var(--stage);
+  }
+
+  .stage-rail:not(.stage-rail--hero) .stage {
+    position: relative;
+    top: auto;
+  }
+}

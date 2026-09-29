@@ -1,0 +1,162 @@
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--paper);
+  transition: opacity var(--dur-1) var(--ease-in-out);
+}
+
+.intro[data-leaving='true'] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro__skip {
+  position: absolute;
+  top: var(--sp-3);
+  right: var(--gutter);
+  z-index: 2;
+  padding: var(--sp-1);
+  color: var(--label);
+  transition: color var(--dur-1) var(--ease-in-out);
+}
+
+.intro__skip:hover {
+  color: var(--ink);
+}
+
+/* ─── Lines draw themselves ─────────────────────────────────── */
+
+.intro__lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.intro__lines * {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0.8;
+  animation: intro-draw 1100ms var(--ease-in-out) forwards;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+@keyframes intro-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ─── The name ──────────────────────────────────────────────── */
+
+.intro__name {
+  position: absolute;
+  left: var(--nx, 50%);
+  top: 50%;
+  margin: 0;
+  /* Tracking adds space after the last letter too; matching padding on
+     the left keeps the word optically centred. */
+  padding-left: 0.9em;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-weight: var(--fw-hair);
+  font-size: var(--fs-intro);
+  line-height: 1;
+  letter-spacing: 0.9em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink);
+  opacity: 0;
+  animation: intro-name 1000ms var(--ease-out) 450ms forwards;
+}
+
+@keyframes intro-name {
+  to {
+    opacity: 1;
+    letter-spacing: var(--track-intro);
+    padding-left: var(--track-intro);
+  }
+}
+
+/* ─── Ink drops fall and pool into the blob ─────────────────── */
+
+/* The goo filter runs only on this narrow column, not the viewport. */
+.intro__ink {
+  position: absolute;
+  left: calc(var(--hx) - 70px);
+  top: 0;
+  width: 140px;
+  height: calc(var(--hy) + var(--r) * 2);
+  filter: url('#intro-goo');
+}
+
+.intro__pool,
+.intro__drop {
+  position: absolute;
+  left: 70px;
+  top: var(--hy);
+  border-radius: 50%;
+  background: var(--stone);
+}
+
+.intro__pool {
+  width: calc(var(--r) * 2);
+  height: calc(var(--r) * 2);
+  margin: calc(var(--r) * -1) 0 0 calc(var(--r) * -1);
+  transform: scale(0);
+  animation: intro-pool 1000ms var(--ease-out) 1560ms forwards;
+}
+
+@keyframes intro-pool {
+  0% {
+    transform: scale(0);
+  }
+  20% {
+    transform: scale(0.5);
+  }
+  45% {
+    transform: scale(0.78);
+  }
+  70% {
+    transform: scale(1.08, 0.94);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.intro__drop {
+  --size: calc(var(--r) * 2 * var(--d));
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  opacity: 0;
+  animation: intro-drop 520ms var(--ease-in) var(--delay) forwards;
+}
+
+@keyframes intro-drop {
+  0% {
+    opacity: 1;
+    transform: translate(var(--dx), calc(-1 * var(--hy) - 40px)) scale(0.8, 1.2);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(calc(var(--dx) * 0.25), 0) scale(0.85, 1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(0.35);
+  }
+}
+
+.intro__filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
