@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ActiveContext, RegistryContext } from './sectionContexts'
+import {
+  ActiveContext,
+  EarnedContext,
+  RegistryContext,
+} from './sectionContexts'
 
 /* One IntersectionObserver watches a thin band across the middle of the
    viewport. Whatever section sits in that band is "current", which gives
@@ -26,6 +30,7 @@ function lastInDocument(nodes) {
 
 export default function SectionProvider({ children }) {
   const [activeId, setActiveId] = useState(null)
+  const [earned, setEarned] = useState([])
 
   const nodesRef = useRef(new Map())
   const visibleRef = useRef(new Set())
@@ -58,6 +63,7 @@ export default function SectionProvider({ children }) {
     if (next && next !== activeRef.current) {
       activeRef.current = next
       setActiveId(next)
+      setEarned((prev) => (prev.includes(next) ? prev : [...prev, next]))
     }
   }, [])
 
@@ -134,7 +140,7 @@ export default function SectionProvider({ children }) {
   return (
     <RegistryContext.Provider value={register}>
       <ActiveContext.Provider value={activeId}>
-        {children}
+        <EarnedContext.Provider value={earned}>{children}</EarnedContext.Provider>
       </ActiveContext.Provider>
     </RegistryContext.Provider>
   )

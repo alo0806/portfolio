@@ -6,6 +6,7 @@ import { createContext, useContext } from 'react'
 
 export const RegistryContext = createContext(null)
 export const ActiveContext = createContext(null)
+export const EarnedContext = createContext([])
 
 export function useSectionRegistry() {
   const register = useContext(RegistryContext)
@@ -17,4 +18,10 @@ export function useSectionRegistry() {
 
 export function useActiveSection() {
   return useContext(ActiveContext)
+}
+
+/* Section ids in the order they first became active. Once a color is
+   earned it stays earned, even when you scroll back past it. */
+export function useEarned() {
+  return useContext(EarnedContext)
 }

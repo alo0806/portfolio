@@ -1,0 +1,33 @@
+.story {
+  max-width: var(--measure-prose);
+  display: grid;
+}
+
+.story__item {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: var(--sp-3);
+  padding-block: var(--sp-3);
+  border-top: 1px solid color-mix(in oklab, var(--line) 55%, transparent);
+}
+
+.story__item:last-child {
+  border-bottom: 1px solid color-mix(in oklab, var(--line) 55%, transparent);
+}
+
+.story__when {
+  padding-top: 3px;
+  color: var(--chapter-ink);
+}
+
+.story__what {
+  color: var(--ink-soft);
+  font-size: var(--fs-lead);
+}
+
+@media (max-width: 559px) {
+  .story__item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-1);
+  }
+}
