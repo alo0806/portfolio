@@ -39,14 +39,6 @@
   border-right: 1px solid var(--line);
   overflow-y: auto;
   scrollbar-width: thin;
-  animation: sidebar-in 700ms var(--ease-out) both;
-}
-
-@keyframes sidebar-in {
-  from {
-    opacity: 0;
-    transform: translateX(-14px);
-  }
 }
 
 .sidebar__brand {
@@ -100,9 +92,9 @@
 }
 
 .tracklist__indicator[data-ready='true'] {
+  /* Rows share one height, so only position animates. */
   transition:
-    transform 420ms var(--ease-out),
-    height 420ms var(--ease-out),
+    transform var(--dur-base) var(--ease-out),
     opacity var(--dur-fast) ease;
 }
 
@@ -120,7 +112,6 @@
   padding: 10px 12px;
   border-radius: var(--r-sm);
   color: var(--muted-ink);
-  transition: color var(--dur-mid) ease;
 }
 
 /* The lead cell holds number, ▶ and equalizer stacked; one shows. */
@@ -133,25 +124,40 @@
 
 .track__lead > * {
   grid-area: 1 / 1;
-  transition:
-    opacity var(--dur-fast) ease,
-    transform var(--dur-fast) var(--ease-out);
 }
 
+/* Hover: the number blurs and shrinks away as ▶ springs up in its
+   place — one morph rather than a swap. */
 .track__number {
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
   font-variant-numeric: tabular-nums;
+  transition:
+    opacity var(--dur-fast) ease,
+    transform var(--dur-fast) var(--ease-out),
+    filter var(--dur-fast) ease;
 }
 
 .track__play {
   opacity: 0;
-  transform: scale(0.6);
+  transform: scale(0.4) rotate(-40deg);
+  filter: blur(2px);
   color: var(--ink);
+  transition:
+    opacity var(--dur-fast) ease,
+    transform var(--dur-base) var(--ease-overshoot),
+    filter var(--dur-fast) ease;
 }
 
+/* Equalizer handoff: on a track change the old row's bars drop and the
+   new row's bars spring up just after. */
 .track__eq {
   opacity: 0;
+  transform: scale(1, 0);
+  transform-origin: 50% 100%;
+  transition:
+    opacity var(--dur-fast) ease,
+    transform var(--dur-fast) var(--ease-in-out);
 }
 
 .track__title {
@@ -170,12 +176,14 @@
 
 .track:hover .track__number {
   opacity: 0;
-  transform: scale(0.6);
+  transform: scale(0.5);
+  filter: blur(2px);
 }
 
 .track:hover .track__play {
   opacity: 1;
-  transform: scale(1);
+  transform: none;
+  filter: none;
 }
 
 /* The current track: equalizer instead of number or ▶. */
@@ -194,6 +202,10 @@
 
 .track[aria-current='page'] .track__eq {
   opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--dur-fast) ease 120ms,
+    transform var(--dur-base) var(--ease-overshoot) 120ms;
 }
 
 /* ─── Links ─────────────────────────────────────────────────── */
@@ -211,19 +223,12 @@
   padding: 4px 0;
   font-size: var(--fs-small);
   color: var(--ink);
-  background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px
-    no-repeat;
-  transition: background-size var(--dur-mid) var(--ease-out);
 }
 
 .links__arrow {
   color: var(--muted);
   font-size: 0.8em;
-  transition: transform var(--dur-mid) var(--ease-out);
-}
-
-.links__link:hover {
-  background-size: 100% 1px;
+  transition: transform var(--dur-base) var(--ease-out);
 }
 
 .links__link:hover .links__arrow {
@@ -243,11 +248,6 @@
   padding: 2px 0;
   font-size: var(--fs-small);
   color: var(--muted-ink);
-  background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px
-    no-repeat;
-  transition:
-    color var(--dur-mid) ease,
-    background-size var(--dur-mid) var(--ease-out);
 }
 
 .replay-link__icon {
@@ -258,7 +258,6 @@
 
 .replay-link:hover {
   color: var(--ink);
-  background-size: 100% 1px;
 }
 
 .replay-link:hover .replay-link__icon {
@@ -341,7 +340,7 @@
     right: 0;
     height: 1.5px;
     background: currentColor;
-    transition: transform var(--dur-mid) var(--ease-out);
+    transition: transform var(--dur-base) var(--ease-out);
   }
 
   .topbar__toggle-icon::before {
@@ -373,7 +372,7 @@
     padding: var(--sp-3) 20px;
     background: var(--sidebar);
     overflow-y: auto;
-    animation: panel-in var(--dur-mid) var(--ease-out) both;
+    animation: panel-in var(--dur-base) var(--ease-out) both;
   }
 
   .topbar__panel[hidden] {
@@ -390,5 +389,154 @@
       opacity: 0;
       transform: translateY(-8px);
     }
+  }
+}
+
+/* ─── Scrub line (track changes) ────────────────────────────────
+   A lane over the content area; MainLayout sweeps the playhead across
+   it in the direction of travel. */
+
+.scrub-lane {
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-w);
+  right: 0;
+  bottom: calc(var(--player-h) + env(safe-area-inset-bottom, 0px));
+  z-index: 12;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scrub {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 120px;
+  opacity: 0;
+}
+
+.scrub__line {
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  right: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(transparent, var(--accent) 20% 80%, transparent);
+}
+
+.scrub__wave {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 120px;
+  height: 40px;
+  translate: 0 -50%;
+  overflow: visible;
+  -webkit-mask: linear-gradient(90deg, transparent, #000);
+  mask: linear-gradient(90deg, transparent, #000);
+}
+
+.scrub__wave path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+:root[data-track-dir='prev'] .scrub__line,
+:root[data-track-dir='prev'] .scrub__wave {
+  right: auto;
+  left: 0;
+}
+
+:root[data-track-dir='prev'] .scrub__wave {
+  scale: -1 1;
+}
+
+/* ─── Arrival choreography ─────────────────────────────────────── */
+
+/* Straight after the iris: one continuous sequence. The overlay lifts
+   onto bare paper and each piece arrives on its own cue. */
+.layout[data-entrance='iris'] {
+  --page-delay: 560ms;
+}
+
+.layout[data-entrance='iris'] .sidebar {
+  animation: panel-arrive var(--dur-slow) var(--ease-out) both;
+}
+
+.layout[data-entrance='iris'] .tracklist__list > li {
+  animation: track-load var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(260ms + var(--row, 0) * 80ms);
+}
+
+.layout[data-entrance='iris'] .track[aria-current='page'] .track__eq {
+  animation: eq-pop var(--dur-base) var(--ease-overshoot) both;
+  animation-delay: 640ms;
+}
+
+.layout[data-entrance='iris'] .player {
+  animation: player-rise var(--dur-slow) var(--ease-out) both;
+  animation-delay: 200ms;
+}
+
+.layout[data-entrance='iris'] .topbar__bar {
+  animation: bar-drop var(--dur-slow) var(--ease-out) both;
+}
+
+/* A direct link or reload: the same pieces, quicker and quieter. */
+.layout[data-entrance='direct'] .sidebar {
+  animation: panel-settle var(--dur-slow) var(--ease-out) both;
+}
+
+.layout[data-entrance='direct'] .player {
+  animation: player-rise var(--dur-base) var(--ease-out) both;
+}
+
+@keyframes panel-arrive {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes panel-settle {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+}
+
+@keyframes track-load {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+}
+
+@keyframes eq-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3, 0);
+  }
+}
+
+@keyframes player-rise {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes bar-drop {
+  from {
+    transform: translateY(-100%);
+  }
+}
+
+@media (max-width: 899px) {
+  .scrub-lane {
+    left: 0;
+    top: var(--topbar-h);
   }
 }

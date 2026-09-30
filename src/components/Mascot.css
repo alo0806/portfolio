@@ -93,7 +93,7 @@
   transform-origin: 50% 100%;
   transition:
     opacity var(--dur-fast) ease,
-    transform var(--dur-mid) var(--ease-out);
+    transform var(--dur-base) var(--ease-out);
 }
 
 .mascot__bubble::after {

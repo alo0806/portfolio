@@ -90,17 +90,24 @@
   --shadow-record: 0 30px 60px -24px rgba(0, 0, 0, 0.7),
     0 0 0 1px rgba(255, 255, 255, 0.04);
 
-  /* ─── Motion ─── */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* ─── Motion ───
+     Three curves, three durations. Everything that moves uses these
+     (JS reads them too, via src/lib/motion.js). Only transform, opacity,
+     clip-path and filter are ever animated. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* smooth settle */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* slow in, slow out */
+  --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1); /* small UI only */
   --dur-fast: 180ms;
-  --dur-mid: 320ms;
-  --dur-page: 380ms;
-  --dur-slow: 700ms;
+  --dur-base: 360ms;
+  --dur-slow: 800ms;
   --stagger: 60ms;
-  --iris-ms: 850; /* unitless: read by JS */
-  --fade-ms: 220; /* unitless: read by JS */
-  --spinup-ms: 400; /* unitless: read by JS */
+
+  /* Sequence timings, unitless for JS */
+  --iris-ms: 850;
+  --fade-ms: 220;
+  --spinup-ms: 400;
+  --tonearm-ms: 420;
+  --crackle-ms: 220;
   --beat: 0.52s; /* ~115 bpm: equalizer, mascot bob */
 
   /* ─── Layout ─── */

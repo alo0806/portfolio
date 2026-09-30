@@ -7,6 +7,7 @@ const BASE_SPEED = 40 // degrees per second: a slow, idle turn
 const FAST_SPEED = 720 // "press play": two revolutions a second
 const EASE_NORMAL = 3.5 // how quickly speed changes (per second)
 const EASE_SPINUP = 9 // spin-up reaches ~97% of full speed in ~400ms
+const BLUR_ABOVE = 300 // label motion-blurs above this speed
 
 /* A vinyl record drawn in CSS: concentric grooves, a label, and a light
    reflection that stays put while the disc turns beneath it (that
@@ -14,12 +15,24 @@ const EASE_SPINUP = 9 // spin-up reaches ~97% of full speed in ~400ms
 
    The spin runs from JS as angle + speed rather than a CSS keyframe, so
    speed can ramp — spin up on "press play", drift down on pause —
-   without the jump a keyframe restart causes. Only transform changes. */
-export default function Record({ label, fast = false, className = '', ref }) {
+   without the jump a keyframe restart causes. Only transform changes.
+
+   startFast: begin at full speed and drift down (coming back from the
+   site). crackle: a quick burst of visual vinyl grain. The label blurs
+   whenever the disc is actually turning fast, in either direction. */
+export default function Record({
+  label,
+  fast = false,
+  startFast = false,
+  crackle = false,
+  className = '',
+  ref,
+}) {
   const discRef = useRef(null)
   const { playing } = usePlayer()
   const reduced = useReducedMotion()
   const targetRef = useRef({ fast, playing, reduced })
+  const startFastRef = useRef(startFast)
 
   useEffect(() => {
     targetRef.current = { fast, playing, reduced }
@@ -30,7 +43,8 @@ export default function Record({ label, fast = false, className = '', ref }) {
     if (!disc) return undefined
 
     let angle = Math.random() * 360
-    let speed = 0
+    let speed = startFastRef.current && !targetRef.current.reduced ? FAST_SPEED : 0
+    let blurred = false
     let last = performance.now()
     let frame = 0
 
@@ -43,6 +57,11 @@ export default function Record({ label, fast = false, className = '', ref }) {
       speed += (goal - speed) * (1 - Math.exp(-rate * dt))
       angle = (angle + speed * dt) % 360
       disc.style.transform = `rotate(${angle.toFixed(2)}deg)`
+      const blur = speed > BLUR_ABOVE
+      if (blur !== blurred) {
+        blurred = blur
+        disc.dataset.blur = blur ? 'true' : 'false'
+      }
       frame = requestAnimationFrame(tick)
     }
 
@@ -52,7 +71,12 @@ export default function Record({ label, fast = false, className = '', ref }) {
   }, [])
 
   return (
-    <div className={`record ${className}`.trim()} ref={ref} aria-hidden="true">
+    <div
+      className={`record ${className}`.trim()}
+      ref={ref}
+      data-crackle={crackle ? 'true' : 'false'}
+      aria-hidden="true"
+    >
       <div className="record__disc" ref={discRef}>
         <div className="record__grooves" />
         <div className="record__label">
@@ -62,6 +86,7 @@ export default function Record({ label, fast = false, className = '', ref }) {
         </div>
       </div>
       <div className="record__sheen" />
+      <div className="record__crackle" />
     </div>
   )
 }

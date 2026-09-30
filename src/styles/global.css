@@ -92,6 +92,30 @@ svg {
   color: var(--muted-ink);
 }
 
+/* ─── Underline that draws itself (transform only) ──────────── */
+
+.u-line {
+  position: relative;
+}
+
+.u-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.u-line:hover::after,
+.u-line:focus-visible::after {
+  transform: scaleX(1);
+}
+
 /* ─── Play state ───────────────────────────────────────────────
    One attribute on <html> pauses every ambient loop (equalizer, mascot
    bob, cover spin); each opts in with animation-play-state. */
@@ -104,41 +128,75 @@ svg {
   --play-state: paused;
 }
 
-/* ─── Page content enters with a stagger ───────────────────────
-   Every direct child of a .page rises in on mount; pages remount on
-   route change, so this replays on every switch. */
+/* ─── Track change: direction ──────────────────────────────────
+   Before every page switch, <html data-track-dir> is set to "next" or
+   "prev" (see src/lib/trackNav.js). "next" moves content left — the old
+   page leaves to the left, the new one arrives from the right — and
+   "prev" mirrors it. */
+
+:root {
+  --enter-x: 28px;
+  --exit-x: -28px;
+  --wipe-from: inset(0 100% 0 0); /* title mask opens left → right */
+  --page-delay: 0ms;
+}
+
+:root[data-track-dir='prev'] {
+  --enter-x: -28px;
+  --exit-x: 28px;
+  --wipe-from: inset(0 0 0 100%);
+}
+
+/* ─── Page content enters: title wipes open, then a stagger ─────
+   Pages remount on every switch, so this replays each time. The
+   layout shifts the whole thing later with --page-delay while it's
+   doing its own entrance (after the iris). */
 
 .page > * {
-  animation: rise var(--dur-page) var(--ease-out) both;
+  animation: page-in var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--page-delay) + var(--stagger) * 2);
 }
 
-.page > :nth-child(2) {
-  animation-delay: calc(var(--stagger) * 1);
+.page > :nth-child(1) {
+  animation-delay: var(--page-delay);
 }
 .page > :nth-child(3) {
-  animation-delay: calc(var(--stagger) * 2);
+  animation-delay: calc(var(--page-delay) + var(--stagger) * 3);
 }
 .page > :nth-child(4) {
-  animation-delay: calc(var(--stagger) * 3);
+  animation-delay: calc(var(--page-delay) + var(--stagger) * 4);
 }
-.page > :nth-child(5) {
-  animation-delay: calc(var(--stagger) * 4);
-}
-.page > :nth-child(n + 6) {
-  animation-delay: calc(var(--stagger) * 5);
+.page > :nth-child(n + 5) {
+  animation-delay: calc(var(--page-delay) + var(--stagger) * 5);
 }
 
-@keyframes rise {
+@keyframes page-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateX(var(--enter-x));
   }
 }
 
-/* ─── Page switch: the outgoing page fades up and out ──────────
-   Uses View Transitions (router `viewTransition` links). The root
-   snapshot is left alone; only the content area animates, and the
-   incoming page supplies its own staggered entrance above. */
+/* The incoming title reveals behind a mask before the rest arrives. */
+.page-head__title {
+  animation: title-wipe var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--page-delay) + var(--stagger));
+}
+
+@keyframes title-wipe {
+  from {
+    clip-path: var(--wipe-from);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ─── Page switch: the outgoing page slides out ─────────────────
+   View Transitions (router `viewTransition` navigations). The root
+   snapshot is left alone — the sidebar, player bar and scrub line stay
+   live — and only the content area animates out; the incoming page
+   supplies its own entrance above. */
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -160,8 +218,42 @@ svg {
 @keyframes page-out {
   to {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateX(var(--exit-x));
   }
+}
+
+/* "Back to the record": the whole page (one snapshot, on top) contracts
+   into a circle over the intro; the clip itself is animated from JS. */
+:root[data-vt='reverse'] .layout__page {
+  view-transition-name: none;
+}
+
+:root[data-vt='reverse']::view-transition-old(root) {
+  z-index: 1;
+}
+
+/* ─── Reveal on scroll (once) ───────────────────────────────────
+   Below-the-fold items rise in behind a mask the first time they're
+   seen. useReveal() sets data-reveal; items already on screen at mount
+   are marked revealed immediately and never animate. */
+
+/* A page-level item that waits for scrolling skips the page's own
+   entrance stagger — one motion per element, never two. */
+.page > [data-reveal-mode='scroll'] {
+  animation: none;
+}
+
+[data-reveal='pending'] {
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(18px);
+}
+
+[data-reveal='shown'] {
+  clip-path: inset(0 0 -40px 0); /* room for hover shadows */
+  transform: none;
+  transition:
+    clip-path var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
 }
 
 /* ─── Utilities ────────────────────────────────────────────── */
@@ -193,22 +285,47 @@ svg {
   white-space: nowrap;
 }
 
-/* Reduced motion: no travel. Things may still fade, briefly. */
+/* ─── Reduced motion ───────────────────────────────────────────
+   Nothing travels, spins, tilts, types or scrolls. Everything that used
+   to move becomes instant — except the few things that mark a change of
+   place (a page arriving, the intro, the panels), which get a short
+   crossfade instead so the change is still legible. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
+    animation-duration: 1ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+    transition-duration: 1ms !important;
     transition-delay: 0s !important;
   }
 
-  ::view-transition-old(page) {
-    animation: fade-out 120ms linear both;
+  [data-rm-fade] {
+    animation: rm-fade 180ms ease both !important;
   }
 
-  @keyframes fade-out {
+  .page > *,
+  .page-head__title {
+    animation: none !important;
+  }
+
+  [data-reveal] {
+    clip-path: none !important;
+    transform: none !important;
+  }
+
+  ::view-transition-old(page) {
+    animation: rm-fade-out 150ms linear both;
+  }
+
+  @keyframes rm-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes rm-fade-out {
     to {
       opacity: 0;
     }

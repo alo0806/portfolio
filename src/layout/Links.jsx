@@ -15,7 +15,7 @@ export default function Links({ onNavigate }) {
           return (
             <li key={label}>
               <a
-                className="links__link"
+                className="links__link u-line"
                 href={href}
                 target={external ? '_blank' : undefined}
                 rel={external ? 'noreferrer' : undefined}

@@ -1,3 +1,4 @@
+import Reveal from '../components/Reveal'
 import { about } from '../data/content'
 import PageHead from './PageHead'
 import usePageTitle from './usePageTitle'
@@ -15,7 +16,7 @@ export default function AboutPage() {
           <p key={paragraph}>{paragraph}</p>
         ))}
       </div>
-      <section aria-labelledby="hobbies-title">
+      <Reveal as="section" aria-labelledby="hobbies-title">
         <h2 className="label about__label" id="hobbies-title">
           {about.hobbiesTitle}
         </h2>
@@ -24,15 +25,15 @@ export default function AboutPage() {
             <li key={hobby}>{hobby}</li>
           ))}
         </ul>
-      </section>
+      </Reveal>
       <ul className="about__photos" aria-label="Photos (placeholders)">
         {about.photos.map(({ caption, palette, tilt }) => (
-          <li key={caption}>
+          <Reveal as="li" key={caption}>
             <figure className="photo" style={{ '--tilt': tilt }}>
               <div className="photo__image" data-palette={palette} />
               <figcaption className="photo__caption">{caption}</figcaption>
             </figure>
-          </li>
+          </Reveal>
         ))}
       </ul>
     </>

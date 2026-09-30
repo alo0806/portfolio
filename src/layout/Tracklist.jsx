@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import Equalizer from '../components/Equalizer'
 import { PlayIcon } from '../components/icons'
 import { TRACKS } from '../data/tracks'
+import { prepareTrackClick } from '../lib/trackNav'
 
 /* The page switcher, as a tracklist. Each row is a real link (with a view
    transition). Hovering a row swaps its number for ▶; the current page
@@ -41,9 +42,19 @@ export default function Tracklist({ onNavigate }) {
       <div className="tracklist__frame">
         <span className="tracklist__indicator" ref={indicatorRef} aria-hidden="true" />
         <ol className="tracklist__list" ref={listRef}>
-          {TRACKS.map((track) => (
-            <li key={track.path}>
-              <NavLink to={track.path} viewTransition className="track" onClick={onNavigate}>
+          {TRACKS.map((track, index) => (
+            <li key={track.path} style={{ '--row': index }}>
+              <NavLink
+                to={track.path}
+                viewTransition
+                className="track"
+                onClick={() => {
+                  // Runs before the link navigates: sets the slide
+                  // direction from this row's position.
+                  prepareTrackClick(pathname, track.path)
+                  onNavigate?.()
+                }}
+              >
                 <span className="track__lead" aria-hidden="true">
                   <span className="track__number">{track.number}</span>
                   <PlayIcon className="track__play" width={14} height={14} />

@@ -41,7 +41,9 @@ html.has-custom-cursor :is(input, textarea, select, [contenteditable='true']) {
   color: var(--cursor-on-dark);
 }
 
-/* ─── Shapes: outer elements are positioned by JS, inner ones size ─── */
+/* ─── Shapes: outer elements are positioned by JS, inner ones scale ───
+   Size changes are `scale`, never width/height, so hovering a link
+   costs no layout. */
 
 .cursor__dot,
 .cursor__ring {
@@ -57,13 +59,8 @@ html.has-custom-cursor :is(input, textarea, select, [contenteditable='true']) {
   top: 0;
   left: 0;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition:
-    width var(--dur-mid) var(--ease-out),
-    height var(--dur-mid) var(--ease-out),
-    background-color var(--dur-mid) var(--ease-out),
-    border-color var(--dur-mid) var(--ease-out),
-    scale var(--dur-fast) var(--ease-out);
+  translate: -50% -50%;
+  transition: scale var(--dur-base) var(--ease-out);
 }
 
 .cursor__dot-shape {
@@ -79,13 +76,25 @@ html.has-custom-cursor :is(input, textarea, select, [contenteditable='true']) {
   opacity: 0.55;
 }
 
+/* The faint fill inside the ring over clickable things. */
+.cursor__ring-shape::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
 /* Over something clickable: the ring swells and fills faintly, the dot
    shrinks away — a pointer state without an arrow. */
 .cursor[data-state='pointer'] .cursor__ring-shape {
-  width: calc(var(--cursor-ring) * 1.65);
-  height: calc(var(--cursor-ring) * 1.65);
-  background: color-mix(in srgb, currentColor 14%, transparent);
-  opacity: 0.8;
+  scale: 1.65;
+}
+
+.cursor[data-state='pointer'] .cursor__ring-shape::after {
+  opacity: 0.14;
 }
 
 .cursor[data-state='pointer'] .cursor__dot-shape {
@@ -93,9 +102,11 @@ html.has-custom-cursor :is(input, textarea, select, [contenteditable='true']) {
 }
 
 .cursor[data-pressed='true'] .cursor__ring-shape {
-  scale: 0.85;
+  scale: 1.4;
+  transition-duration: var(--dur-fast);
 }
 
 .cursor[data-pressed='true'] .cursor__dot-shape {
   scale: 1.4;
+  transition-duration: var(--dur-fast);
 }
