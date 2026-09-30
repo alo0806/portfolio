@@ -22,18 +22,6 @@ export const intro = {
   skip: 'skip intro',
 }
 
-/* ─── Background music ─────────────────────────────────────────
-   Songs play in this order, then loop. Put the audio files in
-   public/audio/ and point `file` at them ('/audio/name.mp3').
-   - credit: short text for the license link, e.g. 'CC BY 4.0'.
-     Use null if the license doesn't ask for attribution.
-   - creditUrl: where that link goes (the song or license page).
-   With no songs, the player runs visuals only and shows `nowPlaying`. */
-export const playlist = [
-  // { title: 'Song Title', artist: 'Artist', file: '/audio/song.mp3', credit: 'CC BY 4.0', creditUrl: 'https://…' },
-]
-
-/* Shown in the player bar when the playlist is empty. */
 export const nowPlaying = {
   song: 'Placeholder Song Title',
   artist: 'Placeholder Artist',
@@ -47,36 +35,15 @@ export const tracks = [
   { path: '/playground', title: 'Playground', cover: 'mint' },
 ]
 
-/* icon: 'email' | 'linkedin' | 'github' | 'resume'
-   The resume has no href: it opens the locked-track box (see `resume`). */
+/* icon: 'email' | 'linkedin' | 'github' | 'resume' */
 export const links = [
   { label: 'Email', href: 'mailto:hello@astnlo.com', icon: 'email' },
   { label: 'LinkedIn', href: '#', icon: 'linkedin' }, // '#' = not set yet
   { label: 'GitHub', href: '#', icon: 'github' },
-  { label: 'Resume', icon: 'resume', locked: true },
+  { label: 'Resume', href: '#', icon: 'resume' },
 ]
 
-/* The resume is a "locked track": a code unlocks it. The code and the
-   file live on the server (Vercel environment variables — see
-   .env.example), never in this file. The email fallback uses the Email
-   link above. */
-export const resume = {
-  label: 'Locked track',
-  title: 'Resume',
-  prompt: 'Enter the code to play it.',
-  field: 'Code',
-  unlock: 'Unlock',
-  unlocking: 'Unlocking…',
-  wrong: 'Not quite — try again.',
-  tooMany: 'Too many tries. Take a short break and try again in a few minutes.',
-  unavailable: 'The resume can’t be loaded right now — email me and I’ll send it.',
-  blocked: 'Unlocked! Your browser held back the new tab — open it here:',
-  open: 'Open resume',
-  fallback: 'Don’t have the code?',
-  fallbackLink: 'Email me',
-}
-
-/* `{song}` and `{artist}` are filled in from the song playing now. */
+/* `{song}` and `{artist}` are filled in from nowPlaying. */
 export const mascotLines = [
   'hi there!',
   'now spinning: {song}',

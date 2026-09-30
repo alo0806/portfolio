@@ -1,15 +1,13 @@
 import { useSyncExternalStore } from 'react'
 import { SOUND } from './config'
 
-/* Sound effects are synthesized with the Web Audio API — no files. The
-   background music (real files, see music.js) shares this graph.
+/* All sound is synthesized with the Web Audio API — no files.
 
    Ground rules, enforced here so no call site has to remember them:
    - On by default; muting is remembered for the session, the volume
-     slider's level across visits. Muting turns the output down rather
-     than stopping anything, so a song keeps its place while muted.
+     slider's level across visits.
    - The AudioContext is created only after a user gesture (browsers
-     require it anyway).
+     require it anyway), and never while muted.
    - Nothing plays while the tab is hidden.
    - Each sound has a minimum interval (config throttle), so rapid
      hovering or clicking can't pile up.
@@ -60,9 +58,6 @@ function subscribe(listener) {
   return () => listeners.delete(listener)
 }
 
-/* Mute or volume changed. */
-export const onSoundChange = subscribe
-
 /* ─── On / off ─────────────────────────────────────────────────── */
 
 export function isSoundOn() {
@@ -77,7 +72,7 @@ export function setSoundOn(on) {
     // Not remembered; harmless.
   }
   if (on) ensureContext() // called from a click, so this is a gesture
-  applyOutput()
+  else ctx?.suspend().catch(() => {})
   notify()
 }
 
@@ -98,7 +93,8 @@ export function setVolume(value) {
   } catch {
     // Not remembered; harmless.
   }
-  applyOutput()
+  // A short glide instead of a jump, so dragging never clicks.
+  output?.gain.setTargetAtTime(loudness(volume), ctx.currentTime, 0.03)
   notify()
 }
 
@@ -110,17 +106,6 @@ function loudness(value) {
   return value ** SOUND.volume.curve
 }
 
-/* Is anything audible right now? (Muted, or the slider at zero, is not.) */
-export function isAudible() {
-  return enabled && volume > 0
-}
-
-// A short glide instead of a jump, so dragging or muting never clicks.
-function applyOutput() {
-  if (!output) return
-  output.gain.setTargetAtTime(enabled ? loudness(volume) : 0, ctx.currentTime, 0.03)
-}
-
 /* ─── The audio graph ──────────────────────────────────────────── */
 
 function ensureContext() {
@@ -130,7 +115,7 @@ function ensureContext() {
     ctx = new AudioCtx()
 
     output = ctx.createGain()
-    output.gain.value = enabled ? loudness(volume) : 0
+    output.gain.value = loudness(volume)
     output.connect(ctx.destination)
 
     sfxBus = ctx.createGain()
@@ -149,11 +134,14 @@ function ensureContext() {
   return ctx
 }
 
-/* For the background music: its sources connect here and follow the
-   volume slider and the mute button like everything else. Call from a
-   user gesture (the first time). Null if Web Audio isn't available. */
-export function getMusicOutput() {
-  return ensureContext() ? { ctx, bus: musicBus } : null
+/* For background music later: connect a source here and it follows the
+   volume slider and the mute button like everything else. Null until a
+   user gesture has allowed audio, or while muted. */
+export function getMusicBus() {
+  if (!enabled) return null
+  const activated = navigator.userActivation?.hasBeenActive ?? true
+  if (!ctx && !activated) return null
+  return ensureContext() ? musicBus : null
 }
 
 // The first click or key press brings the context up (if not muted).
@@ -458,44 +446,7 @@ export const sound = {
     })
   },
 
-  /* A wrong resume code: a quick record scratch — filtered noise whose
-     band swoops up and back down, with a low rubbery swoop under it. */
-  scratch({ force = false } = {}) {
-    if (!gate('scratch', force)) return
-    const x = SOUND.scratch
-    const t = ctx.currentTime
-    const up = t + x.duration * x.turn
-    const end = t + x.duration
-
-    const source = ctx.createBufferSource()
-    source.buffer = getNoise()
-    const band = ctx.createBiquadFilter()
-    band.type = 'bandpass'
-    band.Q.value = x.bandpassQ
-    band.frequency.setValueAtTime(x.bandFrom, t)
-    band.frequency.exponentialRampToValueAtTime(x.bandPeak, up)
-    band.frequency.exponentialRampToValueAtTime(x.bandTo, end)
-    const noiseAmp = ctx.createGain()
-    envelope(noiseAmp.gain, t, x.noiseGain, 0.008, x.duration)
-    source.connect(band).connect(noiseAmp).connect(sfxBus)
-    source.start(t, Math.random() * 1.5)
-    source.stop(end + 0.05)
-
-    const osc = ctx.createOscillator()
-    osc.type = 'sawtooth'
-    osc.frequency.setValueAtTime(x.pitchFrom, t)
-    osc.frequency.exponentialRampToValueAtTime(x.pitchPeak, up)
-    osc.frequency.exponentialRampToValueAtTime(x.pitchTo, end)
-    const soften = ctx.createBiquadFilter()
-    soften.type = 'lowpass'
-    soften.frequency.value = x.pitchLowpass
-    const oscAmp = ctx.createGain()
-    envelope(oscAmp.gain, t, x.pitchGain, 0.01, x.duration)
-    osc.connect(soften).connect(oscAmp).connect(sfxBus)
-    osc.start(t)
-    osc.stop(end + 0.05)
-  },
-
+  /* Turning sound on: a soft two-note hello. */
   /* Letting go of the volume slider: one soft note at the new level. */
   preview({ force = false } = {}) {
     if (!gate('preview', force)) return
@@ -503,7 +454,6 @@ export const sound = {
     playNote(scaleFrequency(p.degree, p.octave))
   },
 
-  /* Turning sound on: a soft two-note hello. */
   confirm({ force = false } = {}) {
     if (!gate('note', force)) return
     const c = SOUND.confirm

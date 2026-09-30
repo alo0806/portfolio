@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { SOUND } from '../sound/config'
 import { scaleFrequency, sound } from '../sound/engine'
 import { TRACKS } from '../data/tracks'
-import MusicLab from './MusicLab'
 import './SoundLab.css'
 
 /* Dev-only (/sounds): every sound, one button each. Plays regardless of
@@ -58,7 +57,6 @@ const GROUPS = [
       { label: 'Card hover', detail: 'texture', play: () => sound.texture(force) },
       { label: 'Sound on', detail: 'confirm', play: () => sound.confirm(force) },
       { label: 'Volume slider', detail: 'note on release', play: () => sound.preview(force) },
-      { label: 'Wrong resume code', detail: 'record scratch', play: () => sound.scratch(force) },
     ],
   },
 ]
@@ -80,13 +78,6 @@ export default function SoundLab() {
           <code>src/sound/config.js</code>
         </p>
       </header>
-
-      <section className="lab__group" aria-labelledby="lab-music">
-        <h2 className="lab__group-title" id="lab-music">
-          Music
-        </h2>
-        <MusicLab />
-      </section>
 
       {GROUPS.map((group) => (
         <section key={group.title} className="lab__group" aria-labelledby={`lab-${group.title}`}>
