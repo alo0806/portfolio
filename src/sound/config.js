@@ -30,10 +30,15 @@ export const SOUND = {
     lowpass: 3200,
   },
 
-  /* Background music bus (nothing plays on it yet): its own level under
-     the same slider, so music and effects can be balanced here. */
+  /* Background music (the playlist in content.js): its own level under
+     the same slider, so music and effects can be balanced here. It
+     starts low — background, not a concert. Times in seconds. */
   music: {
-    level: 0.5,
+    level: 0.35,
+    crossfade: 1.0, // overlap between one song and the next
+    fadeIn: 0.8, // pressing play
+    pauseFade: 0.3, // pressing pause
+    skipFade: 0.6, // the "next song" button
   },
 
   /* Minimum time between two plays of the same sound, in ms, so rapid
