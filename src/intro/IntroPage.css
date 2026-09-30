@@ -1,0 +1,206 @@
+.intro {
+  position: relative;
+  height: 100svh;
+  min-height: 480px;
+  overflow: hidden;
+  background: var(--space);
+  color: var(--space-text);
+}
+
+.intro__sky {
+  z-index: 0;
+}
+
+/* The text block lets clicks fall through to the sky (so bursts work
+   anywhere), except on its two links. */
+.intro__stage {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4) var(--sp-3);
+  text-align: center;
+  pointer-events: none;
+  transition:
+    transform calc(var(--iris-ms) * 1ms) var(--ease-in-out),
+    opacity calc(var(--iris-ms) * 0.7ms) ease;
+}
+
+/* Leaving: the text recedes while the iris grows over it, one motion. */
+.intro[data-leaving='true'] .intro__stage {
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+.intro__stage > * {
+  animation: intro-rise 900ms var(--ease-out) both;
+}
+
+.intro__hi {
+  color: var(--space-muted);
+  letter-spacing: var(--track-mono-wide);
+  animation-delay: 150ms;
+}
+
+.intro__name {
+  margin: var(--sp-2) 0 var(--sp-2);
+  font-size: var(--fs-intro-name);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  animation-delay: 300ms;
+}
+
+.intro__aka {
+  color: var(--space-muted);
+  text-transform: none;
+  letter-spacing: 0.06em;
+  animation-delay: 450ms;
+}
+
+.intro__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-6);
+  animation-delay: 650ms;
+}
+
+@keyframes intro-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* ─── Primary: "step inside" ─── */
+
+.intro__enter {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 14px 30px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--space-line);
+  background: rgba(238, 240, 243, 0.04);
+  color: var(--space-text);
+  letter-spacing: var(--track-mono-wide);
+  overflow: hidden;
+  pointer-events: auto;
+  transition:
+    border-color var(--dur-mid) ease,
+    background-color var(--dur-mid) ease,
+    transform var(--dur-fast) var(--ease-out);
+}
+
+/* A slow band of light sweeps across on hover. */
+.intro__enter::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(244, 241, 234, 0.22) 48%,
+    transparent 66%
+  );
+  transform: translateX(-110%);
+}
+
+.intro__enter:hover,
+.intro__enter:focus-visible {
+  border-color: rgba(238, 240, 243, 0.4);
+  background: rgba(238, 240, 243, 0.08);
+}
+
+.intro__enter:hover::before,
+.intro__enter:focus-visible::before {
+  transform: translateX(110%);
+  transition: transform 900ms var(--ease-in-out);
+}
+
+.intro__enter:active {
+  transform: scale(0.97);
+}
+
+.intro__enter-label {
+  position: relative;
+}
+
+.intro__spark {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  fill: var(--star-gold);
+  scale: 0;
+  rotate: -45deg;
+  transition:
+    scale var(--dur-mid) var(--ease-out),
+    rotate var(--dur-slow) var(--ease-out);
+}
+
+.intro__spark--a {
+  top: 7px;
+  right: 16px;
+}
+
+.intro__spark--b {
+  bottom: 8px;
+  left: 18px;
+  width: 7px;
+  height: 7px;
+  fill: var(--star-teal);
+  transition-delay: 80ms;
+}
+
+.intro__enter:hover .intro__spark,
+.intro__enter:focus-visible .intro__spark {
+  scale: 1;
+  rotate: 45deg;
+}
+
+/* ─── Quiet: "skip intro" ─── */
+
+.intro__skip {
+  padding: 4px 0;
+  color: var(--space-muted);
+  pointer-events: auto;
+  background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px
+    no-repeat;
+  transition:
+    background-size var(--dur-mid) var(--ease-out),
+    color var(--dur-mid) ease;
+}
+
+.intro__skip:hover,
+.intro__skip:focus-visible {
+  color: var(--space-text);
+  background-size: 100% 1px;
+}
+
+.intro__skip:active {
+  opacity: 0.7;
+}
+
+/* ─── Clock ─── */
+
+.intro__clock {
+  position: absolute;
+  left: var(--sp-4);
+  bottom: var(--sp-3);
+  z-index: 1;
+  color: var(--space-muted);
+  pointer-events: none;
+}
+
+@media (max-width: 560px) {
+  .intro__clock {
+    left: var(--sp-3);
+  }
+}

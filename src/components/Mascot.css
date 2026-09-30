@@ -1,0 +1,109 @@
+.mascot {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: var(--sp-5);
+}
+
+.mascot__button {
+  border-radius: 40%;
+  padding: 4px;
+}
+
+.mascot__svg {
+  width: 88px;
+  height: auto;
+  overflow: visible;
+  transform-origin: 50% 90%;
+  animation: mascot-bob 4.2s ease-in-out infinite;
+}
+
+@keyframes mascot-bob {
+  50% {
+    translate: 0 -2px;
+  }
+}
+
+.mascot__shadow {
+  fill: var(--ink);
+  opacity: 0.08;
+}
+
+.mascot__body {
+  fill: var(--accent);
+}
+
+.mascot__shine {
+  fill: #fff;
+  opacity: 0.22;
+}
+
+.mascot__cheek {
+  fill: var(--secondary);
+  opacity: 0.35;
+}
+
+.mascot__white {
+  fill: var(--card);
+}
+
+.mascot__pupil {
+  fill: var(--ink);
+}
+
+.mascot__glint {
+  fill: #fff;
+}
+
+.mascot__eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 90ms ease;
+}
+
+.mascot__svg[data-blink='true'] .mascot__eyes {
+  transform: scaleY(0.12);
+}
+
+/* ─── Speech bubble ─── */
+
+.mascot__bubble {
+  position: absolute;
+  bottom: calc(100% - var(--sp-3));
+  left: 50%;
+  max-width: 220px;
+  width: max-content;
+  padding: 8px 14px;
+  border-radius: var(--r-md);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: var(--fs-small);
+  line-height: 1.4;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 6px) scale(0.96);
+  transform-origin: 50% 100%;
+  transition:
+    opacity var(--dur-fast) ease,
+    transform var(--dur-mid) var(--ease-out);
+}
+
+.mascot__bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border: 7px solid transparent;
+  border-top-color: var(--ink);
+  transform: translateX(-50%);
+}
+
+.mascot__bubble[data-show='true'] {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+.mascot__bubble:empty {
+  visibility: hidden;
+}

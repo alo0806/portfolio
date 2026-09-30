@@ -5,9 +5,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
-  background: var(--paper);
   -webkit-text-size-adjust: 100%;
+  background: var(--paper);
 }
 
 body {
@@ -15,23 +14,21 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-body);
-  font-weight: var(--fw-light);
+  font-weight: 300;
   font-size: var(--fs-body);
   line-height: var(--lh-body);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
 }
 
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: var(--fw-thin);
-  line-height: var(--lh-display);
-  letter-spacing: var(--track-display);
+  font-weight: 500;
+  line-height: var(--lh-tight);
   margin: 0;
 }
 
@@ -60,129 +57,103 @@ button {
   cursor: pointer;
 }
 
-::selection {
-  background: var(--accent-now);
-  color: var(--paper-raised);
+img,
+svg {
+  display: block;
 }
 
 :focus-visible {
-  outline: 1px solid var(--accent-now-ink);
-  outline-offset: 4px;
-  border-radius: 2px;
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
-/* ─── Quiet UI text: thin, small, wide-tracked caps ───────────── */
+[data-surface='dark'] :focus-visible {
+  outline-color: var(--star-teal);
+}
 
-.ui-label,
-.eyebrow {
-  font-family: var(--font-display);
-  font-weight: var(--fw-light);
-  font-size: var(--fs-ui);
-  letter-spacing: var(--track-ui);
+/* ─── Small mono labels, buttons and the clock ─────────────────── */
+
+.mono {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: var(--fs-mono);
+  letter-spacing: var(--track-mono);
   text-transform: uppercase;
-  line-height: 1.6;
-  color: var(--label);
+  line-height: 1.5;
 }
 
-.eyebrow {
-  margin-bottom: var(--sp-3);
-  transition: color var(--dur-3) var(--ease-in-out);
+/* ─── Page content enters with a stagger ───────────────────────
+   Every direct child of a .page rises in on mount; pages remount on
+   route change, so this replays on every switch. */
+
+.page > * {
+  animation: rise var(--dur-page) var(--ease-out) both;
 }
 
-[data-earned='true'] .eyebrow {
-  color: var(--chapter-ink);
+.page > :nth-child(2) {
+  animation-delay: calc(var(--stagger) * 1);
+}
+.page > :nth-child(3) {
+  animation-delay: calc(var(--stagger) * 2);
+}
+.page > :nth-child(4) {
+  animation-delay: calc(var(--stagger) * 3);
+}
+.page > :nth-child(5) {
+  animation-delay: calc(var(--stagger) * 4);
+}
+.page > :nth-child(n + 6) {
+  animation-delay: calc(var(--stagger) * 5);
 }
 
-/* ─── Sections, chapters and their settled wash ──────────────── */
-
-.section {
-  position: relative;
-  isolation: isolate;
-  padding-block: var(--sp-16);
-}
-
-/* Narrow screens reserve a taller band above each heading for the
-   chapter's stage (see Stage.css). */
-@media (max-width: 1023px) {
-  .section {
-    padding-top: var(--sp-20);
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
   }
 }
 
-/* The pigment a chapter keeps once it has been earned. Two masks,
-   intersected: a soft blurred shape stretched to the section (blur
-   survives stretching), and an unstretched, seamlessly tiling turbulence
-   grain that breaks the edge into blotches at the same scale on every
-   section. Both are static images — nothing is filtered per frame. */
-.section__wash {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: var(--chapter-wash);
-  -webkit-mask-image: url('../assets/wash-shape.svg'),
-    url('../assets/wash-grain.svg');
-  mask-image: url('../assets/wash-shape.svg'), url('../assets/wash-grain.svg');
-  -webkit-mask-size: 100% 100%, 520px 520px;
-  mask-size: 100% 100%, 520px 520px;
-  -webkit-mask-repeat: no-repeat, repeat;
-  mask-repeat: no-repeat, repeat;
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
-  opacity: 0;
-  transition: opacity var(--dur-3) var(--ease-in-out);
+/* ─── Page switch: the outgoing page fades up and out ──────────
+   Uses View Transitions (router `viewTransition` links). The root
+   snapshot is left alone; only the content area animates, and the
+   incoming page supplies its own staggered entrance above. */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
 }
 
-.section[data-earned='true'] .section__wash {
-  opacity: var(--wash-opacity);
+::view-transition-group(page) {
+  animation: none;
 }
 
-.shell {
-  width: 100%;
-  max-width: var(--measure);
-  margin-inline: auto;
-  padding-inline: var(--gutter);
+::view-transition-old(page) {
+  animation: page-out var(--dur-fast) var(--ease-in-out) both;
 }
 
-/* Content on the left, the blob's stage on the right. Below 1024px the
-   stage lifts out of the grid into the band above the heading. */
-.chapter {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--rail-gap);
+::view-transition-new(page) {
+  animation: none;
 }
 
-@media (min-width: 1024px) {
-  .chapter {
-    grid-template-columns: minmax(0, 1fr) var(--rail);
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
   }
 }
 
-.section__title {
-  font-size: var(--fs-h2);
-  max-width: 16ch;
-  margin-bottom: var(--sp-6);
-}
-
-.prose {
-  max-width: var(--measure-prose);
-  display: grid;
-  gap: var(--sp-3);
-  color: var(--ink-soft);
-  font-size: var(--fs-lead);
-}
-
-/* ─── Utilities ──────────────────────────────────────────────── */
+/* ─── Utilities ────────────────────────────────────────────── */
 
 .skip-link {
-  position: absolute;
+  position: fixed;
   top: var(--sp-1);
   left: var(--sp-1);
-  z-index: 100;
+  z-index: 2000;
   padding: var(--sp-1) var(--sp-2);
-  background: var(--paper-raised);
-  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: var(--r-sm);
   transform: translateY(-200%);
 }
 
@@ -201,12 +172,8 @@ button {
   white-space: nowrap;
 }
 
-/* Reduced motion: nothing animates, and color arrives instantly. */
+/* Reduced motion: no travel. Things may still fade, briefly. */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {
@@ -214,5 +181,15 @@ button {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     transition-delay: 0s !important;
+  }
+
+  ::view-transition-old(page) {
+    animation: fade-out 120ms linear both;
+  }
+
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
   }
 }

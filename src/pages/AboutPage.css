@@ -1,0 +1,78 @@
+.about__prose {
+  display: grid;
+  gap: var(--sp-3);
+  max-width: 62ch;
+  font-size: 1.125rem;
+}
+
+.about__hobbies {
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.about__hobbies li {
+  position: relative;
+  padding-left: 26px;
+}
+
+.about__hobbies li::before {
+  content: '✦';
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  color: var(--accent);
+  font-size: 0.8em;
+}
+
+.about__photos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-1) var(--sp-4);
+}
+
+.photo {
+  margin: 0;
+  padding: 10px 10px 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+  rotate: var(--tilt);
+  transition:
+    rotate var(--dur-slow) var(--ease-out),
+    translate var(--dur-mid) var(--ease-out),
+    box-shadow var(--dur-mid) var(--ease-out);
+}
+
+.photo:hover {
+  rotate: 0deg;
+  translate: 0 -4px;
+  box-shadow: var(--shadow-card-hover);
+}
+
+.photo__image {
+  aspect-ratio: 4 / 5;
+}
+
+.photo__caption {
+  margin-top: 10px;
+  font-size: var(--fs-mono-sm);
+  color: var(--muted-ink);
+  text-align: center;
+}
+
+@container (max-width: 480px) {
+  .about__photos {
+    gap: var(--sp-2);
+    padding-inline: 0;
+  }
+
+  .photo {
+    padding: 6px 6px 10px;
+  }
+
+  .photo__caption {
+    font-size: 0.5625rem;
+    letter-spacing: 0.08em;
+  }
+}
