@@ -69,22 +69,57 @@ async function readPassword(req) {
   }
 }
 
-function driveDownloadUrl(shareUrl) {
-  const id = /\/d\/([\w-]+)/.exec(shareUrl)?.[1] ?? new URL(shareUrl).searchParams.get('id')
-  return id ? `https://drive.google.com/uc?export=download&id=${encodeURIComponent(id)}` : null
+/* The Drive file id, from any of: a share link (/file/d/ID/view), an
+   ?id=ID link, or the bare id. Tolerates stray quotes and spaces from
+   pasting into the dashboard. */
+function driveFileId(value) {
+  const clean = String(value).trim().replace(/^['"]|['"]$/g, '').trim()
+  const fromPath = /\/d\/([\w-]{10,})/.exec(clean)?.[1]
+  if (fromPath) return fromPath
+  const fromQuery = /[?&]id=([\w-]{10,})/.exec(clean)?.[1]
+  if (fromQuery) return fromQuery
+  return /^[\w-]{10,}$/.test(clean) ? clean : null
 }
 
-async function loadPdf(shareUrl) {
-  if (cachedPdf && cachedPdf.until > Date.now()) return cachedPdf.buffer
-  const url = driveDownloadUrl(shareUrl)
-  if (!url) return null
-  const response = await fetch(url, { redirect: 'follow' })
-  if (!response.ok) return null
-  const buffer = Buffer.from(await response.arrayBuffer())
-  // Drive answers some problems with an HTML page; only a real PDF passes.
-  if (buffer.subarray(0, 5).toString('latin1') !== '%PDF-') return null
-  cachedPdf = { buffer, until: Date.now() + PDF_CACHE_MS }
-  return buffer
+/* Drive's direct-download endpoints, newest first. */
+const downloadUrls = (id) => [
+  `https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t`,
+  `https://drive.google.com/uc?export=download&id=${id}`,
+]
+
+/* Returns { pdf } or { reason } — the reason is logged (Vercel → Logs)
+   and never contains the link itself. */
+async function loadPdf(shareValue) {
+  if (cachedPdf && cachedPdf.until > Date.now()) return { pdf: cachedPdf.buffer }
+  const id = driveFileId(shareValue)
+  if (!id) return { reason: 'RESUME_URL is not a Google Drive link or file id' }
+
+  let reason = 'no response'
+  for (const url of downloadUrls(id)) {
+    try {
+      const response = await fetch(url, {
+        redirect: 'follow',
+        headers: { 'User-Agent': 'Mozilla/5.0 (resume fetch)', Accept: 'application/pdf,*/*' },
+      })
+      const type = response.headers.get('content-type') ?? ''
+      if (!response.ok) {
+        reason = `Drive answered ${response.status} (${type})`
+        continue
+      }
+      const buffer = Buffer.from(await response.arrayBuffer())
+      // Drive answers some problems (sharing off, sign-in, rate limits)
+      // with an HTML page; only a real PDF passes.
+      if (buffer.subarray(0, 5).toString('latin1') !== '%PDF-') {
+        reason = `Drive sent ${type || 'unknown type'}, not a PDF — is sharing set to "Anyone with the link"?`
+        continue
+      }
+      cachedPdf = { buffer, until: Date.now() + PDF_CACHE_MS }
+      return { pdf: buffer }
+    } catch (error) {
+      reason = `fetch failed: ${error?.message ?? error}`
+    }
+  }
+  return { reason }
 }
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -121,8 +156,11 @@ export default async function handler(req, res) {
   }
 
   failures.delete(ip)
-  const pdf = await loadPdf(shareUrl).catch(() => null)
-  if (!pdf) return send(res, 502, { error: 'unavailable' })
+  const { pdf, reason } = await loadPdf(shareUrl)
+  if (!pdf) {
+    console.error(`[resume] couldn't load the PDF: ${reason}`)
+    return send(res, 502, { error: 'unavailable' })
+  }
 
   return send(res, 200, pdf, {
     'Content-Type': 'application/pdf',
