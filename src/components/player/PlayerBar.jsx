@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { nowPlaying } from '../../data/content'
 import { TRACKS, trackIndexFor } from '../../data/tracks'
@@ -8,7 +8,8 @@ import { skip as skipSong, useMusic } from '../../sound/music'
 import Mascot from '../Mascot'
 import SoundToggle from '../SoundToggle'
 import VolumeSlider from '../VolumeSlider'
-import { NextIcon, PrevIcon, SkipSongIcon } from '../icons'
+import { MusicNextIcon, NextIcon, PrevIcon } from '../icons'
+import QueuePopover from './QueuePopover'
 import SeekBar from './SeekBar'
 import { usePlayer } from './playerContext'
 import '../covers.css'
@@ -28,14 +29,26 @@ const MARQUEE_SPEED = 38 // px per second
      through this page (the clock lives in the artist panel)
    With songs in the playlist (content.js): "Now playing" is the real
    song, with its credit link when the license asks for one and a small
-   "next song" button when there's more than one; play / pause also
-   starts and stops the music; and the orange bar shows the song instead
-   of the scroll, and can be clicked, dragged or keyed to seek. */
+   "next song" button when there's more than one; the cover square shows
+   the song (and flips when it changes); the cover + title open the song
+   queue; play / pause also starts and stops the music; and the orange
+   bar shows the song instead of the scroll, and can be clicked, dragged
+   or keyed to seek. */
+
+// Songs have no artwork: each gets a palette (cycling) and its number.
+const SONG_PALETTES = ['sunset', 'plum', 'mint', 'citrus']
 export default function PlayerBar() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const { playing, musicOn, toggle } = usePlayer()
   const music = useMusic()
+  const queueId = useId()
+  const queueButtonRef = useRef(null)
+  const [queueOpen, setQueueOpen] = useState(false)
+  const closeQueue = useCallback((returnFocus) => {
+    setQueueOpen(false)
+    if (returnFocus) queueButtonRef.current?.focus()
+  }, [])
   const fillRef = useRef(null)
   const marqueeRef = useRef(null)
 
@@ -108,40 +121,56 @@ export default function PlayerBar() {
     return () => observer.disconnect()
   }, [title])
 
+  // The cover square: the song while there's music, else the page.
+  const cover = song
+    ? { key: `song-${music.index}`, palette: SONG_PALETTES[music.index % SONG_PALETTES.length], label: music.index + 1 }
+    : { key: track.path, palette: track.cover, label: track.number }
+
+  const nowPlayingContent = (
+    <>
+      <span className="player__cover" key={cover.key} data-palette={cover.palette} aria-hidden="true">
+        <span className="player__cover-art">{cover.label}</span>
+      </span>
+      <span className="player__meta">
+        <span className="player__label">Now playing</span>
+        <span className="player__song marquee" ref={marqueeRef} data-overflow="false">
+          <span className="marquee__track">
+            <span className="marquee__text">{title}</span>
+            <span className="marquee__text marquee__copy" aria-hidden="true">
+              {title}
+            </span>
+          </span>
+        </span>
+      </span>
+    </>
+  )
+
   return (
     <section className="player" aria-label="Player" data-rm-fade="">
 
       <div className="player__now">
-        <span
-          className="player__cover"
-          key={track.path}
-          data-palette={track.cover}
-          aria-hidden="true"
-        >
-          <span className="player__cover-art">{track.number}</span>
-        </span>
-        <p className="player__meta">
-          <span className="player__label">
-            Now playing
-            {song?.credit && song.creditUrl ? (
-              <>
-                {' · '}
-                <a className="player__credit" href={song.creditUrl} target="_blank" rel="noreferrer">
-                  {song.credit}
-                  <span className="sr-only"> (license, opens in a new tab)</span>
-                </a>
-              </>
-            ) : null}
-          </span>
-          <span className="player__song marquee" ref={marqueeRef} data-overflow="false">
-            <span className="marquee__track">
-              <span className="marquee__text">{title}</span>
-              <span className="marquee__text marquee__copy" aria-hidden="true">
-                {title}
-              </span>
-            </span>
-          </span>
-        </p>
+        {music.available ? (
+          <button
+            type="button"
+            ref={queueButtonRef}
+            className="player__nowbtn"
+            aria-label={`Show the song queue. Now playing: ${title}`}
+            aria-haspopup="dialog"
+            aria-expanded={queueOpen}
+            aria-controls={queueOpen ? queueId : undefined}
+            onClick={() => setQueueOpen((value) => !value)}
+          >
+            {nowPlayingContent}
+          </button>
+        ) : (
+          <div className="player__nowbtn">{nowPlayingContent}</div>
+        )}
+        {song?.credit && song.creditUrl ? (
+          <a className="player__credit" href={song.creditUrl} target="_blank" rel="noreferrer">
+            {song.credit}
+            <span className="sr-only"> (license, opens in a new tab)</span>
+          </a>
+        ) : null}
         {music.next ? (
           <button
             type="button"
@@ -153,9 +182,10 @@ export default function PlayerBar() {
               skipSong()
             }}
           >
-            <SkipSongIcon width={16} height={16} />
+            <MusicNextIcon width={18} height={18} />
           </button>
         ) : null}
+        <QueuePopover id={queueId} open={queueOpen} onClose={closeQueue} triggerRef={queueButtonRef} />
       </div>
 
       <div className="player__center">
@@ -164,6 +194,7 @@ export default function PlayerBar() {
             type="button"
             className="player__btn player__btn--prev"
             aria-label={`Previous track: ${prev.title}`}
+            title={`Previous: ${prev.title}`}
             onClick={() => {
               const target = stepTrack(navigate, pathname, -1)
               sound.switchTrack(target.number - 1)
@@ -189,6 +220,7 @@ export default function PlayerBar() {
             type="button"
             className="player__btn player__btn--next"
             aria-label={`Next track: ${next.title}`}
+            title={`Next: ${next.title}`}
             onClick={() => {
               const target = stepTrack(navigate, pathname, 1)
               sound.switchTrack(target.number - 1)

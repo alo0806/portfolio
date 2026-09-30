@@ -44,11 +44,14 @@ export function NextIcon(props) {
   )
 }
 
-/* Next song (fast-forward), distinct from next track (page). */
-export function SkipSongIcon(props) {
+/* Next song: a music note with an arrow — a different shape from the
+   page prev/next buttons. */
+export function MusicNextIcon(props) {
   return (
     <svg {...base} {...props}>
-      <path d="M2.5 5.5 L10 10 L2.5 14.5 Z M10 5.5 L17.5 10 L10 14.5 Z" fill="currentColor" />
+      <path d="M7.5 13.5V4.2l4.5 1.4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <ellipse cx="5.4" cy="13.8" rx="2.4" ry="1.9" fill="currentColor" />
+      <path d="M12 12.5h5.5M15.5 10.5l2 2-2 2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }

@@ -307,7 +307,124 @@
   outline-offset: 3px;
 }
 
-/* The license credit, beside "Now playing". */
+/* Cover + title: with songs, one button that opens the queue. */
+.player__nowbtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  margin: -4px 0 -4px -6px;
+  padding: 4px 10px 4px 6px;
+  border-radius: var(--r-md);
+  text-align: left;
+  transition: background-color var(--dur-fast) ease;
+}
+
+button.player__nowbtn:hover,
+button.player__nowbtn[aria-expanded='true'] {
+  background: var(--line);
+}
+
+/* ─── Song queue (a small panel above the player bar) ─── */
+
+.queue {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: var(--sp-3);
+  width: min(340px, calc(100vw - 24px));
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  padding: 10px;
+  border-radius: var(--r-md);
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card-hover);
+  animation: queue-in var(--dur-fast) var(--ease-out);
+}
+
+@keyframes queue-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.queue__heading {
+  padding: 4px 8px 8px;
+}
+
+.queue__list {
+  display: grid;
+  gap: 2px;
+}
+
+.queue__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.queue__song {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 8px;
+  border-radius: var(--r-sm);
+  text-align: left;
+  transition: background-color var(--dur-fast) ease;
+}
+
+.queue__song:hover {
+  background: var(--line);
+}
+
+.queue__song[aria-current='true'] {
+  background: var(--accent-tint);
+}
+
+.queue__lead {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 18px;
+  color: var(--muted-ink);
+  font-size: var(--fs-label);
+}
+
+.queue__text {
+  display: grid;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.queue__title {
+  overflow: hidden;
+  font-size: var(--fs-small);
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.queue__artist {
+  overflow: hidden;
+  font-size: var(--fs-label);
+  color: var(--muted-ink);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.queue__credit {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  font-size: var(--fs-label);
+  color: var(--muted-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* The license credit, beside the now-playing area. */
 .player__credit {
   color: inherit;
   text-decoration: underline;
@@ -421,6 +538,10 @@
   .player__cover {
     width: 40px;
     height: 40px;
+  }
+
+  .queue {
+    left: 12px;
   }
 
   /* Phones have volume buttons; the mute button stays. */

@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { getMusic, pause as pauseMusic, play as playMusic, useMusic } from '../../sound/music'
+import {
+  getMusic,
+  pause as pauseMusic,
+  play as playMusic,
+  playSong as playMusicSong,
+  useMusic,
+} from '../../sound/music'
 import { PlayerContext } from './playerContext'
 
 const KEY = 'astnlo:playing'
@@ -45,6 +51,12 @@ export default function PlayerProvider({ children }) {
     setPlaying(true)
   }, [])
 
+  // A song picked from the queue: crossfade to it, music + motion on.
+  const playSong = useCallback((songIndex) => {
+    playMusicSong(songIndex)
+    setPlaying(true)
+  }, [])
+
   const toggle = useCallback(() => {
     const current = getMusic()
     if (!current.available) {
@@ -59,7 +71,10 @@ export default function PlayerProvider({ children }) {
   }, [])
 
   const musicOn = music.available && music.playing
-  const value = useMemo(() => ({ playing, musicOn, play, toggle }), [playing, musicOn, play, toggle])
+  const value = useMemo(
+    () => ({ playing, musicOn, play, playSong, toggle }),
+    [playing, musicOn, play, playSong, toggle],
+  )
 
   return <PlayerContext.Provider value={value}>{children}</PlayerContext.Provider>
 }

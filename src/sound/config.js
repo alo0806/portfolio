@@ -38,7 +38,8 @@ export const SOUND = {
     crossfade: 1.0, // overlap between one song and the next
     fadeIn: 0.8, // pressing play
     pauseFade: 0.3, // pressing pause
-    skipFade: 0.6, // the "next song" button
+    skipFade: 0.6, // the "next song" button and picking from the queue
+    preloadLead: 20, // start downloading the next song this long before its crossfade
   },
 
   /* Minimum time between two plays of the same sound, in ms, so rapid
