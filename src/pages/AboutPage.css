@@ -15,13 +15,20 @@
   padding-left: 26px;
 }
 
+.about__label {
+  margin-bottom: var(--sp-1);
+}
+
+/* A tiny record as the bullet. */
 .about__hobbies li::before {
-  content: '✦';
+  content: '';
   position: absolute;
-  left: 0;
-  top: 0.1em;
-  color: var(--accent);
-  font-size: 0.8em;
+  left: 2px;
+  top: 0.55em;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent) 0 30%, var(--ink) 32%);
 }
 
 .about__photos {
@@ -52,11 +59,12 @@
 
 .photo__image {
   aspect-ratio: 4 / 5;
+  background: linear-gradient(140deg, var(--pal-a), var(--pal-b));
 }
 
 .photo__caption {
   margin-top: 10px;
-  font-size: var(--fs-mono-sm);
+  font-size: var(--fs-label);
   color: var(--muted-ink);
   text-align: center;
 }
@@ -72,7 +80,6 @@
   }
 
   .photo__caption {
-    font-size: 0.5625rem;
-    letter-spacing: 0.08em;
+    font-size: 0.6875rem;
   }
 }

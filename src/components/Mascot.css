@@ -2,7 +2,6 @@
   position: relative;
   display: flex;
   justify-content: center;
-  padding-top: var(--sp-5);
 }
 
 .mascot__button {
@@ -11,22 +10,29 @@
 }
 
 .mascot__svg {
-  width: 88px;
+  width: var(--mascot);
   height: auto;
   overflow: visible;
-  transform-origin: 50% 90%;
-  animation: mascot-bob 4.2s ease-in-out infinite;
+  transform-origin: 50% 95%;
+  animation: mascot-bob var(--beat) ease-in-out infinite alternate;
+  animation-play-state: var(--play-state);
 }
 
+/* A little bounce and squash on every beat. */
 @keyframes mascot-bob {
-  50% {
-    translate: 0 -2px;
+  from {
+    translate: 0 0;
+    scale: 1.04 0.96;
+  }
+  to {
+    translate: 0 -3px;
+    scale: 0.98 1.02;
   }
 }
 
 .mascot__shadow {
   fill: var(--ink);
-  opacity: 0.08;
+  opacity: 0.1;
 }
 
 .mascot__body {
@@ -39,8 +45,8 @@
 }
 
 .mascot__cheek {
-  fill: var(--secondary);
-  opacity: 0.35;
+  fill: var(--cover-plum-b);
+  opacity: 0.55;
 }
 
 .mascot__white {
@@ -69,7 +75,8 @@
 
 .mascot__bubble {
   position: absolute;
-  bottom: calc(100% - var(--sp-3));
+  z-index: 5;
+  bottom: calc(100% + 10px);
   left: 50%;
   max-width: 220px;
   width: max-content;
@@ -106,4 +113,23 @@
 
 .mascot__bubble:empty {
   visibility: hidden;
+}
+
+/* In the player bar the blob sits at the right edge, so its bubble opens
+   leftward instead of centring (which would run off screen). */
+.mascot[data-align='end'] .mascot__bubble {
+  left: auto;
+  right: 0;
+  transform: translate(0, 6px) scale(0.96);
+  transform-origin: 90% 100%;
+}
+
+.mascot[data-align='end'] .mascot__bubble[data-show='true'] {
+  transform: translate(0, 0) scale(1);
+}
+
+.mascot[data-align='end'] .mascot__bubble::after {
+  left: auto;
+  right: calc(var(--mascot) / 2 - 7px);
+  transform: none;
 }

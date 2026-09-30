@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useIris } from '../components/iris/irisContext'
 
-/* Replays the intro regardless of the session flag: the route reads
+/* Back to the intro regardless of the session flag: the route reads
    `replay` from navigation state and skips its "already seen" redirect. */
 export default function ReplayLink({ onNavigate }) {
   const { cover } = useIris()
@@ -10,17 +10,17 @@ export default function ReplayLink({ onNavigate }) {
     <Link
       to="/"
       state={{ replay: true }}
-      className="mono replay-link"
+      className="replay-link"
       onClick={(event) => {
         event.preventDefault()
         onNavigate?.()
-        cover({ to: '/', state: { replay: true }, color: '--space' })
+        cover({ to: '/', state: { replay: true }, color: '--indigo' })
       }}
     >
-      <span className="replay-link__star" aria-hidden="true">
-        ✦
+      <span className="replay-link__icon" aria-hidden="true">
+        ↺
       </span>{' '}
-      back to the stars
+      back to the record
     </Link>
   )
 }

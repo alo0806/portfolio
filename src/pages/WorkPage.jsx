@@ -1,54 +1,25 @@
-import LatestLog from './LatestLog'
+import { projects, work } from '../data/content'
+import AlbumCard from './AlbumCard'
+import LinerNotes from './LinerNotes'
 import PageHead from './PageHead'
-import ProjectCard from './ProjectCard'
 import usePageTitle from './usePageTitle'
 import './WorkPage.css'
 
-const METRICS = [
-  { label: 'Metric one', value: '—' },
-  { label: 'Metric two', value: '—' },
-  { label: 'Metric three', value: '—' },
-]
-
-const PROJECTS = [
-  {
-    title: 'Project One',
-    tag: 'Side project',
-    fill: '--grad-1',
-    description: 'Placeholder. One line about what it does and who it is for.',
-    metrics: METRICS,
-  },
-  {
-    title: 'Project Two',
-    tag: 'Internship',
-    fill: '--grad-2',
-    description: 'Placeholder. One line about the problem and what changed.',
-    metrics: METRICS,
-  },
-  {
-    title: 'InnoDesign redesign (in progress)',
-    tag: 'Side project',
-    fill: '--grad-3',
-    description: 'Placeholder. A self-directed rework, audited before redrawn.',
-    metrics: METRICS,
-  },
-]
-
 export default function WorkPage() {
-  usePageTitle('My Work')
+  usePageTitle(work.title)
 
   return (
     <>
-      <PageHead number="01" title="My Work" />
-      <LatestLog />
+      <PageHead path="/work" title={work.title} />
+      <LinerNotes />
       <section aria-labelledby="projects-title">
         <h2 className="sr-only" id="projects-title">
           Projects
         </h2>
-        <ul className="work-grid">
-          {PROJECTS.map((project) => (
+        <ul className="albums">
+          {projects.map((project, index) => (
             <li key={project.title}>
-              <ProjectCard {...project} />
+              <AlbumCard number={index + 1} {...project} />
             </li>
           ))}
         </ul>

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
+import PlayerBar from '../components/player/PlayerBar'
 import { markIntroSeen } from '../lib/session'
 import MobileBar from './MobileBar'
 import Sidebar from './Sidebar'
@@ -38,6 +39,7 @@ export default function MainLayout() {
           <Outlet />
         </div>
       </main>
+      <PlayerBar />
     </div>
   )
 }

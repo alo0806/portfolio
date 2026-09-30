@@ -1,0 +1,27 @@
+.waveform {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  width: min(100%, 560px);
+  height: 160px;
+}
+
+.waveform span {
+  flex: 1;
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: linear-gradient(to top, var(--accent), var(--cover-plum-b));
+  opacity: 0.85;
+  scale: 1 var(--h);
+  animation: wave var(--d) ease-in-out var(--delay) infinite alternate;
+  animation-play-state: var(--play-state);
+}
+
+@keyframes wave {
+  from {
+    scale: 1 calc(var(--h) * 0.35);
+  }
+  to {
+    scale: 1 var(--h);
+  }
+}
