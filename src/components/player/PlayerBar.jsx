@@ -6,6 +6,7 @@ import { stepTrack } from '../../lib/trackNav'
 import { sound } from '../../sound/engine'
 import Mascot from '../Mascot'
 import SoundToggle from '../SoundToggle'
+import VolumeSlider from '../VolumeSlider'
 import { NextIcon, PrevIcon } from '../icons'
 import { usePlayer } from './playerContext'
 import '../covers.css'
@@ -164,7 +165,10 @@ export default function PlayerBar() {
         </div>
 
       <div className="player__side">
-        <SoundToggle />
+        <div className="player__volume">
+          <SoundToggle />
+          <VolumeSlider />
+        </div>
         <Mascot size={52} align="end" />
       </div>
     </section>
