@@ -1,62 +1,68 @@
 /* ─────────────────────────────────────────────────────────────
    Every color, font, size, radius, spacing and motion value lives
-   here. Unitless numbers in the blob / bloom block are read by JS
-   (see src/lib/tokens.js) so they can be tuned without touching code.
+   here. Nothing else defines a raw color.
    ───────────────────────────────────────────────────────────── */
 
 :root {
-  /* Paper, ink and grays */
-  --paper: #eceef1;
-  --paper-raised: #f5f6f8;
+  /* ─── Space (intro, dark panels) ─── */
+  --space: #0e1116;
+  --space-raised: #171c24;
+  --space-line: rgba(238, 240, 243, 0.12);
+  --space-text: #eef0f3;
+  --space-muted: #8d95a4; /* 6.3:1 on --space */
+  --star: #f4f1ea;
+  --star-teal: #8fc7bd;
+  --star-rose: #e3a1ab;
+  --star-gold: #e8d39a;
+  --star-blue: #a9c1e8;
+
+  /* ─── Paper (main pages) ─── */
+  --paper: #f1f2f4;
+  --sidebar: #e6e8ec;
+  --card: #fafbfc;
   --ink: #1e2430;
-  --ink-soft: #3a4250;
-  --label: #535a66; /* small UI text — the muted gray below fails contrast */
-  --line: #8a9099; /* line work and decoration only, never text */
+  --muted: #6b7280; /* borders, icons, decoration — not small text */
+  --muted-ink: #5b616e; /* small text: 5.5:1 on paper, 5.0:1 on sidebar */
+  --line: rgba(30, 36, 48, 0.12);
+  --line-strong: rgba(30, 36, 48, 0.22);
 
-  /* Chapters. Each is a wash (pigment, for fills) and an ink (≥4.5:1 on
-     the paper, for text / focus). The hero is stone: the gray world. */
-  --stone: #7c828c;
-  --stone-ink: #4d535e;
-  --crimson: #a94f5c;
-  --crimson-ink: #8a3a47;
-  --teal: #5e8c85;
-  --teal-ink: #36605a;
-  --blue: #3f5f8a;
-  --blue-ink: #34507a;
-  --gold: #c9a95c;
-  --gold-ink: #6e571f;
+  /* Accents are pairs: the color itself for fills and decoration, and an
+     ink for any text or focus ring (≥4.5:1 on both paper and sidebar). */
+  --accent: #5e8c85;
+  --accent-ink: #3d6b64;
+  --accent-tint: rgba(94, 140, 133, 0.14);
+  --secondary: #a94f5c;
+  --secondary-ink: #8a3a47;
+  --secondary-tint: rgba(169, 79, 92, 0.12);
 
-  /* How strongly a settled chapter wash sits behind its section. Capped so
-     body text keeps contrast over the densest pigment. */
-  --wash-opacity: 0.2;
+  /* Placeholder image fills */
+  --grad-1: linear-gradient(135deg, #d6e6e2 0%, #9fc2bb 55%, #6f9d95 100%);
+  --grad-2: linear-gradient(135deg, #f0d9dc 0%, #d9a2aa 55%, #b56b77 100%);
+  --grad-3: linear-gradient(135deg, #dfe4ee 0%, #adbcd6 55%, #7d8fb4 100%);
+  --grad-4: linear-gradient(135deg, #f1e8d4 0%, #dcc79a 55%, #b99c5f 100%);
 
-  /* Type */
-  --font-display: 'Josefin Sans', 'Futura', 'Century Gothic', sans-serif;
-  --font-body: 'Mulish', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* ─── Type ─── */
+  --font-display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --font-body: 'Jost', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
-  --fw-hair: 100;
-  --fw-thin: 200;
-  --fw-light: 300;
-  --fw-book: 400;
-
-  --fs-intro: clamp(2.5rem, 9vw, 5.5rem);
-  --fs-display: clamp(2.375rem, 6.2vw, 4.625rem);
-  --fs-h2: clamp(1.875rem, 4vw, 3rem);
-  --fs-h3: clamp(1.25rem, 2vw, 1.5rem);
-  --fs-lead: clamp(1.0625rem, 1.5vw, 1.1875rem);
+  --fs-intro-name: clamp(3.5rem, 12vw, 7.75rem);
+  --fs-h1: clamp(2.5rem, 5vw, 3.75rem);
+  --fs-h2: clamp(1.625rem, 2.6vw, 2rem);
+  --fs-h3: 1.5rem;
+  --fs-sidebar-name: 2rem;
   --fs-body: 1.0625rem;
   --fs-small: 0.9375rem;
-  --fs-ui: 0.75rem;
+  --fs-mono: 0.75rem;
+  --fs-mono-sm: 0.6875rem;
 
-  --lh-display: 1.14;
+  --lh-tight: 1.05;
   --lh-snug: 1.3;
-  --lh-body: 1.75;
+  --lh-body: 1.7;
+  --track-mono: 0.16em;
+  --track-mono-wide: 0.28em;
 
-  --track-display: 0.01em;
-  --track-ui: 0.32em;
-  --track-intro: 0.5em;
-
-  /* Spacing — 8px scale */
+  /* ─── Spacing: 8px scale ─── */
   --sp-1: 8px;
   --sp-2: 16px;
   --sp-3: 24px;
@@ -66,144 +72,42 @@
   --sp-8: 64px;
   --sp-10: 80px;
   --sp-12: 96px;
-  --sp-16: 128px;
-  --sp-20: 160px;
 
-  /* Radii */
+  /* ─── Radii ─── */
   --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 22px;
   --r-pill: 999px;
 
-  /* Motion — slow and graceful; only the blob is springy */
+  /* ─── Shadows ─── */
+  --shadow-card: 0 1px 2px rgba(30, 36, 48, 0.05),
+    0 8px 24px -12px rgba(30, 36, 48, 0.18);
+  --shadow-card-hover: 0 2px 4px rgba(30, 36, 48, 0.06),
+    0 18px 36px -16px rgba(30, 36, 48, 0.28);
+
+  /* ─── Motion ─── */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
-  --dur-1: 600ms;
-  --dur-2: 1000ms;
-  --dur-3: 1600ms;
-  --dur-draw: 1800ms;
+  --dur-fast: 180ms;
+  --dur-mid: 320ms;
+  --dur-page: 380ms;
+  --dur-slow: 700ms;
+  --stagger: 60ms;
+  --iris-ms: 850; /* unitless: read by JS */
+  --fade-ms: 220; /* unitless: read by JS */
 
-  /* Layout */
-  --measure: 1120px;
-  --measure-prose: 60ch;
-  --gutter: clamp(20px, 5vw, 64px);
-  --nav-h: 72px;
-  --rail: 300px;
-  --rail-gap: var(--sp-8);
-  --stage: 300px;
-  --stage-hero: 440px;
-  --art-stroke: 1;
-  --art-stroke-hero: 0.75;
+  /* ─── Layout ─── */
+  --sidebar-w: 300px;
+  --content-max: 960px;
+  --topbar-h: 60px;
 
-  /* Blob (unitless, read by JS) */
-  --blob-r: 34;
-  --blob-circles: 6;
-  --goo-blur: 10;
-  --blob-leash: 120; /* max distance from home toward the cursor */
-  --blob-gap: 90; /* never closer than this to the cursor */
-  --blob-drift: 18;
-  --blob-idle-ms: 2800;
-
-  /* Bloom (unitless, read by JS) */
-  --bloom-size: 640;
-  --bloom-duration: 2400;
-  --bloom-peak: 0.55;
-}
-
-/* Narrow screens: a smaller mass with fewer circles and a lighter filter,
-   and each chapter's stage shrinks into the band above its heading. */
-@media (max-width: 1023px) {
-  :root {
-    --stage: 128px;
-    --stage-hero: 260px;
-    --art-stroke: 2.2;
-    --art-stroke-hero: 1.15;
-
-    --blob-r: 24;
-    --blob-circles: 3;
-    --goo-blur: 7;
-    --blob-leash: 36;
-    --blob-gap: 70;
-    --blob-drift: 8;
-
-    --bloom-size: 384;
-  }
-}
-
-/* ─── Scroll-driven accent ──────────────────────────────────────
-   --accent-now is "the color of the chapter you are in". The blob, nav
-   and focus rings read it; none of them know which section is active.
-   Registering it is what lets it interpolate instead of snapping. */
-
-@property --accent-now {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #7c828c;
-}
-
-@property --accent-now-ink {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #4d535e;
-}
-
-:root {
-  --accent-now: var(--stone);
-  --accent-now-ink: var(--stone-ink);
-
-  transition:
-    --accent-now var(--dur-3) var(--ease-in-out),
-    --accent-now-ink var(--dur-3) var(--ease-in-out);
-}
-
-:root[data-section='projects'] {
-  --accent-now: var(--crimson);
-  --accent-now-ink: var(--crimson-ink);
-}
-
-:root[data-section='about'] {
-  --accent-now: var(--teal);
-  --accent-now-ink: var(--teal-ink);
-}
-
-:root[data-section='story'] {
-  --accent-now: var(--blue);
-  --accent-now-ink: var(--blue-ink);
-}
-
-:root[data-section='contact'] {
-  --accent-now: var(--gold);
-  --accent-now-ink: var(--gold-ink);
-}
-
-/* ─── Per-chapter pigment ───────────────────────────────────────
-   Anything tagged with data-chapter (a section, an earned dot, a bloom)
-   picks up that chapter's wash and ink from here. */
-
-[data-chapter='hero'] {
-  --chapter-wash: var(--stone);
-  --chapter-ink: var(--stone-ink);
-}
-
-[data-chapter='projects'] {
-  --chapter-wash: var(--crimson);
-  --chapter-ink: var(--crimson-ink);
-  --wash-opacity: 0.2;
-}
-
-[data-chapter='about'] {
-  --chapter-wash: var(--teal);
-  --chapter-ink: var(--teal-ink);
-  --wash-opacity: 0.22;
-}
-
-[data-chapter='story'] {
-  --chapter-wash: var(--blue);
-  --chapter-ink: var(--blue-ink);
-  --wash-opacity: 0.16;
-}
-
-[data-chapter='contact'] {
-  --chapter-wash: var(--gold);
-  --chapter-ink: var(--gold-ink);
-  --wash-opacity: 0.32;
+  /* ─── Cursor ───
+     ONE switch: `blend` inverts whatever is underneath (works on dark and
+     light with no configuration). Change to `themed` to use the per-surface
+     colors below instead — surfaces opt in with data-surface="dark". */
+  --cursor-mode: blend;
+  --cursor-on-light: var(--ink);
+  --cursor-on-dark: var(--star);
+  --cursor-dot: 6px;
+  --cursor-ring: 34px;
 }
