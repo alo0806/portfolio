@@ -4,11 +4,11 @@ import { nowPlaying } from '../../data/content'
 import { TRACKS, trackIndexFor } from '../../data/tracks'
 import { stepTrack } from '../../lib/trackNav'
 import { sound } from '../../sound/engine'
-import { skip as skipSong, useMusic } from '../../sound/music'
+import { previous as previousSong, skip as skipSong, useMusic } from '../../sound/music'
 import Mascot from '../Mascot'
 import SoundToggle from '../SoundToggle'
 import VolumeSlider from '../VolumeSlider'
-import { MusicNextIcon, NextIcon, PrevIcon } from '../icons'
+import { NextIcon, PrevIcon, SongNextIcon, SongPrevIcon } from '../icons'
 import QueuePopover from './QueuePopover'
 import SeekBar from './SeekBar'
 import { usePlayer } from './playerContext'
@@ -29,8 +29,9 @@ const MARQUEE_SPEED = 38 // px per second
      through this page (the clock lives in the artist panel)
    With songs in the playlist (content.js): "Now playing" is the real
    song, with its credit link when the license asks for one and a small
-   "next song" button when there's more than one; the cover square shows
-   the song (and flips when it changes); the cover + title open the song
+   previous / next song buttons (double arrows) either side of the page
+   controls; the cover square shows the song's album art (and flips when
+   it changes, turning while playing); the cover + title open the song
    queue; play / pause also starts and stops the music; and the orange
    bar shows the song instead of the scroll, and can be clicked, dragged
    or keyed to seek. */
@@ -123,13 +124,24 @@ export default function PlayerBar() {
 
   // The cover square: the song while there's music, else the page.
   const cover = song
-    ? { key: `song-${music.index}`, palette: SONG_PALETTES[music.index % SONG_PALETTES.length], label: music.index + 1 }
+    ? {
+        key: `song-${music.index}`,
+        palette: SONG_PALETTES[music.index % SONG_PALETTES.length],
+        label: music.index + 1,
+        image: song.cover,
+      }
     : { key: track.path, palette: track.cover, label: track.number }
 
   const nowPlayingContent = (
     <>
       <span className="player__cover" key={cover.key} data-palette={cover.palette} aria-hidden="true">
-        <span className="player__cover-art">{cover.label}</span>
+        {cover.image ? (
+          <span className="player__cover-art player__cover-art--image">
+            <img src={cover.image} alt="" width="44" height="44" decoding="async" />
+          </span>
+        ) : (
+          <span className="player__cover-art">{cover.label}</span>
+        )}
       </span>
       <span className="player__meta">
         <span className="player__label">Now playing</span>
@@ -171,25 +183,25 @@ export default function PlayerBar() {
             <span className="sr-only"> (license, opens in a new tab)</span>
           </a>
         ) : null}
-        {music.next ? (
-          <button
-            type="button"
-            className="player__btn player__btn--song"
-            aria-label={`Next song: ${music.next.title}`}
-            title="Next song"
-            onClick={() => {
-              sound.click()
-              skipSong()
-            }}
-          >
-            <MusicNextIcon width={18} height={18} />
-          </button>
-        ) : null}
         <QueuePopover id={queueId} open={queueOpen} onClose={closeQueue} triggerRef={queueButtonRef} />
       </div>
 
       <div className="player__center">
         <div className="player__controls">
+          {music.prev ? (
+            <button
+              type="button"
+              className="player__btn player__btn--song player__btn--song-prev"
+              aria-label={`Previous song: ${music.prev.title}`}
+              title={`Previous song: ${music.prev.title}`}
+              onClick={() => {
+                sound.click()
+                previousSong()
+              }}
+            >
+              <SongPrevIcon />
+            </button>
+          ) : null}
           <button
             type="button"
             className="player__btn player__btn--prev"
@@ -228,6 +240,20 @@ export default function PlayerBar() {
           >
             <NextIcon />
           </button>
+          {music.next ? (
+            <button
+              type="button"
+              className="player__btn player__btn--song player__btn--song-next"
+              aria-label={`Next song: ${music.next.title}`}
+              title={`Next song: ${music.next.title}`}
+              onClick={() => {
+                sound.click()
+                skipSong()
+              }}
+            >
+              <SongNextIcon />
+            </button>
+          ) : null}
         </div>
         {music.available ? (
           <SeekBar time={music.time} duration={music.duration} />
