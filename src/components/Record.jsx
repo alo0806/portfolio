@@ -18,25 +18,28 @@ const BLUR_ABOVE = 300 // label motion-blurs above this speed
    without the jump a keyframe restart causes. Only transform changes.
 
    startFast: begin at full speed and drift down (coming back from the
-   site). crackle: a quick burst of visual vinyl grain. The label blurs
+   site). idle: keep the slow turn even while the player is paused (the
+   intro's turntable is always waiting). crackle: a quick burst of visual vinyl grain. The label blurs
    whenever the disc is actually turning fast, in either direction. */
 export default function Record({
   label,
   fast = false,
   startFast = false,
   crackle = false,
+  idle = false,
   className = '',
   ref,
 }) {
   const discRef = useRef(null)
   const { playing } = usePlayer()
   const reduced = useReducedMotion()
-  const targetRef = useRef({ fast, playing, reduced })
+  const turning = playing || idle
+  const targetRef = useRef({ fast, turning, reduced })
   const startFastRef = useRef(startFast)
 
   useEffect(() => {
-    targetRef.current = { fast, playing, reduced }
-  }, [fast, playing, reduced])
+    targetRef.current = { fast, turning, reduced }
+  }, [fast, turning, reduced])
 
   useEffect(() => {
     const disc = discRef.current
@@ -52,7 +55,7 @@ export default function Record({
       const dt = Math.min((now - last) / 1000, 1 / 20)
       last = now
       const target = targetRef.current
-      const goal = target.reduced ? 0 : target.fast ? FAST_SPEED : target.playing ? BASE_SPEED : 0
+      const goal = target.reduced ? 0 : target.fast ? FAST_SPEED : target.turning ? BASE_SPEED : 0
       const rate = target.fast ? EASE_SPINUP : EASE_NORMAL
       speed += (goal - speed) * (1 - Math.exp(-rate * dt))
       angle = (angle + speed * dt) % 360

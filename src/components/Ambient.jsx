@@ -38,10 +38,12 @@ function makeGlow([r, g, b]) {
   return canvas
 }
 
-export default function Ambient({ className = '', interactive = false }) {
+/* idle: keep drifting even while the player is paused (the intro). */
+export default function Ambient({ className = '', interactive = false, idle = false }) {
   const canvasRef = useRef(null)
   const reduced = useReducedMotion()
-  const { playing } = usePlayer()
+  const { playing: playerPlaying } = usePlayer()
+  const playing = playerPlaying || idle
   const playingRef = useRef(playing)
 
   useEffect(() => {

@@ -18,6 +18,20 @@ html.has-custom-cursor :is(input, textarea, select, [contenteditable='true']) {
   transition: opacity var(--dur-fast) ease;
 }
 
+/* As a popover (top layer): undo the browser's popover box styling so it
+   stays a full-viewport, invisible, click-through layer. */
+.cursor[popover] {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
 .cursor[data-visible='true'] {
   opacity: 1;
 }

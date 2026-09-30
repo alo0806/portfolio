@@ -33,6 +33,9 @@ export default function MobileBar() {
 
     const onKey = (event) => {
       if (event.key !== 'Escape') return
+      // A dialog opened from the menu (the resume box) handles its own
+      // Escape; the menu stays open underneath.
+      if (document.querySelector('dialog[open]')) return
       setOpen(false)
       buttonRef.current?.focus()
     }

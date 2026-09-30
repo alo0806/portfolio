@@ -121,7 +121,7 @@ export default function IntroPage() {
       data-leaving={leaving ? 'true' : 'false'}
       style={{ '--leave-delay': `${leaveDelay}ms` }}
     >
-      <Ambient className="intro__ambient" interactive />
+      <Ambient className="intro__ambient" interactive idle />
 
       <main id="main" className="intro__stage" data-rm-fade="">
         <div className="intro__deck">
@@ -130,6 +130,7 @@ export default function IntroPage() {
               ref={recordRef}
               className="intro__record"
               label={intro.recordLabel}
+              idle
               fast={phase === 'spin'}
               startFast={entry === 'return'}
               crackle={phase === 'crackle' || phase === 'spin'}
