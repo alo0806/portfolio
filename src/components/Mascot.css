@@ -30,6 +30,23 @@
   }
 }
 
+/* Music playing: bounce + squash on each bass hit (--pulse), sway with
+   the loudness (--sway). Set per frame by the Mascot component. */
+:root[data-reactive='true'] .mascot__svg {
+  animation: none;
+  translate: 0 calc(var(--pulse, 0) * -4px);
+  scale: calc(1 + var(--pulse, 0) * 0.07) calc(1 - var(--pulse, 0) * 0.07);
+  rotate: calc(var(--sway, 0) * 5deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-reactive='true'] .mascot__svg {
+    translate: none;
+    scale: none;
+    rotate: none;
+  }
+}
+
 .mascot__shadow {
   fill: var(--ink);
   opacity: 0.1;

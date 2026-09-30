@@ -44,6 +44,33 @@ export function NextIcon(props) {
   )
 }
 
+/* Next song (fast-forward), distinct from next track (page). */
+export function SkipSongIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M2.5 5.5 L10 10 L2.5 14.5 Z M10 5.5 L17.5 10 L10 14.5 Z" fill="currentColor" />
+    </svg>
+  )
+}
+
+export function LockIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="4" y="8.5" width="12" height="9" rx="2.5" fill="currentColor" />
+      <path d="M6.75 8.5V6.5a3.25 3.25 0 0 1 6.5 0v2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="10" cy="13" r="1.4" fill="var(--icon-knockout, #fff)" />
+    </svg>
+  )
+}
+
+export function CloseIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M5.5 5.5 14.5 14.5M14.5 5.5 5.5 14.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 /* ─── Theme ─── */
 
 export function MoonIcon(props) {

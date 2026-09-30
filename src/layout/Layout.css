@@ -242,6 +242,16 @@
   color: var(--accent-ink);
 }
 
+.links__lock {
+  --icon-knockout: var(--sidebar);
+  color: var(--muted);
+  transition: color var(--dur-fast) ease;
+}
+
+.links__link:hover .links__lock {
+  color: var(--accent-ink);
+}
+
 /* ─── Back to the record ────────────────────────────────────── */
 
 .sidebar__meta {

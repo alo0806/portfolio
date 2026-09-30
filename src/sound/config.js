@@ -30,10 +30,36 @@ export const SOUND = {
     lowpass: 3200,
   },
 
-  /* Background music bus (nothing plays on it yet): its own level under
-     the same slider, so music and effects can be balanced here. */
+  /* Background music (the playlist in content.js): its own level under
+     the same slider, so music and effects can be balanced here. It
+     starts low — background, not a concert. Times in seconds. */
   music: {
-    level: 0.5,
+    level: 0.35,
+    crossfade: 1.0, // overlap between one song and the next
+    fadeIn: 0.8, // pressing play
+    pauseFade: 0.3, // pressing pause
+    skipFade: 0.6, // the "next song" button
+  },
+
+  /* Audio-reactive visuals: how the music is split into three bands and
+     turned into motion. Band edges in Hz; `gain` evens the bands out
+     (higher bands carry less energy). Smoothing rates are per second:
+     higher = snappier. */
+  analysis: {
+    fftSize: 1024,
+    bands: {
+      bass: [40, 160],
+      mids: [250, 2000],
+      highs: [2000, 8000],
+    },
+    gain: { bass: 1.1, mids: 1.5, highs: 2.6 },
+    attack: 22,
+    release: 7,
+    reducedRate: 2, // prefers-reduced-motion: slow, no bounce
+    /* A beat is bass jumping `threshold`× above its recent average
+       (averaged over `window` s), at least `floor` loud, no sooner than
+       `cooldown` s after the last one. The pulse then fades over `decay` s. */
+    beat: { threshold: 1.3, floor: 0.22, window: 1.2, cooldown: 0.22, decay: 0.2 },
   },
 
   /* Minimum time between two plays of the same sound, in ms, so rapid
@@ -48,6 +74,7 @@ export const SOUND = {
     babble: 250,
     texture: 120,
     preview: 120,
+    scratch: 300,
   },
 
   /* Tracklist rows: each page has its own note (scale degree + octave).
@@ -136,6 +163,23 @@ export const SOUND = {
     gain: 0.05,
     bandpass: 4200,
     bandpassQ: 0.8,
+  },
+
+  /* Wrong resume code: a record scratch. The band (and a low swoop
+     under it) rises for `turn` of the duration, then falls back. */
+  scratch: {
+    duration: 0.24,
+    turn: 0.35,
+    noiseGain: 0.5,
+    bandFrom: 500,
+    bandPeak: 2600,
+    bandTo: 420,
+    bandpassQ: 3,
+    pitchFrom: 150,
+    pitchPeak: 360,
+    pitchTo: 110,
+    pitchGain: 0.16,
+    pitchLowpass: 1200,
   },
 
   /* Turning sound on: a tiny rising two-note hello. */

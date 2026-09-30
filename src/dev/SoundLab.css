@@ -67,3 +67,26 @@
   color: var(--muted-ink);
   font-size: var(--fs-label);
 }
+
+.lab__meters {
+  display: flex;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+
+.lab__meter {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+
+.lab__meter-bar {
+  width: 28px;
+  height: 80px;
+  border-radius: 6px;
+  background: linear-gradient(to top, var(--accent) calc(var(--v) * 100%), var(--line) calc(var(--v) * 100%));
+}
+
+.lab__meters[data-live='false'] .lab__meter-bar {
+  opacity: 0.4;
+}

@@ -1,0 +1,209 @@
+/* The locked-track box. A native <dialog>, so it sits in the top layer
+   above everything (player bar and mobile menu included). */
+
+.resume {
+  width: min(380px, calc(100vw - 32px));
+  max-width: none;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  overflow: visible;
+}
+
+.resume::backdrop {
+  background: color-mix(in srgb, var(--indigo) 45%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.resume[open] {
+  animation: resume-in var(--dur-base) var(--ease-out);
+}
+
+.resume[open]::backdrop {
+  animation: resume-fade var(--dur-base) ease;
+}
+
+@keyframes resume-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+@keyframes resume-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.resume__panel {
+  position: relative;
+  display: grid;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  border-radius: var(--r-lg);
+  background: var(--card);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.resume__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--muted-ink);
+  transition:
+    color var(--dur-fast) ease,
+    background-color var(--dur-fast) ease;
+}
+
+.resume__close:hover {
+  color: var(--ink);
+  background: var(--line);
+}
+
+/* ─── The track: a cover square with a lock ─── */
+
+.resume__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding-right: var(--sp-4);
+}
+
+.resume__cover {
+  --icon-knockout: var(--cover-plum-a);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--r-md);
+  background: linear-gradient(140deg, var(--cover-plum-a), var(--cover-plum-b));
+  color: var(--on-indigo);
+}
+
+.resume__label {
+  font-size: var(--fs-label);
+  font-weight: 500;
+  color: var(--muted-ink);
+}
+
+.resume__title {
+  font-size: var(--fs-h3);
+  line-height: 1.2;
+}
+
+/* ─── Code field ─── */
+
+.resume__form {
+  display: grid;
+  gap: 6px;
+}
+
+.resume__prompt {
+  margin-bottom: var(--sp-1);
+  font-size: var(--fs-small);
+  color: var(--muted-ink);
+}
+
+.resume__field-label {
+  font-size: var(--fs-label);
+  font-weight: 500;
+}
+
+.resume__row {
+  display: flex;
+  gap: var(--sp-1);
+}
+
+.resume__input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--muted); /* 3:1+ against the field, as inputs need */
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-body);
+  letter-spacing: 0.12em;
+}
+
+.resume__input:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 1px;
+}
+
+.resume__input[aria-invalid='true'] {
+  border-color: var(--accent-ink);
+}
+
+.resume__input:disabled {
+  opacity: 0.6;
+}
+
+.resume__unlock {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: var(--r-sm);
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 500;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) ease;
+}
+
+.resume__unlock:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.resume__unlock:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.resume__unlock:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.resume__message {
+  min-height: 1.4em;
+  font-size: var(--fs-small);
+  color: var(--accent-ink);
+}
+
+.resume__open {
+  display: inline-flex;
+  justify-self: start;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: var(--r-sm);
+  background: var(--accent);
+  color: var(--indigo);
+  font-weight: 500;
+}
+
+/* ─── Fallback ─── */
+
+.resume__fallback {
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--line);
+  font-size: var(--fs-small);
+  color: var(--muted-ink);
+}
+
+.resume__fallback a {
+  color: var(--ink);
+  font-weight: 500;
+}

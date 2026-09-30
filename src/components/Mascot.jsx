@@ -1,12 +1,31 @@
 import { useEffect, useRef, useState } from 'react'
 import { mascotLines, nowPlaying } from '../data/content'
+import useAudioFrame from '../hooks/useAudioFrame'
 import useReducedMotion from '../hooks/useReducedMotion'
 import { sound } from '../sound/engine'
+import { getMusic } from '../sound/music'
 import './Mascot.css'
 
-const LINES = mascotLines.map((line) =>
-  line.replace('{song}', nowPlaying.song).replace('{artist}', nowPlaying.artist),
-)
+// Lines name whatever is playing right now (or the placeholder).
+function lineAt(index) {
+  const song = getMusic().song
+  return mascotLines[index]
+    .replace('{song}', song?.title ?? nowPlaying.song)
+    .replace('{artist}', song?.artist ?? nowPlaying.artist)
+}
+
+/* With music on: a bounce and squash on each bass hit, a gentle sway
+   with the overall loudness. Written as CSS variables; Mascot.css turns
+   them into motion (and drops them under reduced motion). */
+function paint(svg, frame) {
+  if (!frame) {
+    svg.style.removeProperty('--pulse')
+    svg.style.removeProperty('--sway')
+    return
+  }
+  svg.style.setProperty('--pulse', frame.pulse.toFixed(3))
+  svg.style.setProperty('--sway', frame.sway.toFixed(3))
+}
 
 const PUPIL_REACH = 2.4 // in the SVG's own units
 const EYES = [
@@ -14,8 +33,8 @@ const EYES = [
   { cx: 59, cy: 44 },
 ]
 
-/* A soft rounded blob that lives in the player bar. It bobs to the beat
-   while playing, its eyes follow the cursor, and it blinks now and then.
+/* A soft rounded blob that lives in the player bar. It bobs to the music
+   (or an idle beat) while playing, its eyes follow the cursor, and it blinks now and then.
    Hover it, click it, or press Enter on it and it says something (lines
    live in content.js). The line is announced politely to screen readers.
    `align` sets which way the speech bubble opens. */
@@ -27,14 +46,16 @@ export default function Mascot({ size = 88, align = 'center' }) {
   const pupilRightRef = useRef(null)
   const lastLineRef = useRef(-1)
   const hideTimerRef = useRef(0)
+  useAudioFrame(svgRef, paint)
 
   const say = () => {
-    let index = Math.floor(Math.random() * LINES.length)
-    if (index === lastLineRef.current) index = (index + 1) % LINES.length
+    let index = Math.floor(Math.random() * mascotLines.length)
+    if (index === lastLineRef.current) index = (index + 1) % mascotLines.length
     lastLineRef.current = index
     window.clearTimeout(hideTimerRef.current)
-    setLine(LINES[index])
-    sound.babble(LINES[index])
+    const text = lineAt(index)
+    setLine(text)
+    sound.babble(text)
   }
 
   const hideSoon = (delay) => {

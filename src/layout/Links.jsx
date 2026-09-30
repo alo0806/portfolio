@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import ResumeLink from '../components/ResumeLink'
 import { EmailIcon, GitHubIcon, LinkedInIcon, ResumeIcon } from '../components/icons'
 import { links } from '../data/content'
 
@@ -9,6 +10,8 @@ const ICONS = {
   resume: ResumeIcon,
 }
 
+/* The artist's links. A `locked` link (the resume) is a button that opens
+   the code box instead of going anywhere. */
 export default function Links({ onNavigate }) {
   const labelId = useId()
 
@@ -18,9 +21,16 @@ export default function Links({ onNavigate }) {
         Links
       </h2>
       <ul className="links__list">
-        {links.map(({ label, href, icon }) => {
+        {links.map(({ label, href = '#', icon, locked }) => {
           const external = href.startsWith('http')
           const Icon = ICONS[icon]
+          if (locked) {
+            return (
+              <li key={label}>
+                <ResumeLink label={label} />
+              </li>
+            )
+          }
           return (
             <li key={label}>
               <a
