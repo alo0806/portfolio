@@ -82,9 +82,45 @@
 }
 
 .player__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
   font-size: var(--fs-label);
   font-weight: 500;
   color: var(--muted-ink);
+  white-space: nowrap;
+}
+
+.player__eq {
+  width: 11px;
+  height: 9px;
+}
+
+.player__credit {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 2px;
+  transition: color var(--dur-fast) ease;
+}
+
+.player__credit:hover {
+  color: var(--ink);
+}
+
+/* The small "next song" button beside the title. */
+.player__btn--song {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  color: var(--muted-ink);
+}
+
+.player__btn--song:hover {
+  color: var(--ink);
 }
 
 .player__song {
@@ -238,21 +274,48 @@
 
 
 
-.player__progress {
-  position: relative;
-  display: block;
+/* Song progress: elapsed · bar · length. */
+.seek {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
   width: 100%;
-  height: 4px;
-  border-radius: var(--r-pill);
-  background: var(--line);
+}
+
+.seek__time {
+  min-width: 4ch;
+  font-size: var(--fs-label);
+  color: var(--muted-ink);
+}
+
+.seek__time:first-child {
+  text-align: right;
+}
+
+.seek__input {
+  width: 100%;
+  height: 16px;
+}
+
+.seek__input:disabled {
+  cursor: default;
+}
+
+/* Scroll progress: a hairline along the player's top edge. */
+.player__scroll {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
   overflow: hidden;
   pointer-events: none;
 }
 
-.player__fill {
+.player__scroll-fill {
   position: absolute;
   inset: 0;
-  border-radius: inherit;
   background: var(--accent);
   transform: scaleX(0);
   transform-origin: left;
@@ -279,33 +342,37 @@
   color: var(--muted-ink);
 }
 
-/* A native range input, restyled: the track fills with the accent up to
-   the thumb (--fill is set inline from the value). The input itself is
-   taller than the 4px track so it's easy to grab. */
-.volume {
+/* Native range inputs (volume, seek), restyled: the track fills with the
+   accent up to the thumb (--fill is set inline from the value). The input
+   is taller than the 4px track so it's easy to grab. */
+.range {
   --track: linear-gradient(90deg, var(--accent) var(--fill, 0%), var(--line) var(--fill, 0%));
   appearance: none;
   -webkit-appearance: none;
-  width: 84px;
-  height: 24px;
-  margin: 0 var(--sp-1) 0 2px;
+  margin: 0;
   background: transparent;
   cursor: pointer;
 }
 
-.volume::-webkit-slider-runnable-track {
+.volume {
+  width: 84px;
+  height: 24px;
+  margin: 0 var(--sp-1) 0 2px;
+}
+
+.range::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: var(--r-pill);
   background: var(--track);
 }
 
-.volume::-moz-range-track {
+.range::-moz-range-track {
   height: 4px;
   border-radius: var(--r-pill);
   background: var(--track);
 }
 
-.volume::-webkit-slider-thumb {
+.range::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 12px;
   height: 12px;
@@ -316,7 +383,7 @@
   transition: transform var(--dur-fast) var(--ease-out);
 }
 
-.volume::-moz-range-thumb {
+.range::-moz-range-thumb {
   width: 12px;
   height: 12px;
   border: 0;
@@ -325,13 +392,13 @@
   transition: transform var(--dur-fast) var(--ease-out);
 }
 
-.volume:hover::-webkit-slider-thumb,
-.volume:focus-visible::-webkit-slider-thumb {
+.range:not(:disabled):hover::-webkit-slider-thumb,
+.range:focus-visible::-webkit-slider-thumb {
   transform: scale(1.25);
 }
 
-.volume:hover::-moz-range-thumb,
-.volume:focus-visible::-moz-range-thumb {
+.range:not(:disabled):hover::-moz-range-thumb,
+.range:focus-visible::-moz-range-thumb {
   transform: scale(1.25);
 }
 
@@ -357,20 +424,14 @@
     display: none;
   }
 
-  /* Compact bar: no room under the buttons, so the progress becomes a
-     hairline along the top edge. */
+  /* Compact bar: no room for the seek bar; the music keeps playing and
+     the top hairline still shows scroll progress. */
   .player__center {
     width: auto;
   }
 
-  .player__progress {
-    position: absolute;
-    top: -1px;
-    left: 0;
-    right: 0;
-    width: auto;
-    height: 2px;
-    border-radius: 0;
+  .seek {
+    display: none;
   }
 }
 
@@ -388,4 +449,12 @@
   .marquee[data-overflow='true'] .marquee__copy {
     display: none;
   }
+}
+
+.range:disabled::-webkit-slider-thumb {
+  opacity: 0;
+}
+
+.range:disabled::-moz-range-thumb {
+  opacity: 0;
 }

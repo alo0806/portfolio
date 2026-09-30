@@ -40,3 +40,20 @@
     scale: 1 1;
   }
 }
+
+/* Driven by the music (see src/sound/analysis.js): each bar is one band. */
+:root[data-reactive='true'] .equalizer span {
+  animation: none;
+}
+
+:root[data-reactive='true'] .equalizer span:nth-child(1) {
+  scale: 1 calc(0.18 + var(--eq-bass, 0) * 0.82);
+}
+
+:root[data-reactive='true'] .equalizer span:nth-child(2) {
+  scale: 1 calc(0.18 + var(--eq-mids, 0) * 0.82);
+}
+
+:root[data-reactive='true'] .equalizer span:nth-child(3) {
+  scale: 1 calc(0.18 + var(--eq-highs, 0) * 0.82);
+}

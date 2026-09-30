@@ -6,6 +6,7 @@ import Record from '../components/Record'
 import Tonearm from '../components/Tonearm'
 import { PlayIcon } from '../components/icons'
 import { useIris } from '../components/iris/irisContext'
+import { usePlayer } from '../components/player/playerContext'
 import { intro } from '../data/content'
 import useReducedMotion from '../hooks/useReducedMotion'
 import { clearEntranceCue, markIntroSeen } from '../lib/session'
@@ -44,6 +45,7 @@ function RevealWords({ text }) {
    claimed on the first press and a second press is refused. */
 export default function IntroPage() {
   const { cover } = useIris()
+  const { play: startPlaying } = usePlayer()
   const reduced = useReducedMotion()
   const location = useLocation()
   const [entry] = useState(() => (location.state?.entrance === 'return' ? 'return' : 'first'))
@@ -85,12 +87,17 @@ export default function IntroPage() {
     setLeaveDelay(leadIn)
 
     // Sound follows the picture: the thump as the needle lands (the arm's
-    // drop starts at 85% of its swing), crackle through the spin-up.
+    // drop starts at 85% of its swing), crackle through the spin-up, and
+    // the music fading in under it. The music has to be started inside
+    // this click (browsers' autoplay rule), so it starts silent and its
+    // fade-in waits for the needle. "skip intro" never starts it.
+    const needleAt = reduced ? 0 : (armMs * 0.85) / 1000
+    startPlaying({ delay: needleAt + 0.1 })
     if (reduced) {
       sound.needleDrop()
       return
     }
-    sound.needleDrop({ delay: (armMs * 0.85) / 1000 })
+    sound.needleDrop({ delay: needleAt })
     sound.crackle({ delay: armMs / 1000, duration: (leadIn - armMs) / 1000 + 0.35 })
 
     setPhase('arm')

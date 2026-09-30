@@ -17,7 +17,7 @@ export default function VolumeSlider() {
   return (
     <input
       type="range"
-      className="volume"
+      className="range volume"
       min="0"
       max="1"
       step="0.05"
