@@ -1,4 +1,4 @@
-.starfield {
+.ambient {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -7,7 +7,7 @@
   pointer-events: none;
 }
 
-/* Only an interactive sky takes clicks (for sparkle bursts). */
-.starfield[data-interactive='true'] {
+/* Only an interactive backdrop takes clicks (for ripples). */
+.ambient[data-interactive='true'] {
   pointer-events: auto;
 }

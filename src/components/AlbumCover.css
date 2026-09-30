@@ -1,0 +1,92 @@
+.cover {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  container-type: inline-size;
+  background: linear-gradient(140deg, var(--pal-a) 0%, var(--pal-b) 100%);
+  color: var(--pal-ink);
+  font-family: var(--font-display);
+}
+
+.cover--image {
+  background: var(--sidebar);
+}
+
+.cover--image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cover__number {
+  position: absolute;
+  top: 6cqi;
+  left: 7cqi;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 4.2cqi;
+  letter-spacing: 0.04em;
+}
+
+.cover__number--bottom {
+  top: auto;
+  bottom: 6cqi;
+}
+
+/* stacked: the title in huge, tight lines anchored bottom-left */
+.cover__stack {
+  position: absolute;
+  left: 6cqi;
+  right: 6cqi;
+  bottom: 5cqi;
+  display: grid;
+  font-weight: 800;
+  font-size: 17cqi;
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+}
+
+/* initial: one enormous letter bleeding off the edge */
+.cover__initial {
+  position: absolute;
+  right: -8cqi;
+  bottom: -26cqi;
+  font-weight: 800;
+  font-size: 108cqi;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  opacity: 0.92;
+}
+
+.cover__caption {
+  position: absolute;
+  top: 6cqi;
+  left: 7cqi;
+  max-width: 60%;
+  font-weight: 600;
+  font-size: 7cqi;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* framed: a thin ring like a record's edge, title set across it */
+.cover__ring {
+  position: absolute;
+  inset: 14cqi;
+  border-radius: 50%;
+  border: 0.8cqi solid currentColor;
+  opacity: 0.55;
+}
+
+.cover__framed-title {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 0 12cqi;
+  text-align: center;
+  font-weight: 700;
+  font-size: 11cqi;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}

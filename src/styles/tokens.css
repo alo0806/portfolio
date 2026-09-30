@@ -4,63 +4,66 @@
    ───────────────────────────────────────────────────────────── */
 
 :root {
-  /* ─── Space (intro, dark panels) ─── */
-  --space: #0e1116;
-  --space-raised: #171c24;
-  --space-line: rgba(238, 240, 243, 0.12);
-  --space-text: #eef0f3;
-  --space-muted: #8d95a4; /* 6.3:1 on --space */
-  --star: #f4f1ea;
-  --star-teal: #8fc7bd;
-  --star-rose: #e3a1ab;
-  --star-gold: #e8d39a;
-  --star-blue: #a9c1e8;
+  /* ─── Intro (the listening room) ─── */
+  --indigo: #15132b;
+  --indigo-raised: #211e3f;
+  --indigo-line: rgba(237, 235, 245, 0.14);
+  --on-indigo: #edebf5;
+  --on-indigo-muted: #9c97b8; /* 6.6:1 on --indigo */
 
-  /* ─── Paper (main pages) ─── */
-  --paper: #f1f2f4;
-  --sidebar: #e6e8ec;
-  --card: #fafbfc;
-  --ink: #1e2430;
-  --muted: #6b7280; /* borders, icons, decoration — not small text */
-  --muted-ink: #5b616e; /* small text: 5.5:1 on paper, 5.0:1 on sidebar */
-  --line: rgba(30, 36, 48, 0.12);
-  --line-strong: rgba(30, 36, 48, 0.22);
+  /* ─── Pages ─── */
+  --paper: #f4f3ef;
+  --sidebar: #eae8e1;
+  --card: #fbfaf7;
+  --ink: #1b1a24;
+  --muted: #8a8793; /* borders, icons, decoration — not text */
+  --muted-ink: #5e5b66; /* text: 6.0:1 on paper, 5.4:1 on sidebar */
+  --line: rgba(27, 26, 36, 0.12);
+  --line-strong: rgba(27, 26, 36, 0.22);
 
-  /* Accents are pairs: the color itself for fills and decoration, and an
-     ink for any text or focus ring (≥4.5:1 on both paper and sidebar). */
-  --accent: #5e8c85;
-  --accent-ink: #3d6b64;
-  --accent-tint: rgba(94, 140, 133, 0.14);
-  --secondary: #a94f5c;
-  --secondary-ink: #8a3a47;
-  --secondary-tint: rgba(169, 79, 92, 0.12);
+  /* One saturated accent. The orange is ~2.6:1 on paper, so it's for
+     fills only; text and focus rings use the ink. */
+  --accent: #ff6b35;
+  --accent-ink: #a23d17; /* 5.9:1 on paper, 5.3:1 on sidebar */
+  --accent-tint: rgba(255, 107, 53, 0.14);
 
-  /* Placeholder image fills */
-  --grad-1: linear-gradient(135deg, #d6e6e2 0%, #9fc2bb 55%, #6f9d95 100%);
-  --grad-2: linear-gradient(135deg, #f0d9dc 0%, #d9a2aa 55%, #b56b77 100%);
-  --grad-3: linear-gradient(135deg, #dfe4ee 0%, #adbcd6 55%, #7d8fb4 100%);
-  --grad-4: linear-gradient(135deg, #f1e8d4 0%, #dcc79a 55%, #b99c5f 100%);
+  /* ─── Vinyl ─── */
+  --vinyl: #121118;
+  --vinyl-groove: #1d1b26;
+  --vinyl-sheen: rgba(255, 255, 255, 0.16);
+
+  /* ─── Cover palettes (album art) — referenced by name in content.js ─── */
+  --cover-sunset-a: #ff6b35;
+  --cover-sunset-b: #ffc15e;
+  --cover-sunset-ink: #2a1206;
+  --cover-plum-a: #3b2d7a;
+  --cover-plum-b: #c46bd6;
+  --cover-plum-ink: #fbf5ff;
+  --cover-citrus-a: #f2e94e;
+  --cover-citrus-b: #ff9f1c;
+  --cover-citrus-ink: #241a00;
+  --cover-mint-a: #2a9d8c;
+  --cover-mint-b: #b9f3d6;
+  --cover-mint-ink: #04241f;
 
   /* ─── Type ─── */
-  --font-display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --font-display: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
   --font-body: 'Jost', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
-  --fs-intro-name: clamp(3.5rem, 12vw, 7.75rem);
-  --fs-h1: clamp(2.5rem, 5vw, 3.75rem);
-  --fs-h2: clamp(1.625rem, 2.6vw, 2rem);
-  --fs-h3: 1.5rem;
-  --fs-sidebar-name: 2rem;
+  --fs-intro: clamp(2.25rem, 6vw, 4.25rem);
+  --fs-h1: clamp(2.25rem, 4.6vw, 3.5rem);
+  --fs-h2: clamp(1.5rem, 2.4vw, 1.875rem);
+  --fs-h3: 1.375rem;
+  --fs-name: 1.75rem;
   --fs-body: 1.0625rem;
   --fs-small: 0.9375rem;
-  --fs-mono: 0.75rem;
-  --fs-mono-sm: 0.6875rem;
+  --fs-label: 0.8125rem;
+  --fs-mono: 0.8125rem;
 
-  --lh-tight: 1.05;
-  --lh-snug: 1.3;
-  --lh-body: 1.7;
-  --track-mono: 0.16em;
-  --track-mono-wide: 0.28em;
+  --lh-tight: 1.02;
+  --lh-snug: 1.25;
+  --lh-body: 1.65;
 
   /* ─── Spacing: 8px scale ─── */
   --sp-1: 8px;
@@ -80,10 +83,12 @@
   --r-pill: 999px;
 
   /* ─── Shadows ─── */
-  --shadow-card: 0 1px 2px rgba(30, 36, 48, 0.05),
-    0 8px 24px -12px rgba(30, 36, 48, 0.18);
-  --shadow-card-hover: 0 2px 4px rgba(30, 36, 48, 0.06),
-    0 18px 36px -16px rgba(30, 36, 48, 0.28);
+  --shadow-card: 0 1px 2px rgba(27, 26, 36, 0.05),
+    0 10px 28px -14px rgba(27, 26, 36, 0.22);
+  --shadow-card-hover: 0 2px 4px rgba(27, 26, 36, 0.06),
+    0 22px 40px -18px rgba(27, 26, 36, 0.32);
+  --shadow-record: 0 30px 60px -24px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
 
   /* ─── Motion ─── */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -95,19 +100,28 @@
   --stagger: 60ms;
   --iris-ms: 850; /* unitless: read by JS */
   --fade-ms: 220; /* unitless: read by JS */
+  --spinup-ms: 400; /* unitless: read by JS */
+  --beat: 0.52s; /* ~115 bpm: equalizer, mascot bob */
 
   /* ─── Layout ─── */
   --sidebar-w: 300px;
   --content-max: 960px;
   --topbar-h: 60px;
+  --player-h: 76px;
 
   /* ─── Cursor ───
-     ONE switch: `blend` inverts whatever is underneath (works on dark and
-     light with no configuration). Change to `themed` to use the per-surface
-     colors below instead — surfaces opt in with data-surface="dark". */
+     ONE switch: `blend` inverts whatever is underneath. Change to
+     `themed` to use the per-surface colors below — surfaces opt in with
+     data-surface="dark". */
   --cursor-mode: blend;
   --cursor-on-light: var(--ink);
-  --cursor-on-dark: var(--star);
+  --cursor-on-dark: var(--on-indigo);
   --cursor-dot: 6px;
   --cursor-ring: 34px;
+}
+
+@media (max-width: 899px) {
+  :root {
+    --player-h: 64px;
+  }
 }

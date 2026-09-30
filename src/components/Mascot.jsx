@@ -1,16 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import { mascotLines, nowPlaying } from '../data/content'
 import useReducedMotion from '../hooks/useReducedMotion'
 import './Mascot.css'
 
-/* Placeholder lines — rewrite freely. */
-const LINES = [
-  'hi there!',
-  'oh — you found me.',
-  'i run on vibes and css.',
-  'psst. the playground is coming soon.',
-  'try clicking the stars sometime.',
-  "i'm a blob. a professional one.",
-]
+const LINES = mascotLines.map((line) =>
+  line.replace('{song}', nowPlaying.song).replace('{artist}', nowPlaying.artist),
+)
 
 const PUPIL_REACH = 2.4 // in the SVG's own units
 const EYES = [
@@ -18,11 +13,12 @@ const EYES = [
   { cx: 59, cy: 44 },
 ]
 
-/* A soft rounded blob that sits at the bottom of the sidebar. Its eyes
-   follow the cursor and it blinks now and then; hover it, click it, or
-   press Enter on it and it says something. The line is announced
-   politely to screen readers. */
-export default function Mascot() {
+/* A soft rounded blob that lives in the player bar. It bobs to the beat
+   while playing, its eyes follow the cursor, and it blinks now and then.
+   Hover it, click it, or press Enter on it and it says something (lines
+   live in content.js). The line is announced politely to screen readers.
+   `align` sets which way the speech bubble opens. */
+export default function Mascot({ size = 88, align = 'center' }) {
   const reduced = useReducedMotion()
   const [line, setLine] = useState('')
   const svgRef = useRef(null)
@@ -134,7 +130,7 @@ export default function Mascot() {
   }, [reduced])
 
   return (
-    <div className="mascot">
+    <div className="mascot" data-align={align} style={{ '--mascot': `${size}px` }}>
       <p className="mascot__bubble" role="status" data-show={line ? 'true' : 'false'}>
         {line}
       </p>

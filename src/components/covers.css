@@ -1,0 +1,27 @@
+/* Maps a palette name (from content.js) to its tokens. Anything tagged
+   data-palette gets --pal-a / --pal-b (the gradient) and --pal-ink
+   (the type on top, chosen for contrast against both ends). */
+
+[data-palette='sunset'] {
+  --pal-a: var(--cover-sunset-a);
+  --pal-b: var(--cover-sunset-b);
+  --pal-ink: var(--cover-sunset-ink);
+}
+
+[data-palette='plum'] {
+  --pal-a: var(--cover-plum-a);
+  --pal-b: var(--cover-plum-b);
+  --pal-ink: var(--cover-plum-ink);
+}
+
+[data-palette='citrus'] {
+  --pal-a: var(--cover-citrus-a);
+  --pal-b: var(--cover-citrus-b);
+  --pal-ink: var(--cover-citrus-ink);
+}
+
+[data-palette='mint'] {
+  --pal-a: var(--cover-mint-a);
+  --pal-b: var(--cover-mint-b);
+  --pal-ink: var(--cover-mint-ink);
+}

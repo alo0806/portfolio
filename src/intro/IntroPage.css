@@ -1,18 +1,18 @@
 .intro {
   position: relative;
   height: 100svh;
-  min-height: 480px;
+  min-height: 560px;
   overflow: hidden;
-  background: var(--space);
-  color: var(--space-text);
+  background: var(--indigo);
+  color: var(--on-indigo);
 }
 
-.intro__sky {
+.intro__ambient {
   z-index: 0;
 }
 
-/* The text block lets clicks fall through to the sky (so bursts work
-   anywhere), except on its two links. */
+/* Clicks fall through the stage to the backdrop (for ripples), except
+   on its two links. */
 .intro__stage {
   position: relative;
   z-index: 1;
@@ -21,53 +21,41 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--sp-4) var(--sp-3);
+  gap: var(--sp-4);
+  padding: var(--sp-5) var(--sp-3) var(--sp-8);
   text-align: center;
   pointer-events: none;
-  transition:
-    transform calc(var(--iris-ms) * 1ms) var(--ease-in-out),
-    opacity calc(var(--iris-ms) * 0.7ms) ease;
 }
 
-/* Leaving: the text recedes while the iris grows over it, one motion. */
-.intro[data-leaving='true'] .intro__stage {
-  transform: scale(0.9);
-  opacity: 0;
+.intro__record {
+  --record-size: clamp(220px, min(46vh, 62vw), 440px);
+  animation: intro-rise 900ms var(--ease-out) backwards;
 }
 
-.intro__stage > * {
-  animation: intro-rise 900ms var(--ease-out) both;
+.intro__words {
+  display: grid;
+  gap: var(--sp-1);
+  animation: intro-rise 900ms var(--ease-out) 200ms backwards;
 }
 
-.intro__hi {
-  color: var(--space-muted);
-  letter-spacing: var(--track-mono-wide);
-  animation-delay: 150ms;
-}
-
-.intro__name {
-  margin: var(--sp-2) 0 var(--sp-2);
-  font-size: var(--fs-intro-name);
-  font-weight: 400;
-  line-height: 0.95;
-  letter-spacing: -0.01em;
-  animation-delay: 300ms;
+.intro__title {
+  font-size: var(--fs-intro);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1;
 }
 
 .intro__aka {
-  color: var(--space-muted);
-  text-transform: none;
-  letter-spacing: 0.06em;
-  animation-delay: 450ms;
+  color: var(--on-indigo-muted);
+  font-size: var(--fs-small);
 }
 
 .intro__actions {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--sp-3);
-  margin-top: var(--sp-6);
-  animation-delay: 650ms;
+  gap: var(--sp-2);
+  animation: intro-rise 900ms var(--ease-out) 380ms backwards;
 }
 
 @keyframes intro-rise {
@@ -77,99 +65,72 @@
   }
 }
 
-/* ─── Primary: "step inside" ─── */
+/* Leaving: the words and buttons recede as the iris opens. They wait out
+   the record's spin-up first so the two read as one motion. The record
+   itself stays — the circle grows from it. */
+.intro__words,
+.intro__actions {
+  transition:
+    transform calc(var(--iris-ms) * 1ms) var(--ease-in-out)
+      calc(var(--spinup-ms) * 1ms),
+    opacity calc(var(--iris-ms) * 0.6ms) ease calc(var(--spinup-ms) * 1ms);
+}
 
-.intro__enter {
-  position: relative;
+.intro[data-leaving='true'] .intro__words,
+.intro[data-leaving='true'] .intro__actions {
+  transform: scale(0.94);
+  opacity: 0;
+}
+
+/* ─── Primary: ▶ press play ─── */
+
+.intro__play {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 14px 30px;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 26px 8px 8px;
   border-radius: var(--r-pill);
-  border: 1px solid var(--space-line);
-  background: rgba(238, 240, 243, 0.04);
-  color: var(--space-text);
-  letter-spacing: var(--track-mono-wide);
-  overflow: hidden;
+  background: var(--on-indigo);
+  color: var(--indigo);
+  font-weight: 500;
+  font-size: 1.0625rem;
   pointer-events: auto;
   transition:
-    border-color var(--dur-mid) ease,
-    background-color var(--dur-mid) ease,
-    transform var(--dur-fast) var(--ease-out);
+    transform var(--dur-fast) var(--ease-out),
+    background-color var(--dur-mid) ease;
 }
 
-/* A slow band of light sweeps across on hover. */
-.intro__enter::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 30%,
-    rgba(244, 241, 234, 0.22) 48%,
-    transparent 66%
-  );
-  transform: translateX(-110%);
+.intro__play-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--ink);
+  transition: transform var(--dur-mid) var(--ease-out);
 }
 
-.intro__enter:hover,
-.intro__enter:focus-visible {
-  border-color: rgba(238, 240, 243, 0.4);
-  background: rgba(238, 240, 243, 0.08);
+.intro__play-icon svg {
+  translate: 1px 0; /* optical centring of the triangle */
 }
 
-.intro__enter:hover::before,
-.intro__enter:focus-visible::before {
-  transform: translateX(110%);
-  transition: transform 900ms var(--ease-in-out);
+.intro__play:hover .intro__play-icon,
+.intro__play:focus-visible .intro__play-icon {
+  transform: scale(1.1);
 }
 
-.intro__enter:active {
+.intro__play:active {
   transform: scale(0.97);
 }
 
-.intro__enter-label {
-  position: relative;
-}
-
-.intro__spark {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  fill: var(--star-gold);
-  scale: 0;
-  rotate: -45deg;
-  transition:
-    scale var(--dur-mid) var(--ease-out),
-    rotate var(--dur-slow) var(--ease-out);
-}
-
-.intro__spark--a {
-  top: 7px;
-  right: 16px;
-}
-
-.intro__spark--b {
-  bottom: 8px;
-  left: 18px;
-  width: 7px;
-  height: 7px;
-  fill: var(--star-teal);
-  transition-delay: 80ms;
-}
-
-.intro__enter:hover .intro__spark,
-.intro__enter:focus-visible .intro__spark {
-  scale: 1;
-  rotate: 45deg;
-}
-
-/* ─── Quiet: "skip intro" ─── */
+/* ─── Quiet: skip intro ─── */
 
 .intro__skip {
   padding: 4px 0;
-  color: var(--space-muted);
+  color: var(--on-indigo-muted);
+  font-size: var(--fs-small);
   pointer-events: auto;
   background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px
     no-repeat;
@@ -180,7 +141,7 @@
 
 .intro__skip:hover,
 .intro__skip:focus-visible {
-  color: var(--space-text);
+  color: var(--on-indigo);
   background-size: 100% 1px;
 }
 
@@ -195,7 +156,7 @@
   left: var(--sp-4);
   bottom: var(--sp-3);
   z-index: 1;
-  color: var(--space-muted);
+  color: var(--on-indigo-muted);
   pointer-events: none;
 }
 

@@ -1,66 +1,47 @@
-/* ─── Latest log ────────────────────────────────────────────── */
+/* ─── Liner notes ───────────────────────────────────────────── */
 
-.log {
+.notes {
   position: relative;
   overflow: hidden;
   display: grid;
   gap: var(--sp-2);
   padding: var(--sp-4);
   border-radius: var(--r-lg);
-  background: var(--space);
-  color: var(--space-text);
+  background: var(--indigo);
+  color: var(--on-indigo);
 }
 
-.log__head {
+.notes__head {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: var(--sp-1) var(--sp-3);
 }
 
-.log__label {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-mono);
-  font-size: var(--fs-mono);
-  font-weight: 400;
-  color: var(--star-teal);
+.notes__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
-.log__pulse {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--star-teal);
-  box-shadow: 0 0 0 0 rgba(143, 199, 189, 0.6);
-  animation: log-pulse 2.4s ease-out infinite;
+.notes__date {
+  color: var(--on-indigo-muted);
 }
 
-@keyframes log-pulse {
-  70% {
-    box-shadow: 0 0 0 8px rgba(143, 199, 189, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(143, 199, 189, 0);
-  }
-}
-
-.log__date {
-  color: var(--space-muted);
-}
-
-.log__body {
-  max-width: 56ch;
+.notes__body {
+  position: relative;
+  max-width: 54ch;
   font-size: 1.125rem;
   line-height: 1.6;
 }
 
-.log__all {
+.notes__all {
+  position: relative;
   justify-self: start;
   padding: 2px 0;
-  color: var(--space-muted);
+  color: var(--on-indigo-muted);
+  font-size: var(--fs-small);
   background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px
     no-repeat;
   transition:
@@ -68,49 +49,45 @@
     background-size var(--dur-mid) var(--ease-out);
 }
 
-.log__all:hover {
-  color: var(--space-text);
+.notes__all:hover {
+  color: var(--on-indigo);
   background-size: 100% 1px;
 }
 
-.log__spark {
+/* A slice of record grooves peeking in from the corner. */
+.notes__groove {
   position: absolute;
-  top: var(--sp-3);
-  right: 22%;
-  width: 12px;
-  height: 12px;
-  fill: var(--star-gold);
-  opacity: 0.8;
-  animation: log-twinkle 3.2s ease-in-out infinite;
+  right: -90px;
+  bottom: -150px;
+  width: 300px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--accent) 0 16%, transparent 16.5%),
+    repeating-radial-gradient(circle, transparent 0 3px, rgba(237, 235, 245, 0.06) 3.5px 4px);
+  opacity: 0.9;
+  pointer-events: none;
 }
 
-@keyframes log-twinkle {
-  50% {
-    opacity: 0.25;
-    scale: 0.7;
-    rotate: 45deg;
-  }
-}
+/* ─── Album grid ────────────────────────────────────────────── */
 
-/* ─── Project grid ──────────────────────────────────────────── */
-
-.work-grid {
+.albums {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--sp-3);
 }
 
 @container (min-width: 620px) {
-  .work-grid {
+  .albums {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.work-grid > li {
+.albums > li {
   display: flex;
 }
 
-.project {
+.album {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -124,70 +101,50 @@
     box-shadow var(--dur-mid) var(--ease-out);
 }
 
-.project:hover {
+.album:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-card-hover);
 }
 
-.project__image {
-  position: relative;
-  aspect-ratio: 16 / 10;
-}
-
-.project__image-note {
-  position: absolute;
-  left: var(--sp-2);
-  bottom: 12px;
-  font-size: var(--fs-mono-sm);
-  color: rgba(30, 36, 48, 0.55);
-}
-
-.project__body {
+.album__body {
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: var(--sp-2);
+  gap: var(--sp-1);
   padding: var(--sp-3);
 }
 
-.project__heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--sp-1) var(--sp-2);
-}
-
-.project__title {
-  font-size: var(--fs-h3);
-  font-weight: 500;
-  line-height: var(--lh-snug);
-}
-
-.project__tag {
-  flex-shrink: 0;
-  padding: 4px 10px;
+/* Plain, readable tag — no tiny tracked-out caps. */
+.album__tag {
+  justify-self: start;
+  align-self: flex-start;
+  padding: 3px 10px;
   border-radius: var(--r-pill);
-  font-size: var(--fs-mono-sm);
-  letter-spacing: 0.12em;
-}
-
-.project__tag[data-tone='accent'] {
   background: var(--accent-tint);
   color: var(--accent-ink);
+  font-size: var(--fs-label);
+  font-weight: 500;
 }
 
-.project__tag[data-tone='secondary'] {
-  background: var(--secondary-tint);
-  color: var(--secondary-ink);
+.album__title {
+  margin-top: 4px;
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  line-height: var(--lh-snug);
+  letter-spacing: -0.025em;
 }
 
-.project__desc {
+.album__status {
+  font-weight: 500;
+  color: var(--muted-ink);
+}
+
+.album__desc {
   color: var(--muted-ink);
   font-size: var(--fs-small);
 }
 
-.project__metrics {
+.album__metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--sp-1);
@@ -196,15 +153,15 @@
   border-top: 1px solid var(--line);
 }
 
-.project__metric dt {
-  font-size: 0.625rem;
-  letter-spacing: 0.1em;
+.album__metric dt {
+  font-size: var(--fs-label);
   color: var(--muted-ink);
 }
 
-.project__metric dd {
+.album__metric dd {
   margin: 2px 0 0;
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-weight: 700;
+  font-size: 1.375rem;
   line-height: 1.1;
 }

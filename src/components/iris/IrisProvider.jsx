@@ -25,7 +25,7 @@ const settle = (animation, ms) =>
 /* A full-screen overlay that lives above the routes, so it survives the
    route change it is covering.
 
-   cover({ to, origin }) — the iris: a circle of paper grows from `origin`
+   cover({ to, origin, delay }) — the iris: a circle of paper grows from `origin`
    (a point in the viewport) to the farthest corner, the route changes
    underneath while the screen is fully covered, then the overlay fades
    away and the new page runs its own entrance.
@@ -40,11 +40,14 @@ export default function IrisProvider({ children }) {
   const busyRef = useRef(false)
 
   const run = useCallback(
-    async (el, { to, state, origin, color = '--paper', onCovered }) => {
+    async (el, { to, state, origin, color = '--paper', delay = 0, onCovered }) => {
       const irisMs = readNumberToken('--iris-ms', 850)
       const fadeMs = readNumberToken('--fade-ms', 220)
 
       try {
+        // Lets the caller run a lead-in first (the record spinning up)
+        // while already holding the transition, so it can't be doubled.
+        if (delay > 0) await wait(delay)
         el.getAnimations().forEach((animation) => animation.cancel())
         el.style.background = `var(${color})`
         el.dataset.active = 'true'

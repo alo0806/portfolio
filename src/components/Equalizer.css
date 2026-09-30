@@ -1,0 +1,42 @@
+.equalizer {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 14px;
+  height: 12px;
+}
+
+.equalizer span {
+  flex: 1;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--accent);
+  transform-origin: bottom;
+  animation: eq-bounce var(--beat) ease-in-out infinite alternate;
+  animation-play-state: var(--play-state);
+}
+
+.equalizer span:nth-child(1) {
+  scale: 1 0.45;
+  animation-delay: -0.2s;
+}
+
+.equalizer span:nth-child(2) {
+  scale: 1 0.8;
+  animation-duration: calc(var(--beat) * 0.8);
+}
+
+.equalizer span:nth-child(3) {
+  scale: 1 0.6;
+  animation-delay: -0.35s;
+  animation-duration: calc(var(--beat) * 1.2);
+}
+
+@keyframes eq-bounce {
+  from {
+    scale: 1 0.25;
+  }
+  to {
+    scale: 1 1;
+  }
+}

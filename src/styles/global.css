@@ -27,8 +27,9 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 500;
+  font-weight: 650;
   line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
@@ -69,18 +70,38 @@ svg {
 }
 
 [data-surface='dark'] :focus-visible {
-  outline-color: var(--star-teal);
+  outline-color: var(--accent);
 }
 
-/* ─── Small mono labels, buttons and the clock ─────────────────── */
+/* ─── Mono is only for small numbers: track times, clock, progress ─── */
 
-.mono {
+.num {
   font-family: var(--font-mono);
   font-weight: 400;
   font-size: var(--fs-mono);
-  letter-spacing: var(--track-mono);
-  text-transform: uppercase;
-  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* Small section headings ("Tracklist", "Links"): quiet, sentence case. */
+.label {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--fs-label);
+  letter-spacing: 0.02em;
+  color: var(--muted-ink);
+}
+
+/* ─── Play state ───────────────────────────────────────────────
+   One attribute on <html> pauses every ambient loop (equalizer, mascot
+   bob, cover spin); each opts in with animation-play-state. */
+
+:root {
+  --play-state: running;
+}
+
+:root[data-playing='false'] {
+  --play-state: paused;
 }
 
 /* ─── Page content enters with a stagger ───────────────────────

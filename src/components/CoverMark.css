@@ -1,0 +1,33 @@
+.cover-mark {
+  position: relative;
+  display: inline-block;
+  width: calc(var(--mark) * 1.25);
+  height: var(--mark);
+}
+
+.cover-mark__record {
+  position: absolute;
+  top: 8%;
+  right: 0;
+  width: 84%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent) 0 22%, var(--vinyl) 23%);
+}
+
+.cover-mark__sleeve {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--mark);
+  display: grid;
+  place-items: end start;
+  padding: 8% 10%;
+  border-radius: 18%;
+  background: linear-gradient(140deg, var(--pal-a), var(--pal-b));
+  color: var(--pal-ink);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: calc(var(--mark) * 0.36);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
