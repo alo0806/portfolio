@@ -1,4 +1,5 @@
 import Reveal from '../components/Reveal'
+import SymmetryDraw from '../components/SymmetryDraw/SymmetryDraw'
 import Waveform from '../components/Waveform'
 import { playground } from '../data/content'
 import PageHead from './PageHead'
@@ -12,6 +13,7 @@ export default function PlaygroundPage() {
     <>
       <PageHead path="/playground" title={playground.title} />
       <p className="bsides__lead">{playground.lead}</p>
+      <SymmetryDraw />
       <Reveal
         as="section"
         className="bsides__panel"
