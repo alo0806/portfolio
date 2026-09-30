@@ -232,13 +232,21 @@ svg {
   z-index: 1;
 }
 
+/* Theme switch: the whole screen is one snapshot, and the new theme
+   wipes in over it as a circle (clip animated from ThemeToggle). */
+:root[data-vt='theme'] .layout__page {
+  view-transition-name: none;
+}
+
 /* ─── Reveal on scroll (once) ───────────────────────────────────
    Below-the-fold items rise in behind a mask the first time they're
-   seen. useReveal() sets data-reveal; items already on screen at mount
-   are marked revealed immediately and never animate. */
+   seen (Reveal.jsx). The mask exists only while it's doing that job:
+     pending → hidden below its own bottom edge
+     shown   → opening; the clip grows past every edge so a card's tilt,
+               lift or shadow is never cut off mid-reveal
+     done    → no clip at all. Items already on screen at mount start
+               here, so hovering or tilting them can never be clipped. */
 
-/* A page-level item that waits for scrolling skips the page's own
-   entrance stagger — one motion per element, never two. */
 .page > [data-reveal-mode='scroll'] {
   animation: none;
 }
@@ -249,7 +257,7 @@ svg {
 }
 
 [data-reveal='shown'] {
-  clip-path: inset(0 0 -40px 0); /* room for hover shadows */
+  clip-path: inset(-80px -80px -80px -80px);
   transform: none;
   transition:
     clip-path var(--dur-slow) var(--ease-out),

@@ -35,11 +35,12 @@ export const tracks = [
   { path: '/playground', title: 'Playground', cover: 'mint' },
 ]
 
+/* icon: 'email' | 'linkedin' | 'github' | 'resume' */
 export const links = [
-  { label: 'Email', href: 'mailto:hello@astnlo.com' },
-  { label: 'LinkedIn', href: '#' }, // '#' = not set yet
-  { label: 'GitHub', href: '#' },
-  { label: 'Resume', href: '#' },
+  { label: 'Email', href: 'mailto:hello@astnlo.com', icon: 'email' },
+  { label: 'LinkedIn', href: '#', icon: 'linkedin' }, // '#' = not set yet
+  { label: 'GitHub', href: '#', icon: 'github' },
+  { label: 'Resume', href: '#', icon: 'resume' },
 ]
 
 /* `{song}` and `{artist}` are filled in from nowPlaying. */

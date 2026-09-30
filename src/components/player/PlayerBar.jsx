@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { nowPlaying } from '../../data/content'
 import { TRACKS, trackIndexFor } from '../../data/tracks'
 import { stepTrack } from '../../lib/trackNav'
-import Clock from '../Clock'
 import Mascot from '../Mascot'
 import { NextIcon, PrevIcon } from '../icons'
 import { usePlayer } from './playerContext'
@@ -20,8 +19,8 @@ const MARQUEE_SPEED = 38 // px per second
      morphs between the two shapes
    - the cover square flips to each new track and turns slowly while
      playing; a title too long for its space scrolls as a marquee
-   - the progress bar is how far you've scrolled through this page, with
-     the local time as its readout */
+   - the orange bar under the controls shows how far you've scrolled
+     through this page (the clock lives in the artist panel) */
 export default function PlayerBar() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
@@ -94,6 +93,7 @@ export default function PlayerBar() {
 
   return (
     <section className="player" aria-label="Player" data-rm-fade="">
+
       <div className="player__now">
         <span
           className="player__cover"
@@ -146,13 +146,11 @@ export default function PlayerBar() {
             <NextIcon />
           </button>
         </div>
-        <div className="player__progress">
-          <span className="player__bar" aria-hidden="true">
+        {/* How far you've scrolled through this page. */}
+          <span className="player__progress" aria-hidden="true">
             <span className="player__fill" ref={fillRef} />
           </span>
-          <Clock className="player__time" format="compact" />
         </div>
-      </div>
 
       <div className="player__side">
         <Mascot size={52} align="end" />

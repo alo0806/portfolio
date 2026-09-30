@@ -28,7 +28,9 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--accent) 0 30%, var(--ink) 32%);
+  /* Always vinyl-black with an orange label, in either theme. */
+  background: radial-gradient(circle, var(--accent) 0 30%, var(--vinyl) 32%);
+  box-shadow: 0 0 0 1px var(--line-strong);
 }
 
 .about__photos {
