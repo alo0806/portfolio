@@ -254,6 +254,19 @@ svg {
   display: none;
 }
 
+/* Browsers stack these layers in paint order, which already puts the
+   chrome above the page — but say it outright, so no engine can draw
+   the sliding page over the player bar. */
+::view-transition-group(page) {
+  z-index: 1;
+}
+
+::view-transition-group(sidebar),
+::view-transition-group(topbar),
+::view-transition-group(player) {
+  z-index: 2;
+}
+
 /* "Back to the record": the whole page (one snapshot, on top) contracts
    into a circle over the intro; the clip itself is animated from JS. */
 :root[data-vt='reverse'] :is(.layout__page, .sidebar, .topbar, .player) {
