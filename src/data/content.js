@@ -31,7 +31,12 @@ export const intro = {
    With no songs, the player works exactly as before (motion only) and
    shows `nowPlaying`. */
 export const playlist = [
-  // { title: 'Song Title', artist: 'Artist', file: '/audio/song.mp3', credit: 'CC BY 4.0', creditUrl: 'https://…' },
+  { title: 'Greetings', artist: 'Low.F.M', file: '/audio/greetings.mp3', credit: null, creditUrl: null },
+  { title: 'Radio', artist: 'Riddiman & Joe Leytrick', file: '/audio/radio.mp3', credit: null, creditUrl: null },
+  { title: 'After the Rain', artist: 'Frad x Jordy Chandra', file: '/audio/after-the-rain.mp3', credit: null, creditUrl: null },
+  { title: 'Colorful Flowers', artist: 'Tokyo Music Walker', file: '/audio/colorful-flowers.mp3', credit: null, creditUrl: null },
+  { title: 'Butterfly', artist: 'Sleepy Fish', file: '/audio/butterfly.mp3', credit: null, creditUrl: null },
+  { title: 'East Side Manhattan', artist: 'Popoi', file: '/audio/east-side-manhattan.mp3', credit: null, creditUrl: null },
 ]
 
 /* Shown in the player bar while the playlist is empty. */

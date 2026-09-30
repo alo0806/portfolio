@@ -15,6 +15,9 @@ import { getMusicOutput } from './engine'
    - Both decks feed one mix, which goes to the music bus.
    - A song that fails to load is skipped; if none load, the site simply
      runs its visuals without music.
+   - Only what's needed is downloaded: the current song (its length first,
+     then as it plays), and the next one only shortly before its crossfade
+     (config: music.preloadLead). Nobody downloads the whole playlist.
    - The current song and position are remembered for the session. */
 
 const SESSION_KEY = 'astnlo:music'
@@ -77,9 +80,23 @@ export function pause({ fade: seconds = SOUND.music.pauseFade } = {}) {
   update()
 }
 
-/* The "next song" button. */
+/* The "next song" button. While paused it just moves to the next song. */
 export function skip() {
   advance(SOUND.music.skipFade)
+}
+
+/* Picking a song from the queue: crossfade to it and play. Call from a
+   user gesture. Picking the current song just makes sure it's playing. */
+export function playSong(songIndex) {
+  if (!available() || songIndex < 0 || songIndex >= SONGS.length) return
+  if (songIndex === index) {
+    play()
+    return
+  }
+  wanted = true
+  window.clearTimeout(pauseTimer)
+  connect()
+  advance(SOUND.music.skipFade, songIndex)
 }
 
 export function seek(seconds) {
@@ -151,8 +168,11 @@ function deck(i) {
   return decks[i]
 }
 
-function load(d, songIndex, at = 0) {
+/* Point a deck at a song. 'metadata' fetches just enough to know its
+   length (playing fetches the rest as needed); 'auto' downloads it ahead. */
+function load(d, songIndex, at = 0, preload = 'metadata') {
   d.song = songIndex
+  d.el.preload = preload
   d.el.src = SONGS[songIndex].file
   d.seekTo = at > 0 ? at : null
 }
@@ -191,10 +211,12 @@ function fade(d, to, seconds, delay = 0) {
   param.linearRampToValueAtTime(to, now + delay + Math.max(seconds, 0.01))
 }
 
-/* Move to the next playable song, overlapping the two over `seconds`. */
-function advance(seconds) {
-  const next = nextPlayable(index)
-  if (next < 0) return update()
+/* Move to another song (the next playable one by default), overlapping
+   the two over `seconds`. If the next song was already preloaded on the
+   other deck, that copy is used rather than fetching it again. */
+function advance(seconds, target = nextPlayable(index)) {
+  const next = target
+  if (next < 0 || failed.has(next)) return update()
   const from = decks[active]
   const toIndex = decks[active] ? 1 - active : active
   const to = deck(toIndex)
@@ -202,7 +224,12 @@ function advance(seconds) {
 
   index = next
   resumeAt = 0
-  load(to, next, 0)
+  if (to.song === next && to.el.getAttribute('src') === SONGS[next].file) {
+    to.el.currentTime = 0 // preloaded: start from the top
+    to.seekTo = null
+  } else {
+    load(to, next, 0)
+  }
   active = toIndex
 
   if (wanted && from && from !== to) {
@@ -228,13 +255,28 @@ function advance(seconds) {
 function onTime(d) {
   if (decks[active] !== d) return
   const { currentTime, duration } = d.el
-  const crossfade = SOUND.music.crossfade
-  if (wanted && Number.isFinite(duration) && duration > crossfade * 3 && duration - currentTime <= crossfade) {
-    advance(crossfade)
-    return
+  const { crossfade, preloadLead } = SOUND.music
+  if (wanted && Number.isFinite(duration) && duration > crossfade * 3) {
+    const left = duration - currentTime
+    if (left <= crossfade) {
+      advance(crossfade)
+      return
+    }
+    if (left <= crossfade + preloadLead) preloadNext()
   }
   save()
   update()
+}
+
+/* Shortly before a crossfade, start downloading the next song on the
+   other deck, so it's ready to play the moment it's needed. */
+function preloadNext() {
+  const next = nextPlayable(index)
+  if (next < 0 || next === index) return
+  const other = deck(1 - active)
+  if (other === outgoing) return
+  if (other.song === next && other.el.getAttribute('src') === SONGS[next].file) return
+  load(other, next, 0, 'auto')
 }
 
 function onError(d) {
@@ -266,6 +308,8 @@ function build() {
   const next = available() ? nextPlayable(index) : -1
   return {
     available: available(),
+    songs: SONGS,
+    index,
     count: SONGS.length - failed.size,
     song: available() ? SONGS[index] : null,
     next: next >= 0 && next !== index ? SONGS[next] : null,
