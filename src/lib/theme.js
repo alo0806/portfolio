@@ -1,23 +1,14 @@
 import { useSyncExternalStore } from 'react'
 
-/* Light / dark, stored per visitor. The first paint is handled by a tiny
-   inline script in index.html (so there's no flash of the wrong theme);
-   this module keeps <html data-theme> and every toggle in sync after. */
+/* Light / dark, stored per visitor. Light is the default; dark only once
+   chosen. The first paint is handled by a tiny inline script in
+   index.html (so there's no flash of the wrong theme); this module keeps
+   <html data-theme> and every toggle in sync after. */
 
 const KEY = 'astnlo:theme'
-const SYSTEM_DARK = '(prefers-color-scheme: dark)'
 
 export function getTheme() {
   return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
-}
-
-function storedTheme() {
-  try {
-    const value = window.localStorage.getItem(KEY)
-    return value === 'dark' || value === 'light' ? value : null
-  } catch {
-    return null
-  }
 }
 
 function apply(theme) {
@@ -40,18 +31,7 @@ export function setTheme(theme) {
 function subscribe(callback) {
   const observer = new MutationObserver(callback)
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
-
-  // Until someone chooses, follow the system setting live.
-  const system = window.matchMedia(SYSTEM_DARK)
-  const onSystem = (event) => {
-    if (!storedTheme()) apply(event.matches ? 'dark' : 'light')
-  }
-  system.addEventListener('change', onSystem)
-
-  return () => {
-    observer.disconnect()
-    system.removeEventListener('change', onSystem)
-  }
+  return () => observer.disconnect()
 }
 
 export function useTheme() {

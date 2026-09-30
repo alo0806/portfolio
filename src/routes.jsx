@@ -21,6 +21,16 @@ export const routes = [
           { path: '/playground', element: <PlaygroundPage /> },
         ],
       },
+      // Dev only: a panel to hear every sound. `import.meta.env.DEV` is
+      // false in production builds, so this route (and its code) is dropped.
+      ...(import.meta.env.DEV
+        ? [
+            {
+              path: '/sounds',
+              lazy: async () => ({ Component: (await import('./dev/SoundLab')).default }),
+            },
+          ]
+        : []),
       { path: '*', element: <Navigate to="/work" replace /> },
     ],
   },

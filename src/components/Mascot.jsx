@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { mascotLines, nowPlaying } from '../data/content'
 import useReducedMotion from '../hooks/useReducedMotion'
+import { sound } from '../sound/engine'
 import './Mascot.css'
 
 const LINES = mascotLines.map((line) =>
@@ -33,6 +34,7 @@ export default function Mascot({ size = 88, align = 'center' }) {
     lastLineRef.current = index
     window.clearTimeout(hideTimerRef.current)
     setLine(LINES[index])
+    sound.babble(LINES[index])
   }
 
   const hideSoon = (delay) => {

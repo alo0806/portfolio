@@ -3,7 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { nowPlaying } from '../../data/content'
 import { TRACKS, trackIndexFor } from '../../data/tracks'
 import { stepTrack } from '../../lib/trackNav'
+import { sound } from '../../sound/engine'
 import Mascot from '../Mascot'
+import SoundToggle from '../SoundToggle'
 import { NextIcon, PrevIcon } from '../icons'
 import { usePlayer } from './playerContext'
 import '../covers.css'
@@ -122,7 +124,10 @@ export default function PlayerBar() {
             type="button"
             className="player__btn player__btn--prev"
             aria-label={`Previous track: ${prev.title}`}
-            onClick={() => stepTrack(navigate, pathname, -1)}
+            onClick={() => {
+              const target = stepTrack(navigate, pathname, -1)
+              sound.switchTrack(target.number - 1)
+            }}
           >
             <PrevIcon />
           </button>
@@ -130,7 +135,10 @@ export default function PlayerBar() {
             type="button"
             className="player__btn player__btn--play"
             aria-label={playing ? 'Pause ambient motion' : 'Play ambient motion'}
-            onClick={toggle}
+            onClick={() => {
+              sound.click()
+              toggle()
+            }}
           >
             <span className="pp" data-state={playing ? 'playing' : 'paused'} aria-hidden="true">
               <span className="pp__half pp__half--l" />
@@ -141,7 +149,10 @@ export default function PlayerBar() {
             type="button"
             className="player__btn player__btn--next"
             aria-label={`Next track: ${next.title}`}
-            onClick={() => stepTrack(navigate, pathname, 1)}
+            onClick={() => {
+              const target = stepTrack(navigate, pathname, 1)
+              sound.switchTrack(target.number - 1)
+            }}
           >
             <NextIcon />
           </button>
@@ -153,6 +164,7 @@ export default function PlayerBar() {
         </div>
 
       <div className="player__side">
+        <SoundToggle />
         <Mascot size={52} align="end" />
       </div>
     </section>

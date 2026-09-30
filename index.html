@@ -13,17 +13,14 @@
       rel="stylesheet"
     />
     <script>
-      /* Apply the saved (or system) theme before first paint, so a dark-mode
-         visitor never sees a flash of light. */
+      /* Apply the saved theme before first paint (so a returning dark-mode
+         visitor never sees a flash of light). Light unless chosen otherwise. */
       (function () {
         var theme = null
         try {
           theme = localStorage.getItem('astnlo:theme')
         } catch (e) {}
-        if (theme !== 'dark' && theme !== 'light') {
-          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        }
-        document.documentElement.dataset.theme = theme
+        document.documentElement.dataset.theme = theme === 'dark' ? 'dark' : 'light'
       })()
     </script>
     <title>Austin Lo</title>

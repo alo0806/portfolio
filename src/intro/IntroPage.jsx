@@ -10,6 +10,7 @@ import { intro } from '../data/content'
 import useReducedMotion from '../hooks/useReducedMotion'
 import { clearEntranceCue, markIntroSeen } from '../lib/session'
 import { readNumberToken } from '../lib/tokens'
+import { sound } from '../sound/engine'
 import './IntroPage.css'
 
 /* Each word sits in its own clipped box and rises into view. The spaces
@@ -82,7 +83,15 @@ export default function IntroPage() {
 
     setLeaving(true)
     setLeaveDelay(leadIn)
-    if (reduced) return
+
+    // Sound follows the picture: the thump as the needle lands (the arm's
+    // drop starts at 85% of its swing), crackle through the spin-up.
+    if (reduced) {
+      sound.needleDrop()
+      return
+    }
+    sound.needleDrop({ delay: (armMs * 0.85) / 1000 })
+    sound.crackle({ delay: armMs / 1000, duration: (leadIn - armMs) / 1000 + 0.35 })
 
     setPhase('arm')
     timersRef.current.push(
