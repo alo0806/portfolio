@@ -1,7 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import Clock from '../components/Clock'
 import CoverMark from '../components/CoverMark'
 import Mascot from '../components/Mascot'
+import ThemeToggle from '../components/ThemeToggle'
 import { artist } from '../data/content'
 import { prepareTrackClick } from '../lib/trackNav'
 import Links from './Links'
@@ -80,10 +82,12 @@ export default function MobileBar() {
         <p className="sidebar__sub">{artist.subline}</p>
         <Tracklist onNavigate={close} />
         <Links onNavigate={close} />
+        <Clock className="sidebar__clock" />
         <div className="sidebar__meta">
           <ReplayLink onNavigate={close} />
         </div>
-        <div className="topbar__mascot">
+        <div className="topbar__foot">
+          <ThemeToggle />
           <Mascot size={72} />
         </div>
       </div>

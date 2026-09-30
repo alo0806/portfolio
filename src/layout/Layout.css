@@ -218,10 +218,16 @@
 
 .links__link {
   display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
   padding: 4px 0;
   font-size: var(--fs-small);
+  color: var(--ink);
+}
+
+.links__icon {
+  flex-shrink: 0;
+  align-self: center;
   color: var(--ink);
 }
 
@@ -239,8 +245,49 @@
 /* ─── Back to the record ────────────────────────────────────── */
 
 .sidebar__meta {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
   padding-top: var(--sp-2);
   border-top: 1px solid var(--line);
+}
+
+.sidebar__clock {
+  color: var(--muted-ink);
+}
+
+/* Bottom of the panel: the clock sits above the divider, and the way
+   back to the record shares the row below it with the theme toggle. */
+.sidebar__foot {
+  margin-top: auto;
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.sidebar__meta--row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+/* Shorter laptop screens: tighten the panel so everything, the toggle
+   included, fits without scrolling. */
+@media (max-height: 800px) {
+  .sidebar {
+    gap: var(--sp-3);
+    padding-block: var(--sp-3);
+  }
+
+  .sidebar__bio {
+    margin-top: var(--sp-1);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .track {
+    padding-block: 7px;
+  }
 }
 
 .replay-link {
@@ -379,9 +426,12 @@
     display: none;
   }
 
-  .topbar__mascot {
+  .topbar__foot {
     margin-top: auto;
     padding-top: var(--sp-6);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
   }
 
   @keyframes panel-in {

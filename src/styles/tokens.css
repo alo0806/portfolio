@@ -27,6 +27,13 @@
   --accent-ink: #a23d17; /* 5.9:1 on paper, 5.3:1 on sidebar */
   --accent-tint: rgba(255, 107, 53, 0.14);
 
+  /* Dark panels on the pages (liner notes, B-sides) and the mascot's
+     eyes, which stay light in either theme. */
+  --panel-dark: var(--indigo);
+  --panel-dark-line: transparent;
+  --eye: #fbfaf7;
+  --icon-knockout: var(--sidebar); /* the "in" cut out of the LinkedIn mark */
+
   /* ─── Vinyl ─── */
   --vinyl: #121118;
   --vinyl-groove: #1d1b26;
@@ -131,4 +138,32 @@
   :root {
     --player-h: 64px;
   }
+}
+
+/* ─── Dark theme ────────────────────────────────────────────────
+   Set by <html data-theme="dark"> (toggle in the artist panel; defaults
+   to the system setting). Only page surfaces change — the intro, record,
+   covers and accent are the same in both themes. Every text colour
+   below is ≥4.5:1 on paper, sidebar and card. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --paper: #15141b;
+  --sidebar: #1c1b24;
+  --card: #222030;
+  --ink: #eceaf2; /* 16:1 on paper */
+  --muted: #7b7888;
+  --muted-ink: #a9a6b5; /* 7.6:1 on paper, 6.6:1 on card */
+  --line: rgba(236, 234, 242, 0.12);
+  --line-strong: rgba(236, 234, 242, 0.24);
+
+  --accent-ink: #ff8c5a; /* 7.9:1 on paper */
+  --accent-tint: rgba(255, 107, 53, 0.18);
+
+  --panel-dark: #242046;
+  --panel-dark-line: rgba(237, 235, 245, 0.1);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px -14px rgba(0, 0, 0, 0.7);
+  --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.45),
+    0 22px 40px -18px rgba(0, 0, 0, 0.85);
 }

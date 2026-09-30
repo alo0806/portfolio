@@ -12,7 +12,8 @@
   place-items: center;
   padding: var(--sp-4);
   border-radius: var(--r-lg);
-  background: var(--indigo);
+  background: var(--panel-dark);
+  border: 1px solid var(--panel-dark-line);
 }
 
 .bsides__wave {
@@ -25,9 +26,9 @@
   position: relative;
   padding: 10px 22px;
   border-radius: var(--r-pill);
-  background: var(--indigo);
+  background: var(--panel-dark);
   border: 1px solid var(--indigo-line);
   color: var(--on-indigo);
   font-weight: 500;
-  box-shadow: 0 0 0 10px var(--indigo);
+  box-shadow: 0 0 0 10px var(--panel-dark);
 }
