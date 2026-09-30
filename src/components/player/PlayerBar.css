@@ -264,6 +264,12 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  gap: var(--sp-2);
+}
+
+/* Muted reads as quieter; on reads as on. */
+.player__btn--sound[aria-pressed='false'] {
+  color: var(--muted-ink);
 }
 
 /* ─── Compact (phones): cover, song, play/pause, next ─── */
@@ -271,7 +277,7 @@
 @media (max-width: 899px) {
   .player {
     left: 0;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     gap: var(--sp-2);
     padding-inline: 16px 12px;
   }
@@ -282,7 +288,7 @@
   }
 
   .player__btn--prev,
-  .player__side {
+  .player__side .mascot {
     display: none;
   }
 

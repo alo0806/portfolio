@@ -4,6 +4,7 @@ import Equalizer from '../components/Equalizer'
 import { PlayIcon } from '../components/icons'
 import { TRACKS } from '../data/tracks'
 import { prepareTrackClick } from '../lib/trackNav'
+import { sound } from '../sound/engine'
 
 /* The page switcher, as a tracklist. Each row is a real link (with a view
    transition). Hovering a row swaps its number for ▶; the current page
@@ -48,10 +49,14 @@ export default function Tracklist({ onNavigate }) {
                 to={track.path}
                 viewTransition
                 className="track"
+                onPointerEnter={(event) => {
+                  if (event.pointerType === 'mouse') sound.trackNote(index, { soft: true })
+                }}
                 onClick={() => {
                   // Runs before the link navigates: sets the slide
                   // direction from this row's position.
                   prepareTrackClick(pathname, track.path)
+                  sound.trackNote(index)
                   onNavigate?.()
                 }}
               >

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useIris } from '../components/iris/irisContext'
+import { sound } from '../sound/engine'
 
 /* Back to the intro regardless of the session flag: the route reads
    `replay` from navigation state and skips its "already seen" redirect.
@@ -16,6 +17,7 @@ export default function ReplayLink({ onNavigate }) {
       onClick={(event) => {
         event.preventDefault()
         onNavigate?.()
+        sound.tapeStop()
         reverse({ to: '/', state: { replay: true }, target: '[data-iris-target]' })
       }}
     >

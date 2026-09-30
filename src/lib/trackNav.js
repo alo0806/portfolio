@@ -49,6 +49,7 @@ export function stepTrack(navigate, pathname, step) {
   setDirection(step > 0 ? 'next' : 'prev')
   remember(target.path)
   navigate(target.path, { viewTransition: true })
+  return target
 }
 
 /* A tracklist row: direction from its position relative to where we are

@@ -134,3 +134,29 @@ export function ResumeIcon(props) {
     </svg>
   )
 }
+
+/* ─── Sound ─── */
+
+export function SpeakerOnIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3.5 7.5h3l4-3.5v12l-4-3.5h-3Z" fill="currentColor" />
+      <path
+        d="M13.5 7.2a4 4 0 0 1 0 5.6M15.8 5a7.2 7.2 0 0 1 0 10"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+export function SpeakerOffIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3.5 7.5h3l4-3.5v12l-4-3.5h-3Z" fill="currentColor" />
+      <path d="M13.5 7.8 17 11.3M17 7.8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}

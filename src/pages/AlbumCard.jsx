@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import AlbumCover from '../components/AlbumCover'
 import useFinePointer from '../hooks/useFinePointer'
 import useReducedMotion from '../hooks/useReducedMotion'
+import { sound } from '../sound/engine'
 
 const MAX_TILT = 7 // degrees
 
@@ -38,6 +39,9 @@ export default function AlbumCard({ number, title, status, tag, description, met
     <article
       className="album"
       ref={cardRef}
+      onPointerEnter={(event) => {
+        if (event.pointerType === 'mouse') sound.texture()
+      }}
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
     >
