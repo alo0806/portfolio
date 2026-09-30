@@ -50,9 +50,9 @@ export const tracks = [
 
 /* icon: 'email' | 'linkedin' | 'github' | 'resume' */
 export const links = [
-  { label: 'Email', href: 'mailto:hello@astnlo.com', icon: 'email' },
-  { label: 'LinkedIn', href: '#', icon: 'linkedin' }, // '#' = not set yet
-  { label: 'GitHub', href: '#', icon: 'github' },
+  { label: 'Email', href: 'mailto:austnlo@ucla.edu', icon: 'email' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/austin-l-7a7862302', icon: 'linkedin' },
+  { label: 'GitHub', href: '#', icon: 'github' }, // '#' = not set yet
   { label: 'Resume', href: '#', icon: 'resume' },
 ]
 
