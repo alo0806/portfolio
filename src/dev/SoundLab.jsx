@@ -56,6 +56,7 @@ const GROUPS = [
       { label: 'Mascot babble', detail: 'one blip per word', play: () => sound.babble('oh — you found me.', force) },
       { label: 'Card hover', detail: 'texture', play: () => sound.texture(force) },
       { label: 'Sound on', detail: 'confirm', play: () => sound.confirm(force) },
+      { label: 'Volume slider', detail: 'note on release', play: () => sound.preview(force) },
     ],
   },
 ]
@@ -73,7 +74,7 @@ export default function SoundLab() {
         <p className="lab__tag">Dev only</p>
         <h1 className="lab__title">Sound lab</h1>
         <p className="lab__meta">
-          Key: {scale.join(' · ')} · master volume {SOUND.master.volume} · tune in{' '}
+          Key: {scale.join(' · ')} · effects level {SOUND.sfx.level} · slider starts at {SOUND.volume.initial} · tune in{' '}
           <code>src/sound/config.js</code>
         </p>
       </header>

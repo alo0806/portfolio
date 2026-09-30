@@ -1,28 +1,35 @@
-import { setSoundOn, sound, useSoundOn } from '../sound/engine'
+import { SOUND } from '../sound/config'
+import { setSoundOn, setVolume, sound, useSoundOn, useVolume } from '../sound/engine'
 import { SpeakerOffIcon, SpeakerOnIcon } from './icons'
 
-/* Sound effects are off by default. Turning them on (a click, so the
-   browser allows audio) plays a soft two-note hello; the choice lasts
-   for the session. */
+/* Mute button, next to the volume slider. Sound is on by default; muting
+   lasts for the session. Unmuting with the slider at zero brings it back
+   to a sensible level, then plays a soft two-note hello. */
 export default function SoundToggle({ className = '' }) {
   const on = useSoundOn()
+  const volume = useVolume()
+  const audible = on && volume > 0
 
   const toggle = () => {
-    const next = !on
-    setSoundOn(next)
-    if (next) sound.confirm()
+    if (audible) {
+      setSoundOn(false)
+      return
+    }
+    if (volume === 0) setVolume(SOUND.volume.initial)
+    setSoundOn(true)
+    sound.confirm()
   }
 
   return (
     <button
       type="button"
       className={`player__btn player__btn--sound ${className}`.trim()}
-      aria-pressed={on}
-      aria-label="Sound effects"
-      title={on ? 'Turn sound effects off' : 'Turn sound effects on'}
+      aria-pressed={!audible}
+      aria-label="Mute sound"
+      title={audible ? 'Mute' : 'Unmute'}
       onClick={toggle}
     >
-      {on ? <SpeakerOnIcon /> : <SpeakerOffIcon />}
+      {audible ? <SpeakerOnIcon /> : <SpeakerOffIcon />}
     </button>
   )
 }

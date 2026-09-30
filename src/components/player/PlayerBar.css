@@ -267,9 +267,72 @@
   gap: var(--sp-2);
 }
 
-/* Muted reads as quieter; on reads as on. */
-.player__btn--sound[aria-pressed='false'] {
+/* ─── Volume: mute button + slider ─── */
+
+.player__volume {
+  display: flex;
+  align-items: center;
+}
+
+/* Muted reads as quieter. */
+.player__btn--sound[aria-pressed='true'] {
   color: var(--muted-ink);
+}
+
+/* A native range input, restyled: the track fills with the accent up to
+   the thumb (--fill is set inline from the value). The input itself is
+   taller than the 4px track so it's easy to grab. */
+.volume {
+  --track: linear-gradient(90deg, var(--accent) var(--fill, 0%), var(--line) var(--fill, 0%));
+  appearance: none;
+  -webkit-appearance: none;
+  width: 84px;
+  height: 24px;
+  margin: 0 var(--sp-1) 0 2px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.volume::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--track);
+}
+
+.volume::-moz-range-track {
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--track);
+}
+
+.volume::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -4px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.volume::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.volume:hover::-webkit-slider-thumb,
+.volume:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.25);
+}
+
+.volume:hover::-moz-range-thumb,
+.volume:focus-visible::-moz-range-thumb {
+  transform: scale(1.25);
 }
 
 /* ─── Compact (phones): cover, song, play/pause, next ─── */
@@ -287,8 +350,10 @@
     height: 40px;
   }
 
+  /* Phones have volume buttons; the mute button stays. */
   .player__btn--prev,
-  .player__side .mascot {
+  .player__side .mascot,
+  .volume {
     display: none;
   }
 

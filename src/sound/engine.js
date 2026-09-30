@@ -4,31 +4,58 @@ import { SOUND } from './config'
 /* All sound is synthesized with the Web Audio API — no files.
 
    Ground rules, enforced here so no call site has to remember them:
-   - Off by default; the on/off choice is remembered for the session.
+   - On by default; muting is remembered for the session, the volume
+     slider's level across visits.
    - The AudioContext is created only after a user gesture (browsers
-     require it anyway), and never before sound is turned on.
+     require it anyway), and never while muted.
    - Nothing plays while the tab is hidden.
    - Each sound has a minimum interval (config throttle), so rapid
      hovering or clicking can't pile up.
-   - Everything passes through one master volume and one low-pass. */
 
-const STORAGE_KEY = 'astnlo:sound'
+   The graph: sound effects → sfx bus (level + low-pass) ─┐
+              background music → music bus (level) ───────┴→ volume → out
+   so the one slider sets both. */
+
+const SOUND_KEY = 'astnlo:sound'
+const VOLUME_KEY = 'astnlo:volume'
 const NOTE_INDEX = { C: 0, 'C#': 1, D: 2, 'D#': 3, E: 4, F: 5, 'F#': 6, G: 7, 'G#': 8, A: 9, 'A#': 10, B: 11 }
 
 let ctx = null
-let master = null
+let output = null
+let sfxBus = null
+let musicBus = null
 let noiseBuffer = null
 let crackleBuffer = null
 let enabled = readEnabled()
+let volume = readVolume()
 const listeners = new Set()
 const lastPlayed = new Map()
 
 function readEnabled() {
   try {
-    return window.sessionStorage.getItem(STORAGE_KEY) === 'on'
+    return window.sessionStorage.getItem(SOUND_KEY) !== 'off'
   } catch {
-    return false
+    return true
   }
+}
+
+function readVolume() {
+  try {
+    const stored = Number.parseFloat(window.localStorage.getItem(VOLUME_KEY))
+    if (Number.isFinite(stored)) return Math.min(1, Math.max(0, stored))
+  } catch {
+    // Fall through to the default.
+  }
+  return SOUND.volume.initial
+}
+
+function notify() {
+  listeners.forEach((listener) => listener())
+}
+
+function subscribe(listener) {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
 }
 
 /* ─── On / off ─────────────────────────────────────────────────── */
@@ -40,22 +67,43 @@ export function isSoundOn() {
 export function setSoundOn(on) {
   enabled = on
   try {
-    window.sessionStorage.setItem(STORAGE_KEY, on ? 'on' : 'off')
+    window.sessionStorage.setItem(SOUND_KEY, on ? 'on' : 'off')
   } catch {
     // Not remembered; harmless.
   }
   if (on) ensureContext() // called from a click, so this is a gesture
   else ctx?.suspend().catch(() => {})
-  listeners.forEach((listener) => listener())
-}
-
-function subscribe(listener) {
-  listeners.add(listener)
-  return () => listeners.delete(listener)
+  notify()
 }
 
 export function useSoundOn() {
-  return useSyncExternalStore(subscribe, isSoundOn, () => false)
+  return useSyncExternalStore(subscribe, isSoundOn, () => true)
+}
+
+/* ─── Volume (0–1, the slider's position) ──────────────────────── */
+
+export function getVolume() {
+  return volume
+}
+
+export function setVolume(value) {
+  volume = Math.min(1, Math.max(0, value))
+  try {
+    window.localStorage.setItem(VOLUME_KEY, String(volume))
+  } catch {
+    // Not remembered; harmless.
+  }
+  // A short glide instead of a jump, so dragging never clicks.
+  output?.gain.setTargetAtTime(loudness(volume), ctx.currentTime, 0.03)
+  notify()
+}
+
+export function useVolume() {
+  return useSyncExternalStore(subscribe, getVolume, () => SOUND.volume.initial)
+}
+
+function loudness(value) {
+  return value ** SOUND.volume.curve
 }
 
 /* ─── The audio graph ──────────────────────────────────────────── */
@@ -65,19 +113,38 @@ function ensureContext() {
     const AudioCtx = window.AudioContext || window.webkitAudioContext
     if (!AudioCtx) return null
     ctx = new AudioCtx()
-    master = ctx.createGain()
-    master.gain.value = SOUND.master.volume
+
+    output = ctx.createGain()
+    output.gain.value = loudness(volume)
+    output.connect(ctx.destination)
+
+    sfxBus = ctx.createGain()
+    sfxBus.gain.value = SOUND.sfx.level
     const soften = ctx.createBiquadFilter()
     soften.type = 'lowpass'
-    soften.frequency.value = SOUND.master.lowpass
+    soften.frequency.value = SOUND.sfx.lowpass
     soften.Q.value = 0.5
-    master.connect(soften).connect(ctx.destination)
+    sfxBus.connect(soften).connect(output)
+
+    musicBus = ctx.createGain()
+    musicBus.gain.value = SOUND.music.level
+    musicBus.connect(output)
   }
   if (ctx.state === 'suspended') ctx.resume().catch(() => {})
   return ctx
 }
 
-// The first click or key press after sound is on brings the context up.
+/* For background music later: connect a source here and it follows the
+   volume slider and the mute button like everything else. Null until a
+   user gesture has allowed audio, or while muted. */
+export function getMusicBus() {
+  if (!enabled) return null
+  const activated = navigator.userActivation?.hasBeenActive ?? true
+  if (!ctx && !activated) return null
+  return ensureContext() ? musicBus : null
+}
+
+// The first click or key press brings the context up (if not muted).
 if (typeof window !== 'undefined') {
   const unlock = () => {
     if (enabled) ensureContext()
@@ -89,7 +156,7 @@ if (typeof window !== 'undefined') {
 /* Returns the context if this sound may play right now, else null.
    `force` (the /sounds test panel) skips the on/off switch and throttle. */
 function gate(name, force = false) {
-  if (!enabled && !force) return null
+  if ((!enabled || volume === 0) && !force) return null
   if (document.hidden) return null
   if (!ctx) {
     const activated = navigator.userActivation?.hasBeenActive ?? true
@@ -171,7 +238,7 @@ function tone(freq, { delay = 0, gain, decay, attack, type, overtone, lowpass, b
   const filter = ctx.createBiquadFilter()
   filter.type = 'lowpass'
   filter.frequency.value = lowpass
-  amp.connect(filter).connect(master)
+  amp.connect(filter).connect(sfxBus)
 
   const osc = ctx.createOscillator()
   osc.type = type
@@ -212,7 +279,7 @@ function noiseBurst({ delay = 0, duration, gain, attack = 0.002, filters }) {
     node.connect(filter)
     node = filter
   })
-  node.connect(amp).connect(master)
+  node.connect(amp).connect(sfxBus)
   source.start(t, Math.random() * 1.5)
   source.stop(t + attack + duration + 0.05)
 }
@@ -251,7 +318,7 @@ function clickSound() {
   osc.frequency.exponentialRampToValueAtTime(c.blipTo, t + c.blipDuration)
   const amp = ctx.createGain()
   envelope(amp.gain, t, c.blipGain, 0.002, c.blipDuration)
-  osc.connect(amp).connect(master)
+  osc.connect(amp).connect(sfxBus)
   osc.start(t)
   osc.stop(t + c.blipDuration + 0.05)
 }
@@ -286,7 +353,7 @@ export const sound = {
     osc.frequency.exponentialRampToValueAtTime(n.to, t + n.sweep)
     const amp = ctx.createGain()
     envelope(amp.gain, t, n.gain, 0.004, n.decay)
-    osc.connect(amp).connect(master)
+    osc.connect(amp).connect(sfxBus)
     osc.start(t)
     osc.stop(t + n.decay + 0.06)
     noiseBurst({
@@ -315,7 +382,7 @@ export const sound = {
     amp.gain.linearRampToValueAtTime(c.gain, t + c.fade)
     amp.gain.setValueAtTime(c.gain, t + Math.max(c.fade, duration - c.fade))
     amp.gain.linearRampToValueAtTime(0.0001, t + duration)
-    source.connect(high).connect(low).connect(amp).connect(master)
+    source.connect(high).connect(low).connect(amp).connect(sfxBus)
     source.start(t, Math.random() * 1.5)
     source.stop(t + duration + 0.05)
   },
@@ -333,7 +400,7 @@ export const sound = {
     amp.gain.setValueAtTime(0.0001, t)
     amp.gain.linearRampToValueAtTime(s.gain, t + 0.02)
     amp.gain.exponentialRampToValueAtTime(0.0001, t + s.duration)
-    filter.connect(amp).connect(master)
+    filter.connect(amp).connect(sfxBus)
     s.degrees.forEach((degree, i) => {
       const freq = scaleFrequency(degree, s.octave)
       const osc = ctx.createOscillator()
@@ -380,6 +447,13 @@ export const sound = {
   },
 
   /* Turning sound on: a soft two-note hello. */
+  /* Letting go of the volume slider: one soft note at the new level. */
+  preview({ force = false } = {}) {
+    if (!gate('preview', force)) return
+    const p = SOUND.preview
+    playNote(scaleFrequency(p.degree, p.octave))
+  },
+
   confirm({ force = false } = {}) {
     if (!gate('note', force)) return
     const c = SOUND.confirm

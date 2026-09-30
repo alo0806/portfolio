@@ -3,7 +3,7 @@
 
    All tonal sounds come from one key, so moving around the site plays a
    soft, coherent melody. Times are in seconds, gains are 0–1 (before the
-   master volume), frequencies in Hz.
+   bus level and volume slider), frequencies in Hz.
    ───────────────────────────────────────────────────────────── */
 
 export const SOUND = {
@@ -14,11 +14,26 @@ export const SOUND = {
     scale: [0, 2, 4, 7, 9], // semitones above the root: major pentatonic
   },
 
-  /* Everything passes through this: one volume and one gentle low-pass,
-     so nothing can ever come out harsh. */
-  master: {
-    volume: 0.22,
+  /* The listener's volume slider sits on top of everything, so it turns
+     down sound effects and any future background music together.
+     `initial` is where it starts for a first-time visitor (0–1); `curve`
+     maps the slider to loudness (2 = halfway sounds about half as loud). */
+  volume: {
+    initial: 0.7,
+    curve: 2,
+  },
+
+  /* Sound effects bus: its own level under the slider, plus one gentle
+     low-pass so nothing can ever come out harsh. */
+  sfx: {
+    level: 0.22,
     lowpass: 3200,
+  },
+
+  /* Background music bus (nothing plays on it yet): its own level under
+     the same slider, so music and effects can be balanced here. */
+  music: {
+    level: 0.5,
   },
 
   /* Minimum time between two plays of the same sound, in ms, so rapid
@@ -32,6 +47,7 @@ export const SOUND = {
     tapeStop: 600,
     babble: 250,
     texture: 120,
+    preview: 120,
   },
 
   /* Tracklist rows: each page has its own note (scale degree + octave).
@@ -127,5 +143,11 @@ export const SOUND = {
     degrees: [0, 3],
     octave: 5,
     spacing: 0.08,
+  },
+
+  /* Letting go of the volume slider: one soft note at the new level. */
+  preview: {
+    degree: 0,
+    octave: 5,
   },
 }
