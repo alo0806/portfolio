@@ -105,3 +105,69 @@
   -webkit-mask: radial-gradient(circle, transparent 0 34%, #000 35%);
   mask: radial-gradient(circle, transparent 0 34%, #000 35%);
 }
+
+/* Motion blur on the label while the disc is really turning. A light
+   uniform blur on an already-rasterised layer: cheap on desktop, and
+   skipped on touch devices. */
+.record__label-text,
+.record__label-side {
+  transition: filter var(--dur-base) var(--ease-out);
+}
+
+.record__disc[data-blur='true'] .record__label-text,
+.record__disc[data-blur='true'] .record__label-side {
+  filter: blur(1.6px);
+}
+
+/* Vinyl crackle, visual only: a still grain texture that jitters and
+   flickers for a moment when the needle lands. Only transform and
+   opacity move. */
+.record__crackle {
+  position: absolute;
+  inset: -2%;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -0.55'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  -webkit-mask: radial-gradient(circle, transparent 0 34%, #000 35% 70%);
+  mask: radial-gradient(circle, transparent 0 34%, #000 35% 70%);
+}
+
+.record[data-crackle='true'] .record__crackle {
+  animation: crackle calc(var(--crackle-ms) * 1ms) steps(1) both;
+}
+
+@keyframes crackle {
+  0% {
+    opacity: 0.55;
+    transform: translate(1%, -1%);
+  }
+  20% {
+    opacity: 0.2;
+    transform: translate(-1.5%, 0.5%);
+  }
+  40% {
+    opacity: 0.6;
+    transform: translate(0.5%, 1.5%);
+  }
+  60% {
+    opacity: 0.25;
+    transform: translate(-0.5%, -1%);
+  }
+  80% {
+    opacity: 0.45;
+    transform: translate(1.5%, 0.5%);
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .record__disc[data-blur='true'] .record__label-text,
+  .record__disc[data-blur='true'] .record__label-side {
+    filter: none;
+  }
+}

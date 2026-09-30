@@ -2,19 +2,21 @@ import { Link } from 'react-router-dom'
 import { useIris } from '../components/iris/irisContext'
 
 /* Back to the intro regardless of the session flag: the route reads
-   `replay` from navigation state and skips its "already seen" redirect. */
+   `replay` from navigation state and skips its "already seen" redirect.
+   The trip plays the iris backward — this page contracts into a circle
+   onto the record (marked data-iris-target on the intro). */
 export default function ReplayLink({ onNavigate }) {
-  const { cover } = useIris()
+  const { reverse } = useIris()
 
   return (
     <Link
       to="/"
       state={{ replay: true }}
-      className="replay-link"
+      className="replay-link u-line"
       onClick={(event) => {
         event.preventDefault()
         onNavigate?.()
-        cover({ to: '/', state: { replay: true }, color: '--indigo' })
+        reverse({ to: '/', state: { replay: true }, target: '[data-iris-target]' })
       }}
     >
       <span className="replay-link__icon" aria-hidden="true">

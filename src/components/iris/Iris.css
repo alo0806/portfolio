@@ -12,3 +12,34 @@
   visibility: visible;
   pointer-events: auto;
 }
+
+/* The rings ride on top of the paper. Their stroke stays the same width
+   however far they're scaled. */
+.iris__rings {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.iris__rings[data-active='true'] {
+  visibility: visible;
+}
+
+.iris__ring {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transform-box: view-box;
+  opacity: 0;
+}
+
+.iris__ring--lead {
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}

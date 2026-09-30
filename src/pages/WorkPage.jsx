@@ -1,3 +1,4 @@
+import Reveal from '../components/Reveal'
 import { projects, work } from '../data/content'
 import AlbumCard from './AlbumCard'
 import LinerNotes from './LinerNotes'
@@ -18,9 +19,9 @@ export default function WorkPage() {
         </h2>
         <ul className="albums">
           {projects.map((project, index) => (
-            <li key={project.title}>
+            <Reveal as="li" key={project.title}>
               <AlbumCard number={index + 1} {...project} />
-            </li>
+            </Reveal>
           ))}
         </ul>
       </section>

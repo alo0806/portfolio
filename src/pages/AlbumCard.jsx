@@ -1,10 +1,46 @@
+import { useRef } from 'react'
 import AlbumCover from '../components/AlbumCover'
+import useFinePointer from '../hooks/useFinePointer'
+import useReducedMotion from '../hooks/useReducedMotion'
 
-/* A project as an album: cover, title, a plain tag, one line, and three
-   metrics — laid out so a recruiter can scan tag and numbers at a glance. */
+const MAX_TILT = 7 // degrees
+
+/* A project as an album: cover, a plain tag, title, one line, and three
+   metrics — laid out so a recruiter can scan tag and numbers at a glance.
+
+   On a mouse or trackpad the card tilts toward the cursor, a light sheen
+   sweeps the cover on hover, and it presses in softly. Touch devices and
+   reduced motion get a still card. */
 export default function AlbumCard({ number, title, status, tag, description, metrics, cover, image }) {
+  const cardRef = useRef(null)
+  const fine = useFinePointer()
+  const reduced = useReducedMotion()
+  const tilt = fine && !reduced
+
+  const onPointerMove = (event) => {
+    const card = cardRef.current
+    if (!tilt || !card) return
+    const rect = card.getBoundingClientRect()
+    const x = (event.clientX - rect.left) / rect.width - 0.5
+    const y = (event.clientY - rect.top) / rect.height - 0.5
+    card.style.setProperty('--ry', `${(x * MAX_TILT * 2).toFixed(2)}deg`)
+    card.style.setProperty('--rx', `${(-y * MAX_TILT * 2).toFixed(2)}deg`)
+  }
+
+  const onPointerLeave = () => {
+    const card = cardRef.current
+    if (!card) return
+    card.style.setProperty('--rx', '0deg')
+    card.style.setProperty('--ry', '0deg')
+  }
+
   return (
-    <article className="album">
+    <article
+      className="album"
+      ref={cardRef}
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
+    >
       <AlbumCover title={title} number={number} cover={cover} image={image} />
       <div className="album__body">
         <p className="album__tag">{tag}</p>

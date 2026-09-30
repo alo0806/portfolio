@@ -45,16 +45,31 @@
   border: 1px solid var(--line);
   box-shadow: var(--shadow-card);
   rotate: var(--tilt);
+  position: relative;
   transition:
     rotate var(--dur-slow) var(--ease-out),
-    translate var(--dur-mid) var(--ease-out),
-    box-shadow var(--dur-mid) var(--ease-out);
+    translate var(--dur-base) var(--ease-out);
+}
+
+/* The deeper hover shadow is pre-drawn and faded in: animating
+   box-shadow itself repaints every frame. */
+.photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: var(--shadow-card-hover);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out);
 }
 
 .photo:hover {
   rotate: 0deg;
   translate: 0 -4px;
-  box-shadow: var(--shadow-card-hover);
+}
+
+.photo:hover::after {
+  opacity: 1;
 }
 
 .photo__image {

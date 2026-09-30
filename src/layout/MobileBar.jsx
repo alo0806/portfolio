@@ -1,8 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import CoverMark from '../components/CoverMark'
 import Mascot from '../components/Mascot'
 import { artist } from '../data/content'
+import { prepareTrackClick } from '../lib/trackNav'
 import Links from './Links'
 import ReplayLink from './ReplayLink'
 import Tracklist from './Tracklist'
@@ -14,6 +15,7 @@ const DESKTOP = '(min-width: 900px)'
    the compact player bar). Escape closes it and returns focus. */
 export default function MobileBar() {
   const panelId = useId()
+  const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const buttonRef = useRef(null)
   const panelRef = useRef(null)
@@ -49,7 +51,15 @@ export default function MobileBar() {
   return (
     <header className="topbar" data-open={open ? 'true' : 'false'}>
       <div className="topbar__bar">
-        <Link to="/work" viewTransition className="topbar__brand" onClick={close}>
+        <Link
+          to="/work"
+          viewTransition
+          className="topbar__brand"
+          onClick={() => {
+            prepareTrackClick(pathname, '/work')
+            close()
+          }}
+        >
           <CoverMark size={30} />
           <span className="topbar__name">{artist.name}</span>
         </Link>

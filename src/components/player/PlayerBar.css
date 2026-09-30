@@ -26,21 +26,53 @@
   min-width: 0;
 }
 
+/* The cover is keyed by track, so it remounts — and flips in — on every
+   track change (the direction follows the slide). The art inside turns
+   slowly while playing. */
 .player__cover {
   flex-shrink: 0;
-  display: grid;
-  place-items: end start;
+  display: block;
   width: 44px;
   height: 44px;
-  padding: 4px 6px;
-  border-radius: 6px;
+  perspective: 300px;
+  animation: cover-flip var(--dur-base) var(--ease-out) both;
+}
+
+:root {
+  --flip: 1;
+}
+
+:root[data-track-dir='prev'] {
+  --flip: -1;
+}
+
+@keyframes cover-flip {
+  from {
+    opacity: 0;
+    transform: perspective(300px) rotateY(calc(var(--flip) * 90deg));
+  }
+}
+
+.player__cover-art {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
   background: linear-gradient(140deg, var(--pal-a), var(--pal-b));
   color: var(--pal-ink);
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 1.125rem;
   line-height: 1;
-  transition: background var(--dur-mid) ease;
+  animation: cover-spin 14s linear infinite;
+  animation-play-state: var(--play-state);
+}
+
+@keyframes cover-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .player__meta {
@@ -56,15 +88,86 @@
 }
 
 .player__song {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   font-size: var(--fs-small);
   font-weight: 500;
 }
 
-.player__dash {
-  color: var(--muted-ink);
+/* ─── Marquee: only when the title overflows ─── */
+
+.marquee {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.marquee__copy {
+  display: none;
+}
+
+.marquee[data-overflow='true'] {
+  text-overflow: clip;
+  -webkit-mask: linear-gradient(90deg, transparent, #000 10px, #000 calc(100% - 18px), transparent);
+  mask: linear-gradient(90deg, transparent, #000 10px, #000 calc(100% - 18px), transparent);
+}
+
+/* Two identical copies side by side; sliding by exactly one copy loops
+   seamlessly. Pauses with the player, and on hover so it can be read. */
+.marquee[data-overflow='true'] .marquee__track {
+  display: inline-flex;
+  animation: marquee var(--marquee-dur, 12s) linear infinite;
+  animation-play-state: var(--play-state);
+}
+
+.marquee[data-overflow='true'] .marquee__text {
+  padding-right: 3em;
+}
+
+.marquee[data-overflow='true'] .marquee__copy {
+  display: inline;
+}
+
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ─── Play / pause: one icon that morphs ───
+   Each half is a clip-path polygon with the same number of points in
+   both states, so the two bars fold into the triangle and back. */
+
+.pp {
+  position: relative;
+  width: 18px;
+  height: 18px;
+}
+
+.pp__half {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  transition: clip-path var(--dur-base) var(--ease-out);
+}
+
+.pp[data-state='playing'] .pp__half--l {
+  clip-path: polygon(22% 16%, 42% 16%, 42% 84%, 22% 84%);
+}
+
+.pp[data-state='playing'] .pp__half--r {
+  clip-path: polygon(58% 16%, 78% 16%, 78% 84%, 58% 84%);
+}
+
+.pp[data-state='paused'] .pp__half--l {
+  clip-path: polygon(28% 14%, 56% 32%, 56% 68%, 28% 86%);
+}
+
+.pp[data-state='paused'] .pp__half--r {
+  clip-path: polygon(56% 32%, 84% 50%, 84% 50%, 56% 68%);
 }
 
 /* ─── Controls + progress ─── */
@@ -83,19 +186,33 @@
 }
 
 .player__btn {
+  position: relative;
   display: grid;
   place-items: center;
   width: 36px;
   height: 36px;
   border-radius: 50%;
   color: var(--ink);
-  transition:
-    background-color var(--dur-fast) ease,
-    transform var(--dur-fast) var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 
-.player__btn:hover {
+/* Hover wash, faded in rather than repainted. */
+.player__btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
   background: var(--line);
+  opacity: 0;
+  transition: opacity var(--dur-fast) ease;
+}
+
+.player__btn:hover::before {
+  opacity: 1;
+}
+
+.player__btn > * {
+  position: relative;
 }
 
 .player__btn:active {
@@ -109,15 +226,15 @@
   color: var(--paper);
 }
 
+.player__btn--play::before {
+  display: none;
+}
+
 .player__btn--play:hover {
-  background: var(--ink);
   transform: scale(1.06);
 }
 
-.player__btn--play svg {
-  width: 18px;
-  height: 18px;
-}
+
 
 .player__progress {
   display: grid;
@@ -198,5 +315,21 @@
     height: 2px;
     border-radius: 0;
     background: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee[data-overflow='true'] {
+    text-overflow: ellipsis;
+    -webkit-mask: none;
+    mask: none;
+  }
+
+  .marquee[data-overflow='true'] .marquee__track {
+    display: inline;
+  }
+
+  .marquee[data-overflow='true'] .marquee__copy {
+    display: none;
   }
 }

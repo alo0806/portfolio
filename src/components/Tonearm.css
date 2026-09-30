@@ -1,0 +1,68 @@
+.tonearm {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.tonearm__base {
+  fill: var(--indigo-raised);
+  stroke: rgba(237, 235, 245, 0.25);
+  stroke-width: 0.4;
+}
+
+.tonearm__pivot {
+  fill: var(--on-indigo-muted);
+}
+
+.tonearm__arm {
+  fill: none;
+  stroke: var(--on-indigo);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.tonearm__head {
+  fill: var(--on-indigo-muted);
+}
+
+.tonearm__needle {
+  fill: var(--accent);
+}
+
+/* Swings about the pivot. Resting, it's parked off the record. */
+.tonearm__swing,
+.tonearm__drop {
+  transform-box: view-box;
+  transform-origin: 96px 6px;
+}
+
+.tonearm__swing {
+  transform: rotate(-26deg);
+  transition: transform calc(var(--tonearm-ms) * 1ms) var(--ease-in-out);
+}
+
+.tonearm[data-state='play'] .tonearm__swing {
+  transform: rotate(0deg);
+}
+
+/* Needle drop: once the swing lands, the head dips onto the vinyl. */
+.tonearm[data-state='play'] .tonearm__drop {
+  animation: needle-drop var(--dur-fast) var(--ease-out) both;
+  animation-delay: calc(var(--tonearm-ms) * 0.85ms);
+}
+
+@keyframes needle-drop {
+  0% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(0.965);
+  }
+  100% {
+    transform: scale(0.975);
+  }
+}

@@ -42,16 +42,28 @@
   padding: 2px 0;
   color: var(--on-indigo-muted);
   font-size: var(--fs-small);
-  background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px
-    no-repeat;
-  transition:
-    color var(--dur-mid) ease,
-    background-size var(--dur-mid) var(--ease-out);
 }
 
 .notes__all:hover {
   color: var(--on-indigo);
-  background-size: 100% 1px;
+}
+
+/* Typing: each character fades in on its turn, starting once the card
+   has arrived. Words never break mid-way. */
+.typed-word {
+  white-space: nowrap;
+}
+
+.typed-char {
+  opacity: 0;
+  animation: type-in 1ms linear forwards;
+  animation-delay: calc(var(--page-delay) + 520ms + var(--c) * 19ms);
+}
+
+@keyframes type-in {
+  to {
+    opacity: 1;
+  }
 }
 
 /* A slice of record grooves peeking in from the corner. */
@@ -87,7 +99,15 @@
   display: flex;
 }
 
+/* Tilt, lift and press are all one transform driven by custom
+   properties (set from JS for the tilt), so they blend and ease back
+   together. The deeper hover shadow is a pre-drawn layer that fades in. */
 .album {
+  --rx: 0deg;
+  --ry: 0deg;
+  --lift: 0px;
+  --press: 1;
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -95,15 +115,59 @@
   background: var(--card);
   border: 1px solid var(--line);
   box-shadow: var(--shadow-card);
-  overflow: hidden;
-  transition:
-    transform var(--dur-mid) var(--ease-out),
-    box-shadow var(--dur-mid) var(--ease-out);
+  transform: perspective(1000px) rotateX(var(--rx)) rotateY(var(--ry))
+    translateY(var(--lift)) scale(var(--press));
+  transition: transform var(--dur-base) var(--ease-out);
 }
 
-.album:hover {
-  transform: translateY(-4px);
+.album::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
   box-shadow: var(--shadow-card-hover);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+.album .cover {
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+}
+
+/* A band of light sweeps across the cover on hover. */
+.album .cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.38) 50%,
+    transparent 65%
+  );
+  transform: translateX(-110%);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .album:hover {
+    --lift: -4px;
+  }
+
+  .album:hover::after {
+    opacity: 1;
+  }
+
+  .album:hover .cover::after {
+    transform: translateX(110%);
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+}
+
+.album:active {
+  --press: 0.985;
+  transition-duration: var(--dur-fast);
 }
 
 .album__body {

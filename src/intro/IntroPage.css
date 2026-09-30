@@ -27,15 +27,62 @@
   pointer-events: none;
 }
 
-.intro__record {
+/* ─── Choreography ─────────────────────────────────────────────
+   Entrances animate inner elements; exits animate their wrappers. The
+   two never fight over one property, so pressing play mid-entrance
+   just carries on smoothly. Times below are when each beat starts. */
+
+.intro {
+  --words-at: 520ms;
+  --tail-at: 900ms;
   --record-size: clamp(220px, min(46vh, 62vw), 440px);
-  animation: intro-rise 900ms var(--ease-out) backwards;
 }
 
+/* Coming back: the page has just contracted onto the record, so the
+   words wait for it before they return. */
+.intro[data-entry='return'] {
+  --words-at: calc(var(--iris-ms) * 1ms - 120ms);
+  --tail-at: calc(var(--iris-ms) * 1ms + 200ms);
+}
+
+/* The record fades up, grows from 0.9 and turns into place. */
+.intro__deck-in {
+  position: relative;
+  width: var(--record-size);
+  aspect-ratio: 1;
+  animation: deck-in var(--dur-slow) var(--ease-out) both;
+}
+
+.intro[data-entry='return'] .intro__deck-in {
+  animation: none;
+}
+
+@keyframes deck-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9) rotate(-10deg);
+  }
+}
+
+/* Particles drift in after the record. */
+.intro__ambient {
+  animation: fade-in 1200ms ease-out 280ms both;
+}
+
+.intro[data-entry='return'] .intro__ambient {
+  animation: none;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The greeting, word by word, each rising behind its own mask. */
 .intro__words {
   display: grid;
   gap: var(--sp-1);
-  animation: intro-rise 900ms var(--ease-out) 200ms backwards;
 }
 
 .intro__title {
@@ -45,9 +92,32 @@
   line-height: 1;
 }
 
+.reveal-word {
+  display: inline-block;
+  overflow: clip;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+  vertical-align: bottom;
+}
+
+.reveal-word__inner {
+  display: inline-block;
+  animation: word-up var(--dur-slow) var(--ease-out) both;
+  animation-delay: calc(var(--words-at) + var(--w) * 80ms);
+}
+
+@keyframes word-up {
+  from {
+    transform: translateY(110%) rotate(4deg);
+  }
+}
+
+/* Then the small line and the buttons settle last. */
 .intro__aka {
   color: var(--on-indigo-muted);
   font-size: var(--fs-small);
+  animation: settle var(--dur-slow) var(--ease-out) both;
+  animation-delay: var(--tail-at);
 }
 
 .intro__actions {
@@ -55,25 +125,38 @@
   flex-direction: column;
   align-items: center;
   gap: var(--sp-2);
-  animation: intro-rise 900ms var(--ease-out) 380ms backwards;
 }
 
-@keyframes intro-rise {
+.intro__actions > * {
+  animation: settle var(--dur-slow) var(--ease-out) both;
+  animation-delay: calc(var(--tail-at) + 90ms);
+}
+
+.intro__actions > :nth-child(2) {
+  animation-delay: calc(var(--tail-at) + 180ms);
+}
+
+.intro__clock {
+  animation: fade-in var(--dur-slow) ease-out both;
+  animation-delay: calc(var(--tail-at) + 250ms);
+}
+
+@keyframes settle {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(10px);
   }
 }
 
-/* Leaving: the words and buttons recede as the iris opens. They wait out
-   the record's spin-up first so the two read as one motion. The record
-   itself stays — the circle grows from it. */
+/* Leaving: the words and buttons recede exactly as the iris opens —
+   after the tonearm, crackle and spin-up (--leave-delay, set at the
+   press) — so it reads as one motion. The record stays; the circle
+   grows from it. */
 .intro__words,
 .intro__actions {
   transition:
-    transform calc(var(--iris-ms) * 1ms) var(--ease-in-out)
-      calc(var(--spinup-ms) * 1ms),
-    opacity calc(var(--iris-ms) * 0.6ms) ease calc(var(--spinup-ms) * 1ms);
+    transform calc(var(--iris-ms) * 1ms) var(--ease-in-out) var(--leave-delay),
+    opacity calc(var(--iris-ms) * 0.6ms) ease var(--leave-delay);
 }
 
 .intro[data-leaving='true'] .intro__words,
@@ -96,9 +179,7 @@
   font-weight: 500;
   font-size: 1.0625rem;
   pointer-events: auto;
-  transition:
-    transform var(--dur-fast) var(--ease-out),
-    background-color var(--dur-mid) ease;
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 
 .intro__play-icon {
@@ -109,7 +190,7 @@
   border-radius: 50%;
   background: var(--accent);
   color: var(--ink);
-  transition: transform var(--dur-mid) var(--ease-out);
+  transition: transform var(--dur-base) var(--ease-out);
 }
 
 .intro__play-icon svg {
@@ -132,17 +213,11 @@
   color: var(--on-indigo-muted);
   font-size: var(--fs-small);
   pointer-events: auto;
-  background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px
-    no-repeat;
-  transition:
-    background-size var(--dur-mid) var(--ease-out),
-    color var(--dur-mid) ease;
 }
 
 .intro__skip:hover,
 .intro__skip:focus-visible {
   color: var(--on-indigo);
-  background-size: 100% 1px;
 }
 
 .intro__skip:active {
