@@ -44,6 +44,15 @@ export function NextIcon(props) {
   )
 }
 
+/* Next song (fast-forward), distinct from next track (page). */
+export function SkipSongIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M2.5 5.5 L10 10 L2.5 14.5 Z M10 5.5 L17.5 10 L10 14.5 Z" fill="currentColor" />
+    </svg>
+  )
+}
+
 /* ─── Theme ─── */
 
 export function MoonIcon(props) {

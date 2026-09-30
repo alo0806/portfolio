@@ -1,13 +1,15 @@
 import { useSyncExternalStore } from 'react'
 import { SOUND } from './config'
 
-/* All sound is synthesized with the Web Audio API — no files.
+/* Sound effects are synthesized with the Web Audio API — no files. The
+   background music (real files, see music.js) shares this graph.
 
    Ground rules, enforced here so no call site has to remember them:
    - On by default; muting is remembered for the session, the volume
-     slider's level across visits.
+     slider's level across visits. Muting turns the output down rather
+     than stopping anything, so a song keeps its place while muted.
    - The AudioContext is created only after a user gesture (browsers
-     require it anyway), and never while muted.
+     require it anyway).
    - Nothing plays while the tab is hidden.
    - Each sound has a minimum interval (config throttle), so rapid
      hovering or clicking can't pile up.
@@ -58,6 +60,9 @@ function subscribe(listener) {
   return () => listeners.delete(listener)
 }
 
+/* Mute or volume changed. */
+export const onSoundChange = subscribe
+
 /* ─── On / off ─────────────────────────────────────────────────── */
 
 export function isSoundOn() {
@@ -72,7 +77,7 @@ export function setSoundOn(on) {
     // Not remembered; harmless.
   }
   if (on) ensureContext() // called from a click, so this is a gesture
-  else ctx?.suspend().catch(() => {})
+  applyOutput()
   notify()
 }
 
@@ -93,8 +98,7 @@ export function setVolume(value) {
   } catch {
     // Not remembered; harmless.
   }
-  // A short glide instead of a jump, so dragging never clicks.
-  output?.gain.setTargetAtTime(loudness(volume), ctx.currentTime, 0.03)
+  applyOutput()
   notify()
 }
 
@@ -106,6 +110,17 @@ function loudness(value) {
   return value ** SOUND.volume.curve
 }
 
+/* Is anything audible right now? (Muted, or the slider at zero, is not.) */
+export function isAudible() {
+  return enabled && volume > 0
+}
+
+// A short glide instead of a jump, so dragging or muting never clicks.
+function applyOutput() {
+  if (!output) return
+  output.gain.setTargetAtTime(enabled ? loudness(volume) : 0, ctx.currentTime, 0.03)
+}
+
 /* ─── The audio graph ──────────────────────────────────────────── */
 
 function ensureContext() {
@@ -115,7 +130,7 @@ function ensureContext() {
     ctx = new AudioCtx()
 
     output = ctx.createGain()
-    output.gain.value = loudness(volume)
+    output.gain.value = enabled ? loudness(volume) : 0
     output.connect(ctx.destination)
 
     sfxBus = ctx.createGain()
@@ -134,14 +149,11 @@ function ensureContext() {
   return ctx
 }
 
-/* For background music later: connect a source here and it follows the
-   volume slider and the mute button like everything else. Null until a
-   user gesture has allowed audio, or while muted. */
-export function getMusicBus() {
-  if (!enabled) return null
-  const activated = navigator.userActivation?.hasBeenActive ?? true
-  if (!ctx && !activated) return null
-  return ensureContext() ? musicBus : null
+/* For the background music: its sources connect here and follow the
+   volume slider and the mute button like everything else. Call from a
+   user gesture (the first time). Null if Web Audio isn't available. */
+export function getMusicOutput() {
+  return ensureContext() ? { ctx, bus: musicBus } : null
 }
 
 // The first click or key press brings the context up (if not muted).

@@ -22,6 +22,19 @@ export const intro = {
   skip: 'skip intro',
 }
 
+/* ─── Background music ─────────────────────────────────────────
+   Songs play in this order, then loop. Put the audio files in
+   public/audio/ and point `file` at them ('/audio/name.mp3').
+   - credit: short text for the license link, e.g. 'CC BY 4.0'.
+     Use null if the license doesn't ask for attribution.
+   - creditUrl: where that link goes (the song or license page).
+   With no songs, the player works exactly as before (motion only) and
+   shows `nowPlaying`. */
+export const playlist = [
+  // { title: 'Song Title', artist: 'Artist', file: '/audio/song.mp3', credit: 'CC BY 4.0', creditUrl: 'https://…' },
+]
+
+/* Shown in the player bar while the playlist is empty. */
 export const nowPlaying = {
   song: 'Placeholder Song Title',
   artist: 'Placeholder Artist',
@@ -43,7 +56,8 @@ export const links = [
   { label: 'Resume', href: '#', icon: 'resume' },
 ]
 
-/* `{song}` and `{artist}` are filled in from nowPlaying. */
+/* `{song}` and `{artist}` are filled in from the song playing now
+   (or nowPlaying, while the playlist is empty). */
 export const mascotLines = [
   'hi there!',
   'now spinning: {song}',

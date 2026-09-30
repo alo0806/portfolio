@@ -4,10 +4,12 @@ import { nowPlaying } from '../../data/content'
 import { TRACKS, trackIndexFor } from '../../data/tracks'
 import { stepTrack } from '../../lib/trackNav'
 import { sound } from '../../sound/engine'
+import { skip as skipSong, useMusic } from '../../sound/music'
 import Mascot from '../Mascot'
 import SoundToggle from '../SoundToggle'
 import VolumeSlider from '../VolumeSlider'
-import { NextIcon, PrevIcon } from '../icons'
+import { NextIcon, PrevIcon, SkipSongIcon } from '../icons'
+import SeekBar from './SeekBar'
 import { usePlayer } from './playerContext'
 import '../covers.css'
 import './PlayerBar.css'
@@ -23,11 +25,17 @@ const MARQUEE_SPEED = 38 // px per second
    - the cover square flips to each new track and turns slowly while
      playing; a title too long for its space scrolls as a marquee
    - the orange bar under the controls shows how far you've scrolled
-     through this page (the clock lives in the artist panel) */
+     through this page (the clock lives in the artist panel)
+   With songs in the playlist (content.js): "Now playing" is the real
+   song, with its credit link when the license asks for one and a small
+   "next song" button when there's more than one; play / pause also
+   starts and stops the music; and the orange bar shows the song instead
+   of the scroll, and can be clicked, dragged or keyed to seek. */
 export default function PlayerBar() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const { playing, toggle } = usePlayer()
+  const { playing, musicOn, toggle } = usePlayer()
+  const music = useMusic()
   const fillRef = useRef(null)
   const marqueeRef = useRef(null)
 
@@ -36,10 +44,16 @@ export default function PlayerBar() {
   const track = TRACKS[index]
   const prev = TRACKS[(index - 1 + count) % count]
   const next = TRACKS[(index + 1) % count]
-  const title = `${nowPlaying.song} — ${nowPlaying.artist}`
+  const song = music.song
+  const title = song ? `${song.title} — ${song.artist}` : `${nowPlaying.song} — ${nowPlaying.artist}`
+  // With music, the button (and its icon) follow the music; without, the motion.
+  const active = music.available ? musicOn : playing
+  const what = music.available ? 'music' : 'ambient motion'
 
   // Scroll progress, written straight to a transform: no re-renders.
+  // (With music, the bar shows the song instead.)
   useEffect(() => {
+    if (music.available) return undefined
     const fill = fillRef.current
     if (!fill) return undefined
     let frame = 0
@@ -65,7 +79,7 @@ export default function PlayerBar() {
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
     }
-  }, [pathname])
+  }, [pathname, music.available])
 
   // Marquee only when the title actually overflows its space.
   useEffect(() => {
@@ -107,7 +121,18 @@ export default function PlayerBar() {
           <span className="player__cover-art">{track.number}</span>
         </span>
         <p className="player__meta">
-          <span className="player__label">Now playing</span>
+          <span className="player__label">
+            Now playing
+            {song?.credit && song.creditUrl ? (
+              <>
+                {' · '}
+                <a className="player__credit" href={song.creditUrl} target="_blank" rel="noreferrer">
+                  {song.credit}
+                  <span className="sr-only"> (license, opens in a new tab)</span>
+                </a>
+              </>
+            ) : null}
+          </span>
           <span className="player__song marquee" ref={marqueeRef} data-overflow="false">
             <span className="marquee__track">
               <span className="marquee__text">{title}</span>
@@ -117,6 +142,20 @@ export default function PlayerBar() {
             </span>
           </span>
         </p>
+        {music.next ? (
+          <button
+            type="button"
+            className="player__btn player__btn--song"
+            aria-label={`Next song: ${music.next.title}`}
+            title="Next song"
+            onClick={() => {
+              sound.click()
+              skipSong()
+            }}
+          >
+            <SkipSongIcon width={16} height={16} />
+          </button>
+        ) : null}
       </div>
 
       <div className="player__center">
@@ -135,13 +174,13 @@ export default function PlayerBar() {
           <button
             type="button"
             className="player__btn player__btn--play"
-            aria-label={playing ? 'Pause ambient motion' : 'Play ambient motion'}
+            aria-label={active ? `Pause ${what}` : `Play ${what}`}
             onClick={() => {
               sound.click()
               toggle()
             }}
           >
-            <span className="pp" data-state={playing ? 'playing' : 'paused'} aria-hidden="true">
+            <span className="pp" data-state={active ? 'playing' : 'paused'} aria-hidden="true">
               <span className="pp__half pp__half--l" />
               <span className="pp__half pp__half--r" />
             </span>
@@ -158,11 +197,15 @@ export default function PlayerBar() {
             <NextIcon />
           </button>
         </div>
-        {/* How far you've scrolled through this page. */}
+        {music.available ? (
+          <SeekBar time={music.time} duration={music.duration} />
+        ) : (
+          /* How far you've scrolled through this page. */
           <span className="player__progress" aria-hidden="true">
             <span className="player__fill" ref={fillRef} />
           </span>
-        </div>
+        )}
+      </div>
 
       <div className="player__side">
         <div className="player__volume">
