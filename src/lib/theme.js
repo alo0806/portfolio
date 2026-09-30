@@ -11,10 +11,11 @@ export function getTheme() {
   return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
 }
 
-// The browser's theme-color stays the record's indigo in both themes
-// (set in index.html), so only the attribute changes here.
 function apply(theme) {
   document.documentElement.dataset.theme = theme
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute('content', theme === 'dark' ? '#15141B' : '#F4F3EF')
 }
 
 /* An explicit choice, remembered from now on. */

@@ -17,11 +17,7 @@ const INTERACTIVE = 'a, button, [role="button"], label, summary'
 
    Appearance is switched by one token, --cursor-mode (tokens.css). The
    cursor also reports which surface it's over (data-surface="dark" on an
-   ancestor) so a themed mode can recolor per background.
-
-   Modal dialogs (the resume box) render in the browser's top layer,
-   above any z-index. So the cursor lives in the top layer too, as a
-   manual popover, and steps back on top whenever a dialog opens. */
+   ancestor) so a themed mode can recolor per background. */
 
 export default function Cursor() {
   const fine = useFinePointer()
@@ -41,24 +37,6 @@ export default function Cursor() {
     const html = document.documentElement
     html.classList.add('has-custom-cursor')
     root.dataset.mode = readToken('--cursor-mode') || 'blend'
-
-    // Top layer: shown now, and re-shown after any dialog opens, since
-    // whatever entered the top layer last is drawn on top.
-    const topLayer = typeof root.showPopover === 'function'
-    const raise = () => {
-      if (!topLayer) return
-      try {
-        if (root.matches(':popover-open')) root.hidePopover()
-        root.showPopover()
-      } catch {
-        // Not in the document (unmounting); nothing to raise.
-      }
-    }
-    raise()
-    const dialogs = new MutationObserver((changes) => {
-      if (changes.some((change) => change.target.localName === 'dialog' && change.target.open)) raise()
-    })
-    dialogs.observe(document.body, { attributes: true, attributeFilter: ['open'], subtree: true })
 
     let x = -100
     let y = -100
@@ -115,7 +93,6 @@ export default function Cursor() {
 
     return () => {
       cancelAnimationFrame(frame)
-      dialogs.disconnect()
       html.classList.remove('has-custom-cursor')
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerover', onOver)
@@ -131,7 +108,6 @@ export default function Cursor() {
     <div
       className="cursor"
       ref={rootRef}
-      popover="manual"
       data-visible="false"
       data-state="default"
       data-pressed="false"
