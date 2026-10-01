@@ -34,6 +34,14 @@
   --eye: #fbfaf7;
   --icon-knockout: var(--sidebar); /* the "in" cut out of the LinkedIn mark */
 
+  /* ─── Cassette mascot (the same in both themes: it's an object, so
+     its outline stays dark even where the page's ink turns light) ─── */
+  --cassette-shell: #f4ecdb;
+  --cassette-notch: #e4d7bd;
+  --cassette-window: #dde3ea;
+  --cassette-reel: #fbfaf7;
+  --cassette-ink: #1b1a24;
+
   /* ─── Vinyl ─── */
   --vinyl: #121118;
   --vinyl-groove: #1d1b26;

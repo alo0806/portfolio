@@ -17,11 +17,27 @@ const EVENTS = ['pointermove', 'pointerdown', 'wheel', 'scroll', 'keydown', 'tou
 let lastInput = 0
 let timer = 0
 let started = false
+let idleNow = false
+const listeners = new Set()
 
 function setIdle(idle) {
   const root = document.documentElement
   if (idle) root.dataset.idle = 'true'
   else delete root.dataset.idle
+  if (idle !== idleNow) {
+    idleNow = idle
+    listeners.forEach((listener) => listener(idle))
+  }
+}
+
+/* For JS-driven motion (the mascot) that should rest the same way. */
+export function isIdle() {
+  return idleNow
+}
+
+export function onIdleChange(listener) {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
 }
 
 function check() {

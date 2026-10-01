@@ -202,6 +202,13 @@ export function hasMusic() {
   return available()
 }
 
+/* The music mix (both decks, before the volume slider and mute), for
+   listening in on — the beat tracker hangs an analyser off it. Null until
+   the first play has built the audio graph. */
+export function getMusicMix() {
+  return graph ? { ctx: graph.ctx, node: graph.mix } : null
+}
+
 /* ─── Decks ────────────────────────────────────────────────────── */
 
 function deck(i) {

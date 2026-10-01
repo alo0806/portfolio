@@ -1,0 +1,144 @@
+/* The cassette buddy. Shapes are styled here (fills from tokens.css);
+   their positions are written by CassetteMascot.jsx every frame. Stroke
+   widths come from --cs-limb / --cs-line / --cs-fine, set on the <svg>
+   from its size so they never get thinner than ~1.5px on screen. */
+
+.cassette .mascot__button {
+  padding: 4px;
+}
+
+.cassette__svg {
+  display: block;
+  overflow: visible;
+}
+
+.cs-limb {
+  fill: none;
+  stroke: var(--cassette-ink);
+  stroke-width: var(--cs-limb);
+  stroke-linecap: round;
+}
+
+.cs-hand,
+.cs-foot {
+  fill: var(--cassette-ink);
+}
+
+.cs-shell {
+  fill: var(--cassette-shell);
+  stroke: var(--cassette-ink);
+  stroke-width: var(--cs-line);
+}
+
+.cs-screw {
+  fill: var(--cassette-ink);
+  opacity: 0.35;
+}
+
+.cs-label {
+  fill: var(--accent);
+}
+
+.cs-label-text {
+  fill: var(--cassette-ink);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 6.6px;
+  letter-spacing: -0.02em;
+}
+
+.cs-side {
+  fill: var(--cassette-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 3.6px;
+  opacity: 0.7;
+}
+
+.cs-window {
+  fill: var(--cassette-window);
+  stroke: var(--cassette-ink);
+  stroke-width: var(--cs-fine);
+}
+
+.cs-tape {
+  stroke: var(--cassette-ink);
+  stroke-width: var(--cs-fine);
+  opacity: 0.35;
+}
+
+.cs-reel {
+  fill: var(--cassette-reel);
+  stroke: var(--cassette-ink);
+  stroke-width: var(--cs-fine);
+}
+
+.cs-hub {
+  fill: var(--cassette-ink);
+}
+
+.cs-tooth {
+  fill: var(--cassette-reel);
+}
+
+.cs-lid {
+  fill: var(--cassette-shell);
+}
+
+.cs-lid-edge,
+.cs-caret,
+.cs-mouth {
+  fill: none;
+  stroke: var(--cassette-ink);
+  stroke-width: var(--cs-line);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cs-caret {
+  stroke-width: var(--cs-limb);
+}
+
+.cs-mouth--fill {
+  fill: var(--cassette-ink);
+}
+
+.cs-notch {
+  fill: var(--cassette-notch);
+  stroke: var(--cassette-ink);
+  stroke-width: var(--cs-fine);
+  stroke-linejoin: round;
+}
+
+.cs-zz {
+  fill: var(--cassette-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 7px;
+}
+
+.cs-zz--small {
+  font-size: 5px;
+}
+
+/* On dark surfaces (indigo) the ink limbs would disappear: each gets a
+   light edge drawn underneath (the halo, hidden on paper), and the hands,
+   feet and z's a light outline. The cream body reads on both already. */
+.cs-halo {
+  display: none;
+  fill: none;
+  stroke: var(--cassette-shell);
+  stroke-width: calc(var(--cs-limb) + var(--cs-line) * 1.6);
+  stroke-linecap: round;
+}
+
+[data-surface='dark'] .cs-halo {
+  display: inline;
+}
+
+[data-surface='dark'] .cs-hand,
+[data-surface='dark'] .cs-foot,
+[data-surface='dark'] .cs-zz {
+  stroke: var(--cassette-shell);
+  stroke-width: calc(var(--cs-line) * 0.8);
+}
