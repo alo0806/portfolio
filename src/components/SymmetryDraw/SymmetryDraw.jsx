@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { prefersReducedMotion } from '../../lib/motion'
+import { onFrame } from '../../lib/ticker'
 import { DEMO_LENGTH, DEMO_STROKES, DEMO_TIMING } from './demo'
 import DrawOverlay from './DrawOverlay'
 import { colorMap, drawAll, drawStroke, fitCanvas, getSnapshot, subscribe } from './engine'
@@ -20,11 +21,12 @@ function DemoCanvas({ active }) {
     const canvas = canvasRef.current
     if (!canvas) return undefined
     let frame = fitCanvas(canvas, cardRadius)
-    let raf = 0
-    let last = performance.now()
+    let stopTicking = null
     let time = 0
-    let visible = true
+    let visible = false
     const reduced = prefersReducedMotion()
+    const html = document.documentElement
+    const paused = () => html.dataset.playing === 'false'
 
     const render = () => {
       const { ctx } = frame
@@ -46,13 +48,20 @@ function DemoCanvas({ active }) {
       ctx.globalAlpha = 1
     }
 
-    const tick = (now) => {
-      const dt = Math.min((now - last) / 1000, 0.1)
-      last = now
-      const paused = document.documentElement.dataset.playing === 'false'
-      if (active && visible && !paused) time = (time + dt) % DEMO_LENGTH
+    // On the shared ticker only while it can actually be seen moving:
+    // active (no drawing yet), on screen, and the site not paused.
+    const running = () => active && visible && !paused() && !reduced
+    const tick = (now, dt) => {
+      if (!running()) {
+        stopTicking = null
+        return false
+      }
+      time = (time + dt) % DEMO_LENGTH
       render()
-      raf = requestAnimationFrame(tick)
+      return true
+    }
+    const wake = () => {
+      if (running() && !stopTicking) stopTicking = onFrame(tick)
     }
 
     const resize = new ResizeObserver(() => {
@@ -62,16 +71,21 @@ function DemoCanvas({ active }) {
     resize.observe(canvas)
     const onScreen = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting
+      wake()
     })
     onScreen.observe(canvas)
+    // The site's play / pause (data-playing on <html>).
+    const playState = new MutationObserver(wake)
+    playState.observe(html, { attributes: true, attributeFilter: ['data-playing'] })
 
-    if (reduced || !active) render()
-    else raf = requestAnimationFrame(tick)
+    render()
+    wake()
 
     return () => {
-      cancelAnimationFrame(raf)
+      stopTicking?.()
       resize.disconnect()
       onScreen.disconnect()
+      playState.disconnect()
     }
   }, [active])
 

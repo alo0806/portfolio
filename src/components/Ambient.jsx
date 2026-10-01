@@ -1,18 +1,22 @@
 import { useEffect, useRef } from 'react'
 import useReducedMotion from '../hooks/useReducedMotion'
+import { canvasPixelRatio, onFrame } from '../lib/ticker'
 import { readToken } from '../lib/tokens'
 import { usePlayer } from './player/playerContext'
 import './Ambient.css'
 
 /* The intro's backdrop: a few soft particles rising, three slow waveform
    lines, and sound-ripple rings wherever you click. One canvas; particle
-   glows are pre-rendered sprites (no shadowBlur); resolution is capped at
-   2×; the loop pauses off screen. Pausing the player freezes the drift,
-   and reduced motion draws one still frame and ignores clicks. */
+   glows are pre-rendered sprites (no shadowBlur); resolution is capped
+   (canvasPixelRatio) and the particle count follows the screen's area
+   within fixed bounds, so a big monitor doesn't get several times the
+   work. It runs on the shared frame ticker, pauses off screen, and rests
+   entirely while nothing moves (player paused, no ripples). Reduced
+   motion draws one still frame and ignores clicks. */
 
 const TAU = Math.PI * 2
-const MAX_DPR = 2
 const MAX_RIPPLES = 24
+const PARTICLES = { perPixels: 30000, min: 14, max: 44 }
 
 const rand = (min, max) => min + Math.random() * (max - min)
 
@@ -43,9 +47,11 @@ export default function Ambient({ className = '', interactive = false }) {
   const reduced = useReducedMotion()
   const { playing } = usePlayer()
   const playingRef = useRef(playing)
+  const wakeRef = useRef(null)
 
   useEffect(() => {
     playingRef.current = playing
+    wakeRef.current?.()
   }, [playing])
 
   useEffect(() => {
@@ -65,12 +71,13 @@ export default function Ambient({ className = '', interactive = false }) {
     let waves = []
     const ripples = []
     let clock = 0
-    let frame = 0
-    let last = performance.now()
+    let stopTicking = null
     let onScreen = true
 
     const build = () => {
-      const count = Math.min(70, Math.round((width * height) / 22000))
+      const count = Math.round(
+        Math.min(PARTICLES.max, Math.max(PARTICLES.min, (width * height) / PARTICLES.perPixels)),
+      )
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
@@ -144,28 +151,34 @@ export default function Ambient({ className = '', interactive = false }) {
       }
     }
 
-    const loop = (now) => {
-      const dt = Math.min((now - last) / 1000, 1 / 20)
-      last = now
-      step(dt)
+    // Rest when nothing would change on screen: paused, and no ripples.
+    const tick = (now, frameDt) => {
+      if (!onScreen) {
+        stopTicking = null
+        return false
+      }
+      step(Math.min(frameDt, 1 / 20))
       draw()
-      frame = requestAnimationFrame(loop)
+      if (!playingRef.current && ripples.length === 0) {
+        stopTicking = null
+        return false
+      }
+      return true
     }
 
     const start = () => {
-      if (reduced || frame || !onScreen) return
-      last = performance.now()
-      frame = requestAnimationFrame(loop)
+      if (reduced || stopTicking || !onScreen) return
+      stopTicking = onFrame(tick)
     }
 
     const stop = () => {
-      if (frame) cancelAnimationFrame(frame)
-      frame = 0
+      stopTicking?.()
+      stopTicking = null
     }
 
     const resize = () => {
       const rect = host.getBoundingClientRect()
-      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
+      const dpr = canvasPixelRatio()
       width = rect.width
       height = rect.height
       canvas.width = Math.round(width * dpr)
@@ -181,6 +194,7 @@ export default function Ambient({ className = '', interactive = false }) {
         ripples.push({ x, y, age: -i * 0.14, life: 1.2, reach: 150 + i * 30, tone: i === 0 ? 1 : 0 })
       }
       ripples.splice(0, Math.max(0, ripples.length - MAX_RIPPLES))
+      start()
     }
 
     const onPointerDown = (event) => {
@@ -200,8 +214,10 @@ export default function Ambient({ className = '', interactive = false }) {
     canvas.addEventListener('pointerdown', onPointerDown)
     resize()
     start()
+    wakeRef.current = start
 
     return () => {
+      wakeRef.current = null
       stop()
       sizeObserver.disconnect()
       visibility.disconnect()

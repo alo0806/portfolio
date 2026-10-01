@@ -1,3 +1,4 @@
+import { canvasPixelRatio } from '../../lib/ticker'
 import { readToken } from '../../lib/tokens'
 
 /* The drawing, as data. Each stroke is kept in coordinates relative to
@@ -84,7 +85,7 @@ export function resolveColor(token) {
    stay sharp) and returns the drawing frame: centre and radius in CSS px. */
 export function fitCanvas(canvas, radiusFor = (w, h) => Math.min(w, h) / 2) {
   const rect = canvas.getBoundingClientRect()
-  const dpr = window.devicePixelRatio || 1
+  const dpr = canvasPixelRatio() // capped: sharp enough, without multiplying the work
   const width = Math.max(1, Math.round(rect.width * dpr))
   const height = Math.max(1, Math.round(rect.height * dpr))
   if (canvas.width !== width) canvas.width = width

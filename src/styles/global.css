@@ -128,6 +128,14 @@ svg {
   --play-state: paused;
 }
 
+/* After ~10s with no input (src/lib/idle.js) the always-on loops hold in
+   place until the next mouse, scroll, key or touch: they're what keeps
+   the whole page repainting every frame when nobody's looking. */
+:root[data-idle='true'] .equalizer span,
+:root[data-idle='true'] .mascot__bob {
+  animation-play-state: paused;
+}
+
 /* ─── Track change: direction ──────────────────────────────────
    Before every page switch, <html data-track-dir> is set to "next" or
    "prev" (see src/lib/trackNav.js). "next" moves content left — the old

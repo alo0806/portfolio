@@ -11,6 +11,10 @@
   inset: 0;
   border-radius: 50%;
   background: var(--vinyl);
+}
+
+/* Only promoted to its own layer while it's actually turning. */
+.record__disc[data-turning='true'] {
   will-change: transform;
 }
 

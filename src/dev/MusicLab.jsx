@@ -1,13 +1,14 @@
 import { usePlayer } from '../components/player/playerContext'
 import { formatTime } from '../lib/formatTime'
 import { SOUND } from '../sound/config'
-import { seek, skip, useMusic } from '../sound/music'
+import { seek, skip, useMusic, useMusicTime } from '../sound/music'
 
 /* The music half of the lab: the playlist's transport, for checking
    songs, crossfades and levels (config.js → music). */
 export default function MusicLab() {
   const { musicOn, toggle } = usePlayer()
   const music = useMusic()
+  const time = useMusicTime()
 
   if (!music.available) {
     return (
@@ -21,7 +22,7 @@ export default function MusicLab() {
   return (
     <>
       <p className="lab__meta">
-        {music.song.title} — {music.song.artist} · {formatTime(music.time)} / {formatTime(music.duration)} ·
+        {music.song.title} — {music.song.artist} · {formatTime(time)} / {formatTime(music.duration)} ·
         music level {SOUND.music.level}
       </p>
       <div className="lab__grid">

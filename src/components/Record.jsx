@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import useReducedMotion from '../hooks/useReducedMotion'
+import { onFrame } from '../lib/ticker'
 import { usePlayer } from './player/playerContext'
 import './Record.css'
 
@@ -33,9 +34,11 @@ export default function Record({
   const reduced = useReducedMotion()
   const targetRef = useRef({ fast, playing, reduced })
   const startFastRef = useRef(startFast)
+  const wakeRef = useRef(null)
 
   useEffect(() => {
     targetRef.current = { fast, playing, reduced }
+    wakeRef.current?.()
   }, [fast, playing, reduced])
 
   useEffect(() => {
@@ -45,12 +48,12 @@ export default function Record({
     let angle = Math.random() * 360
     let speed = startFastRef.current && !targetRef.current.reduced ? FAST_SPEED : 0
     let blurred = false
-    let last = performance.now()
-    let frame = 0
+    let stopTicking = null
 
-    const tick = (now) => {
-      const dt = Math.min((now - last) / 1000, 1 / 20)
-      last = now
+    // On the shared ticker; rests once the disc has fully stopped and
+    // wakes again when the target speed changes.
+    const tick = (now, frameDt) => {
+      const dt = Math.min(frameDt, 1 / 20)
       const target = targetRef.current
       const goal = target.reduced ? 0 : target.fast ? FAST_SPEED : target.playing ? BASE_SPEED : 0
       const rate = target.fast ? EASE_SPINUP : EASE_NORMAL
@@ -62,12 +65,28 @@ export default function Record({
         blurred = blur
         disc.dataset.blur = blur ? 'true' : 'false'
       }
-      frame = requestAnimationFrame(tick)
+      if (goal === 0 && speed < 0.5) {
+        speed = 0
+        stopTicking = null
+        disc.dataset.turning = 'false'
+        return false
+      }
+      return true
     }
 
+    const wake = () => {
+      if (stopTicking) return
+      disc.dataset.turning = 'true'
+      stopTicking = onFrame(tick)
+    }
+    wakeRef.current = wake
+
     disc.style.transform = `rotate(${angle}deg)`
-    frame = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(frame)
+    wake()
+    return () => {
+      stopTicking?.()
+      wakeRef.current = null
+    }
   }, [])
 
   return (

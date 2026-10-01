@@ -10,9 +10,18 @@
 }
 
 .mascot__svg {
+  display: block;
   width: var(--mascot);
   height: auto;
   overflow: visible;
+  transform-origin: 50% 95%;
+}
+
+/* The bob is on a wrapper rather than the <svg> itself: an inline svg's
+   own transform animation can't run on the GPU (it restyles on the main
+   thread every frame); a plain box's can. Looks identical. */
+.mascot__bob {
+  display: block;
   transform-origin: 50% 95%;
   animation: mascot-bob var(--beat) ease-in-out infinite alternate;
   animation-play-state: var(--play-state);

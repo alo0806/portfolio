@@ -9,9 +9,17 @@ html.has-custom-cursor :is(input, textarea, select, [contenteditable='true']) {
   cursor: text !important;
 }
 
+/* A zero-size box at the top-left; the dot and ring are positioned from
+   it by transform. Kept tiny on purpose: the blend mode below applies to
+   this element's painted area, so a full-screen box would make the
+   browser blend the whole screen every frame the cursor moves. */
 .cursor {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  overflow: visible;
   z-index: 1100;
   pointer-events: none;
   opacity: 0;

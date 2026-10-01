@@ -17,6 +17,10 @@
   animation-play-state: var(--play-state);
 }
 
+.waveform[data-offscreen='true'] span {
+  animation-play-state: paused;
+}
+
 @keyframes wave {
   from {
     scale: 1 calc(var(--h) * 0.35);

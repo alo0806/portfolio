@@ -36,6 +36,7 @@ let holdAt = null // during a delayed start: where the song will (re)start from
 let lastSaved = 0
 const failed = new Set()
 const listeners = new Set()
+const timeListeners = new Set()
 const blockedListeners = new Set()
 
 restore()
@@ -175,6 +176,28 @@ export function useMusic() {
   return useSyncExternalStore(subscribeMusic, getMusic, getMusic)
 }
 
+/* The song's position, on its own channel: it changes several times a
+   second, so it's kept out of the snapshot above (which would re-render
+   the whole player bar each time). The progress bar subscribes here and
+   writes to the DOM directly. */
+export function subscribeTime(listener) {
+  timeListeners.add(listener)
+  return () => timeListeners.delete(listener)
+}
+
+export function getTime() {
+  const d = decks[active]
+  const loaded = d && d.song === index
+  // During a delayed start the song runs silently; show where it will
+  // actually begin instead.
+  return holdAt ?? (loaded && d.seekTo == null ? d.el.currentTime : resumeAt)
+}
+
+/* For places that are fine re-rendering with the position (the dev lab). */
+export function useMusicTime() {
+  return useSyncExternalStore(subscribeTime, getTime, getTime)
+}
+
 export function hasMusic() {
   return available()
 }
@@ -304,7 +327,7 @@ function onTime(d) {
     if (left <= crossfade + preloadLead) preloadNext()
   }
   save()
-  update()
+  notifyTime()
 }
 
 /* Shortly before a crossfade, start downloading the next song on the
@@ -363,16 +386,25 @@ function build() {
     next: next >= 0 && next !== index ? SONGS[next] : null,
     prev: prev >= 0 && prev !== index ? SONGS[prev] : null,
     playing: wanted,
-    // During a delayed start the song is running silently; show where it
-    // will actually begin instead.
-    time: holdAt ?? (loaded && d.seekTo == null ? d.el.currentTime : resumeAt),
     duration,
   }
 }
 
+const sameSnapshot = (a, b) => Object.keys(a).every((key) => a[key] === b[key])
+
+/* Only hands React a new snapshot when something in it actually changed,
+   so position updates (and repeated calls) don't re-render anything. */
 function update() {
-  snapshot = build()
-  listeners.forEach((listener) => listener())
+  const next = build()
+  if (!sameSnapshot(snapshot, next)) {
+    snapshot = next
+    listeners.forEach((listener) => listener())
+  }
+  notifyTime()
+}
+
+function notifyTime() {
+  timeListeners.forEach((listener) => listener())
 }
 
 /* ─── Session memory ───────────────────────────────────────────── */
