@@ -1,0 +1,156 @@
+.mlab {
+  max-width: 1200px;
+}
+
+.mlab__controls {
+  display: grid;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+
+.mlab__row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.mlab__label {
+  font-size: var(--fs-small);
+  font-weight: 500;
+  color: var(--muted-ink);
+}
+
+.mlab__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mlab__chip {
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  font-size: var(--fs-small);
+}
+
+.mlab__chip[aria-pressed='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.mlab__chip:disabled {
+  opacity: 0.5;
+}
+
+.mlab__beat {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted-ink);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+}
+
+.mlab__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.15;
+}
+
+/* ─── Stages ─── */
+
+.mlab__stages {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+  margin-top: var(--sp-5);
+}
+
+.mlab__stage {
+  --bar: 64px; /* the mock player bar's height */
+  overflow: hidden;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* Taller bar for the large figure, so its legs can dangle over it. */
+.mlab__stage[data-size='large'] {
+  --bar: 120px;
+}
+
+.mlab__stage[data-surface='dark'] {
+  background: var(--indigo);
+  color: var(--on-indigo);
+  border-color: transparent;
+}
+
+.mlab__caption {
+  padding: 10px 14px 0;
+  color: inherit;
+  font-size: var(--fs-label);
+  opacity: 0.7;
+}
+
+/* Room above the ground for jumps and the speech bubble. */
+.mlab__scene {
+  position: relative;
+  height: 480px;
+}
+
+.mlab__stage[data-size='small'] .mlab__scene {
+  height: 220px;
+}
+
+.mlab__mascot {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 1;
+}
+
+.mlab__stage[data-size='small'] .mlab__mascot {
+  left: auto;
+  right: 24px;
+  translate: none;
+}
+
+/* The mock player bar: the mascot stands on its top edge. */
+.mlab__bar {
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--bar);
+  border-top: 1px solid var(--line-strong);
+  background: var(--sidebar);
+}
+
+.mlab__stage[data-surface='dark'] .mlab__bar {
+  border-top-color: var(--indigo-line);
+  background: var(--indigo-raised);
+}
+
+@media (max-width: 760px) {
+  .mlab__stages {
+    grid-template-columns: 1fr;
+  }
+
+  .mlab__row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .mlab__beat {
+    grid-column: 1;
+  }
+
+  .mlab__scene {
+    height: 400px;
+  }
+}
