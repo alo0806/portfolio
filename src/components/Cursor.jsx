@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import useFinePointer from '../hooks/useFinePointer'
 import useReducedMotion from '../hooks/useReducedMotion'
+import { onFrame } from '../lib/ticker'
 import { readToken } from '../lib/tokens'
 import './Cursor.css'
 
@@ -42,7 +43,23 @@ export default function Cursor() {
     let y = -100
     let rx = x
     let ry = y
-    let frame = 0
+    let stopTicking = null
+
+    // Runs only while there's something to move: the dot follows the
+    // pointer, the ring eases after it, and once the ring has caught up
+    // the loop stops until the pointer moves again.
+    const tick = (now, dt) => {
+      const ease = 1 - (1 - RING_EASE) ** (dt * 60) // the same feel at any refresh rate
+      rx += (x - rx) * ease
+      ry += (y - ry) * ease
+      dot.style.transform = `translate3d(${x}px, ${y}px, 0)`
+      ring.style.transform = `translate3d(${rx.toFixed(2)}px, ${ry.toFixed(2)}px, 0)`
+      if (Math.abs(x - rx) < 0.1 && Math.abs(y - ry) < 0.1) {
+        stopTicking = null
+        return false
+      }
+      return true
+    }
 
     const onMove = (event) => {
       if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') {
@@ -55,6 +72,7 @@ export default function Cursor() {
         ry = y
         root.dataset.visible = 'true'
       }
+      if (!stopTicking) stopTicking = onFrame(tick)
     }
 
     const onOver = (event) => {
@@ -76,23 +94,14 @@ export default function Cursor() {
       root.dataset.visible = 'false'
     }
 
-    const loop = () => {
-      rx += (x - rx) * RING_EASE
-      ry += (y - ry) * RING_EASE
-      dot.style.transform = `translate3d(${x}px, ${y}px, 0)`
-      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`
-      frame = requestAnimationFrame(loop)
-    }
-
     window.addEventListener('pointermove', onMove, { passive: true })
     window.addEventListener('pointerover', onOver, { passive: true })
     window.addEventListener('pointerdown', onDown, { passive: true })
     window.addEventListener('pointerup', onUp, { passive: true })
     document.documentElement.addEventListener('mouseleave', onLeave)
-    frame = requestAnimationFrame(loop)
 
     return () => {
-      cancelAnimationFrame(frame)
+      stopTicking?.()
       html.classList.remove('has-custom-cursor')
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerover', onOver)

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { mascotLines, nowPlaying } from '../data/content'
 import useReducedMotion from '../hooks/useReducedMotion'
+import { onFrame } from '../lib/ticker'
 import { sound } from '../sound/engine'
 import { getMusic } from '../sound/music'
 import './Mascot.css'
@@ -71,8 +72,10 @@ export default function Mascot({ size = 88, align = 'center' }) {
 
   useEffect(() => () => window.clearTimeout(hideTimerRef.current), [])
 
-  /* Eyes follow the cursor. Skipped while the mascot isn't displayed
-     (e.g. the desktop sidebar on a phone) and under reduced motion. */
+  /* Eyes follow the cursor. The work happens on the shared frame ticker,
+     and only while there's something to do: after the pointer moves, until
+     the pupils have settled. Skipped while the mascot isn't on screen
+     (e.g. the phone menu's mascot on desktop) and under reduced motion. */
   useEffect(() => {
     const svg = svgRef.current
     const pupils = [pupilLeftRef.current, pupilRightRef.current]
@@ -80,39 +83,57 @@ export default function Mascot({ size = 88, align = 'center' }) {
 
     let px = null
     let py = null
-    let frame = 0
+    let visible = false
+    let stopTicking = null
     const look = EYES.map(() => ({ x: 0, y: 0 }))
 
-    const onMove = (event) => {
-      px = event.clientX
-      py = event.clientY
-    }
-
-    const loop = () => {
-      frame = requestAnimationFrame(loop)
-      if (px === null || !svg.isConnected || svg.getClientRects().length === 0) return
+    const tick = (now, dt) => {
+      if (px === null || !visible) {
+        stopTicking = null
+        return false
+      }
       const rect = svg.getBoundingClientRect()
       const scale = rect.width / 96
+      const ease = 1 - 0.75 ** (dt * 60) // 0.25 per frame at 60fps
+      let settled = true
       EYES.forEach((eye, i) => {
-        const ex = rect.left + eye.cx * scale
-        const ey = rect.top + eye.cy * scale
-        const dx = px - ex
-        const dy = py - ey
+        const dx = px - (rect.left + eye.cx * scale)
+        const dy = py - (rect.top + eye.cy * scale)
         const distance = Math.hypot(dx, dy) || 1
         const reach = Math.min(distance / 140, 1) * PUPIL_REACH
-        look[i].x += ((dx / distance) * reach - look[i].x) * 0.25
-        look[i].y += ((dy / distance) * reach - look[i].y) * 0.25
+        const tx = (dx / distance) * reach
+        const ty = (dy / distance) * reach
+        look[i].x += (tx - look[i].x) * ease
+        look[i].y += (ty - look[i].y) * ease
+        if (Math.abs(tx - look[i].x) > 0.01 || Math.abs(ty - look[i].y) > 0.01) settled = false
         pupils[i].setAttribute(
           'transform',
           `translate(${look[i].x.toFixed(2)} ${look[i].y.toFixed(2)})`,
         )
       })
+      if (settled) stopTicking = null
+      return !settled
     }
 
+    const wake = () => {
+      if (visible && px !== null && !stopTicking) stopTicking = onFrame(tick)
+    }
+
+    const onMove = (event) => {
+      px = event.clientX
+      py = event.clientY
+      wake()
+    }
+
+    const onScreen = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      wake()
+    })
+    onScreen.observe(svg)
     window.addEventListener('pointermove', onMove, { passive: true })
-    frame = requestAnimationFrame(loop)
     return () => {
-      cancelAnimationFrame(frame)
+      stopTicking?.()
+      onScreen.disconnect()
       window.removeEventListener('pointermove', onMove)
     }
   }, [reduced])
@@ -153,43 +174,48 @@ export default function Mascot({ size = 88, align = 'center' }) {
         onClick={onClick}
         onBlur={() => hideSoon(600)}
       >
-        <svg
-          ref={svgRef}
-          className="mascot__svg"
-          viewBox="0 0 96 84"
-          width="96"
-          height="84"
-          aria-hidden="true"
-          focusable="false"
-          data-blink="false"
-        >
-          <ellipse cx="48" cy="80" rx="30" ry="3" className="mascot__shadow" />
-          <path
-            className="mascot__body"
-            d="M48 8 C72 8 90 26 90 50 C90 68 76 78 48 78 C20 78 6 68 6 50 C6 26 24 8 48 8 Z"
-          />
-          <ellipse
-            cx="31"
-            cy="24"
-            rx="9"
-            ry="5"
-            transform="rotate(-28 31 24)"
-            className="mascot__shine"
-          />
-          <ellipse cx="25" cy="57" rx="5" ry="3" className="mascot__cheek" />
-          <ellipse cx="71" cy="57" rx="5" ry="3" className="mascot__cheek" />
-          <g className="mascot__eyes">
-            {EYES.map((eye, i) => (
-              <g key={eye.cx}>
-                <ellipse cx={eye.cx} cy={eye.cy} rx="7" ry="8.5" className="mascot__white" />
-                <g ref={i === 0 ? pupilLeftRef : pupilRightRef}>
-                  <circle cx={eye.cx} cy={eye.cy + 0.5} r="3.8" className="mascot__pupil" />
-                  <circle cx={eye.cx + 1.4} cy={eye.cy - 1} r="1.1" className="mascot__glint" />
+        {/* The bob runs on this wrapper, not the <svg>: browsers can't
+            hand an inline svg's own animation to the GPU, so it would
+            restyle on the main thread every frame. */}
+        <span className="mascot__bob">
+          <svg
+            ref={svgRef}
+            className="mascot__svg"
+            viewBox="0 0 96 84"
+            width="96"
+            height="84"
+            aria-hidden="true"
+            focusable="false"
+            data-blink="false"
+          >
+            <ellipse cx="48" cy="80" rx="30" ry="3" className="mascot__shadow" />
+            <path
+              className="mascot__body"
+              d="M48 8 C72 8 90 26 90 50 C90 68 76 78 48 78 C20 78 6 68 6 50 C6 26 24 8 48 8 Z"
+            />
+            <ellipse
+              cx="31"
+              cy="24"
+              rx="9"
+              ry="5"
+              transform="rotate(-28 31 24)"
+              className="mascot__shine"
+            />
+            <ellipse cx="25" cy="57" rx="5" ry="3" className="mascot__cheek" />
+            <ellipse cx="71" cy="57" rx="5" ry="3" className="mascot__cheek" />
+            <g className="mascot__eyes">
+              {EYES.map((eye, i) => (
+                <g key={eye.cx}>
+                  <ellipse cx={eye.cx} cy={eye.cy} rx="7" ry="8.5" className="mascot__white" />
+                  <g ref={i === 0 ? pupilLeftRef : pupilRightRef}>
+                    <circle cx={eye.cx} cy={eye.cy + 0.5} r="3.8" className="mascot__pupil" />
+                    <circle cx={eye.cx + 1.4} cy={eye.cy - 1} r="1.1" className="mascot__glint" />
+                  </g>
                 </g>
-              </g>
-            ))}
-          </g>
-        </svg>
+              ))}
+            </g>
+          </svg>
+        </span>
       </button>
     </div>
   )

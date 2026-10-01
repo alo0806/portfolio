@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import useReducedMotion from '../../hooks/useReducedMotion'
+import { onFrame } from '../../lib/ticker'
 import './MiniRecord.css'
 
 const SPEED = 120 // degrees per second at full speed (one turn every 3s)
@@ -33,32 +34,35 @@ export default function MiniRecord({ label, spinning }) {
     if (!disc || reduced) return undefined
     let angle = 0
     let speed = spinningRef.current ? SPEED : 0
-    let last = 0
-    let frame = 0
+    let stopTicking = null
 
-    const tick = (now) => {
-      const dt = Math.min((now - last) / 1000, 0.1)
-      last = now
+    const tick = (now, dt) => {
       const goal = spinningRef.current ? SPEED : 0
       speed += (goal - speed) * (1 - Math.exp(-EASE * dt))
       if (goal === 0 && speed < STILL) speed = 0
       angle = (angle + speed * dt) % 360
       disc.style.transform = `rotate(${angle.toFixed(2)}deg)`
-      // Settled and stopped: let the loop rest until play is pressed.
-      frame = goal === 0 && speed === 0 ? 0 : requestAnimationFrame(tick)
+      // Settled and stopped: leave the ticker until play is pressed.
+      if (goal === 0 && speed === 0) {
+        stopTicking = null
+        disc.dataset.turning = 'false'
+        return false
+      }
+      return true
     }
 
     startRef.current = () => {
-      if (frame) return
-      last = performance.now()
-      frame = requestAnimationFrame(tick)
+      if (stopTicking) return
+      disc.dataset.turning = 'true'
+      stopTicking = onFrame(tick)
     }
     if (spinningRef.current) startRef.current()
 
     return () => {
-      cancelAnimationFrame(frame)
+      stopTicking?.()
       startRef.current = null
       disc.style.transform = ''
+      disc.dataset.turning = 'false'
     }
   }, [reduced])
 

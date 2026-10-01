@@ -251,7 +251,7 @@ export default function PlayerBar() {
           </button>
         </div>
         {music.available ? (
-          <SeekBar time={music.time} duration={music.duration} />
+          <SeekBar duration={music.duration} />
         ) : (
           /* How far you've scrolled through this page. */
           <span className="player__progress" aria-hidden="true">

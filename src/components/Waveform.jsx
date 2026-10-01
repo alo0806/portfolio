@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import './Waveform.css'
 
 const BARS = 48
@@ -5,10 +6,23 @@ const BARS = 48
 /* A row of bars rising and falling at slightly different rates — a
    waveform built in CSS, so it pauses with the player and holds still
    under reduced motion. Heights and timings are fixed per bar (not
-   random) so the shape is stable between renders. */
+   random) so the shape is stable between renders. Off screen, the bars
+   stop animating (no work for something nobody can see). */
 export default function Waveform({ className = '' }) {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return undefined
+    const onScreen = new IntersectionObserver(([entry]) => {
+      el.dataset.offscreen = entry.isIntersecting ? 'false' : 'true'
+    })
+    onScreen.observe(el)
+    return () => onScreen.disconnect()
+  }, [])
+
   return (
-    <div className={`waveform ${className}`.trim()} aria-hidden="true">
+    <div className={`waveform ${className}`.trim()} ref={ref} aria-hidden="true">
       {Array.from({ length: BARS }, (_, i) => {
         const envelope = Math.sin((i / (BARS - 1)) * Math.PI)
         const height = 0.18 + envelope * (0.55 + 0.27 * Math.sin(i * 1.7))
