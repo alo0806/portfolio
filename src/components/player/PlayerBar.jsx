@@ -2,11 +2,12 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { nowPlaying } from '../../data/content'
 import { TRACKS, trackIndexFor } from '../../data/tracks'
+import { readNumberToken } from '../../lib/tokens'
 import { stepTrack } from '../../lib/trackNav'
 import { sound } from '../../sound/engine'
 import { previous as previousSong, skip as skipSong, useMusic } from '../../sound/music'
-import Mascot from '../Mascot'
 import SoundToggle from '../SoundToggle'
+import CassetteMascot from '../cassette/CassetteMascot'
 import VolumeSlider from '../VolumeSlider'
 import { DoubleNextIcon, DoublePrevIcon, NextIcon, PrevIcon } from '../icons'
 import QueuePopover from './QueuePopover'
@@ -17,6 +18,21 @@ import '../covers.css'
 import './PlayerBar.css'
 
 const MARQUEE_SPEED = 38 // px per second
+
+/* The cassette stands on the bar's top edge at its right end (--perch in
+   tokens.css is its box's height). Its ground line is a little above the
+   bottom of its box — the button's 4px padding plus the drawing's own
+   margin below the feet (3 of its 80 units) — so the box hangs that far
+   down over the edge. Paused, it sits on the edge and its legs dangle
+   over the bar. Page content keeps clear of it (--perch-clear). */
+function Perch() {
+  const [size] = useState(() => readNumberToken('--perch', 68))
+  return (
+    <div className="player__perch" style={{ bottom: `calc(100% - ${4 + (size * 3) / 80}px)` }}>
+      <CassetteMascot size={size} align="end" />
+    </div>
+  )
+}
 
 /* Pinned to the bottom of the main area.
    - prev / next step through the tracklist (wrapping at either end), via
@@ -265,7 +281,7 @@ export default function PlayerBar() {
           <SoundToggle />
           <VolumeSlider />
         </div>
-        <Mascot size={52} align="end" />
+        <Perch />
       </div>
     </section>
   )

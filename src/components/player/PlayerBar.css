@@ -425,13 +425,20 @@ button.player__nowbtn[aria-expanded='true'] {
 }
 
 
-/* ─── Mascot ─── */
+/* ─── Right side: volume, and the cassette perched above it ─── */
 
 .player__side {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: var(--sp-2);
+}
+
+/* Positioned against the bar itself; `bottom` (set inline) puts the
+   cassette's feet exactly on the bar's top edge. */
+.player__perch {
+  position: absolute;
+  right: var(--sp-3);
 }
 
 /* ─── Volume: mute button + slider ─── */
@@ -524,7 +531,7 @@ button.player__nowbtn[aria-expanded='true'] {
   /* Phones have volume buttons; the mute button stays. */
   .player__btn--prev,
   .player__btn--song-prev,
-  .player__side .mascot,
+  .player__perch,
   .volume {
     display: none;
   }

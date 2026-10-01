@@ -9,9 +9,9 @@ import { skip, useMusic } from '../sound/music'
 import './SoundLab.css'
 import './MascotLab.css'
 
-/* Dev-only (/mascot): the cassette buddy, for review before it replaces
-   the blob. Every state, action and expression has a button; "Play
-   music" runs the real player, so vibing follows the real beat tracker.
+/* Dev-only (/mascot): the cassette buddy, for reviewing changes to it.
+   Every state, action and expression has a button; "Play music" runs
+   the real player, so vibing follows the real beat tracker.
    It's shown large and at its real player-bar size, on paper and on
    indigo, standing on (or sitting at the edge of) a mock player bar. */
 
@@ -24,8 +24,9 @@ const BASES = [
 ]
 const ACTIONS = [
   { name: 'look', label: 'Look', detail: 'looks around (or move your cursor)' },
-  { name: 'songChange', label: 'Song change', detail: 'tape flip, A ↔ B' },
-  { name: 'hover', label: 'Hover', detail: 'waves (or hover it)' },
+  { name: 'songChange', label: 'Song change', detail: 'tape flip; the arrow turns around' },
+  { name: 'waveLeft', label: 'Wave (left arm)', detail: 'or hover its left side' },
+  { name: 'waveRight', label: 'Wave (right arm)', detail: 'or hover its right side' },
   { name: 'click', label: 'Click', detail: 'startled jump, then talks' },
   { name: 'talking', label: 'Talking', detail: 'holds up the bubble' },
 ]
@@ -38,8 +39,8 @@ const EXPRESSIONS = [
 const STAGES = [
   { size: 'large', surface: 'light', title: 'Large · paper' },
   { size: 'large', surface: 'dark', title: 'Large · indigo' },
-  { size: 52, surface: 'light', title: 'Player bar · paper', align: 'end' },
-  { size: 52, surface: 'dark', title: 'Player bar · indigo', align: 'end' },
+  { size: 68, surface: 'light', title: 'Player bar · paper', align: 'end' },
+  { size: 68, surface: 'dark', title: 'Player bar · indigo', align: 'end' },
   { size: 40, surface: 'light', title: 'Smallest (40px) · paper' },
 ]
 

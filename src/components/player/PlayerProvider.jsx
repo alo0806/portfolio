@@ -19,7 +19,7 @@ function readPlaying() {
 }
 
 /* "Playing" means the site's ambient motion is on: the record, the
-   equalizer, the mascot's bob, the cover spin. The state is mirrored to
+   equalizer, the mascot's dancing, the cover spin. The state is mirrored to
    <html data-playing> so CSS can pause every loop from one place, and
    remembered for the session.
 

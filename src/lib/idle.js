@@ -1,8 +1,8 @@
 /* "Is anyone using the page right now?" After IDLE_MS with no mouse,
    scroll, key or touch input, <html data-idle="true"> is set, and the
-   ambient CSS loops that opt in (equalizer bars, mascot bob) hold where
-   they are. The next input clears it and they carry on from the same
-   spot — no jump.
+   ambient CSS loops that opt in (the equalizer bars) hold where
+   they are, and the mascot comes to rest (onIdleChange). The next input
+   clears it and they carry on from the same spot — no jump.
 
    Why: any always-running animation makes the browser repaint the whole
    page every frame (165 times a second on a fast screen), even when

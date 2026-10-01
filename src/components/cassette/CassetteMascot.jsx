@@ -8,7 +8,6 @@ import { SOUND } from '../../sound/config'
 import { sound } from '../../sound/engine'
 import { getMusic, useMusic } from '../../sound/music'
 import { usePlayer } from '../player/playerContext'
-import '../Mascot.css'
 import './CassetteMascot.css'
 import {
   BODY,
@@ -62,7 +61,7 @@ function lineAt(index) {
    limbs and weight (no squash): breathing, leaning toward the cursor,
    dancing to the music's real beat (sound/beat.js), sitting on the ledge
    when the music is paused and dozing off, flipping over like a tape
-   when the song changes, waving on hover, jumping when clicked, holding
+   when the song changes, waving (with the arm on your side) on hover, jumping when clicked, holding
    up its speech bubble while it talks.
 
    Every frame's pose is computed in rig.js and written straight to the
@@ -78,7 +77,7 @@ function lineAt(index) {
      page); otherwise it follows the player
    - expression: 'happy' | 'surprised' | 'sleepy' | null
    - cue: { name, id } — a new id plays that action once ('look',
-     'songChange', 'hover', 'click', 'talking') */
+     'songChange', 'hover', 'waveLeft', 'waveRight', 'click', 'talking') */
 export default function CassetteMascot({ size = 52, align = 'center', base, expression = null, cue }) {
   const reduced = useReducedMotion()
   const { playing } = usePlayer()
@@ -141,6 +140,8 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
     // Actions in progress: { started, weight }.
     const actions = {}
     let hovering = false
+    let hoverSide = 0 // forced by the review page: -1 left arm, 1 right, 0 = the cursor's side
+    let waveSide = -1
     let talkUntil = 0
     let talkingWords = 0
     let pausedSince = wanted.current.base === 'paused' ? start : 0
@@ -221,10 +222,6 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
       write(el.closed, 'opacity', clamp((pose.lid - 0.85) / 0.15).toFixed(3))
       write(el.closed, 'transform', `translate(${ox} ${oy})`)
       write(el.happy, 'transform', `translate(${ox} ${oy})`)
-      write(el.mSmile, 'opacity', clamp(pose.mSmile).toFixed(3))
-      write(el.mOpen, 'opacity', clamp(pose.mOpen).toFixed(3))
-      write(el.mO, 'opacity', clamp(pose.mO).toFixed(3))
-      write(el.mFlat, 'opacity', clamp(pose.mFlat).toFixed(3))
       write(el.zz, 'opacity', clamp(pose.zz).toFixed(3))
     }
 
@@ -296,16 +293,24 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
       }
       act('songChange', flip < 1 && !rm, (p) => flipAction(p, clamp(flip)), 0.04)
       act('click', jump < 1 && !rm, (p) => jumpAction(p, clamp(jump)), 0.04)
-      act('hover', hovering, (p) => waveAction(p, rm ? 0 : t))
+      // Wave with the arm on the cursor's side (or the one the review page
+      // asked for). Each arm has its own weight, so moving the cursor
+      // across hands the wave from one arm to the other smoothly.
+      readBox(now)
+      if (hovering) {
+        if (hoverSide) waveSide = hoverSide
+        else if (px !== null && box) waveSide = px > box.left + pose.cx * box.ppu ? 1 : -1
+      }
+      act('waveLeft', hovering && waveSide < 0, (p) => waveAction(p, rm ? 0 : t, -1))
+      act('waveRight', hovering && waveSide > 0, (p) => waveAction(p, rm ? 0 : t, 1))
       const talking = now < talkUntil ? 1 : 0
       const words = talkingWords * SOUND.babble.gap
       const sinceTalk = talkUntil ? (now - (talkUntil - BUBBLE_MS)) / 1000 : 99
-      const mouth = !rm && sinceTalk < words ? 0.5 + 0.5 * Math.sin((sinceTalk * Math.PI * 2) / (SOUND.babble.gap * 2)) : 0.25
-      act('talking', talking && jump >= 1, (p) => holdAction(p, rm ? 0 : t, mouth), 0.18)
+      const bob = !rm && sinceTalk < words ? Math.abs(Math.sin((sinceTalk * Math.PI) / SOUND.babble.gap)) : 0
+      act('talking', talking && jump >= 1, (p) => holdAction(p, rm ? 0 : t, bob), 0.18)
 
       // Looking: the reels follow the cursor (or the scripted target); far
       // to one side, the body leans that way too.
-      readBox(now)
       const target = lookAt ? lookAt(now) : px === null ? null : [px, py]
       let tx = 0
       let ty = 0
@@ -421,8 +426,9 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
         }
         wake()
       },
-      hover(on) {
+      hover(on, side = 0) {
         hovering = on
+        if (on) hoverSide = side
         wake()
       },
       talk(text) {
@@ -493,8 +499,8 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
     if (!cue) return
     if (cue.name === 'talking') say()
     else if (cue.name === 'click') onClick()
-    else if (cue.name === 'hover') {
-      api.current.hover?.(true)
+    else if (cue.name === 'hover' || cue.name === 'waveLeft' || cue.name === 'waveRight') {
+      api.current.hover?.(true, cue.name === 'waveLeft' ? -1 : cue.name === 'waveRight' ? 1 : 0)
       window.clearTimeout(hoverTimerRef.current)
       hoverTimerRef.current = window.setTimeout(() => api.current.hover?.(false), 2200)
     } else api.current.play?.(cue.name)
@@ -516,8 +522,7 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
     '--cs-line': Math.max(1.1, 1.05 / ppu).toFixed(2),
     '--cs-fine': Math.max(0.7, 0.75 / ppu).toFixed(2),
   }
-  const clip = (i) => `cs-${uid}-lid-${i}`
-  const [[lx, ly], [rx, ry]] = REELS
+  const clip = (name) => `cs-${uid}-${name}`
 
   return (
     <div className="mascot cassette" data-align={align} style={{ '--mascot': `${(size * VIEW_W) / VIEW_H}px` }}>
@@ -546,7 +551,7 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
         >
           <defs>
             {REELS.map(([cx, cy], i) => (
-              <clipPath key={i} id={clip(i)}>
+              <clipPath key={i} id={clip(`lid-${i}`)}>
                 <circle cx={cx} cy={cy} r={REEL_R + 0.4} />
               </clipPath>
             ))}
@@ -586,34 +591,54 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
                 height={BODY.h}
                 rx={BODY.r}
               />
+              {/* The seam where the two halves of the shell meet. */}
+              <path className="cs-seam" d="M-26.4 12.6H-11.2M11.2 12.6H26.4" />
               {[
-                [-24.5, -13.8],
-                [24.5, -13.8],
-                [-24.5, 13.8],
-                [24.5, 13.8],
+                [-25.6, -15.6],
+                [25.6, -15.6],
+                [-25.6, 15.6],
+                [25.6, 15.6],
               ].map(([x, y]) => (
-                <circle key={`${x}${y}`} className="cs-screw" cx={x} cy={y} r="0.9" />
+                <g key={`${x}${y}`} className="cs-screw">
+                  <circle cx={x} cy={y} r="0.95" />
+                  <path className="cs-screw-slot" d={`M${x - 0.55} ${y}H${x + 0.55}`} />
+                </g>
+              ))}
+              {/* The pinch rollers' holes, bottom left and right. */}
+              {[-20.4, 20.4].map((x) => (
+                <g key={x}>
+                  <circle className="cs-roller" cx={x} cy="14.9" r="1.9" />
+                  <circle className="cs-roller-pin" cx={x} cy="14.9" r="0.6" />
+                </g>
               ))}
             </g>
 
             <g data-part="label">
-              <rect className="cs-label" x="-22" y="-15" width="44" height="9.5" rx="2.2" />
-              <text className="cs-label-text" x="0" y="-7.7" textAnchor="middle">
-                alo
-              </text>
-              <text className="cs-side" x="18.2" y="-8.2" textAnchor="middle">
-                {side}
-              </text>
+              <rect className="cs-sticker" x="-24" y="-15.4" width="48" height="26.6" rx="2.4" />
+              <path className="cs-index" d="M-20 -12.4H21M-20 -9.8H21" />
+              {/* The orange band runs behind the window. */}
+              <rect className="cs-band" x="-24" y="-7.6" width="48" height="14.4" />
+              {/* Which way the tape runs: turns around with the side. */}
+              <path
+                className="cs-arrow"
+                d="M12.6 8.3H16.4V7.3L18.9 9L16.4 10.7V9.7H12.6Z"
+                transform={side === 'A' ? undefined : 'translate(31.5 0) scale(-1 1)'}
+              />
             </g>
 
             <g data-part="window">
-              <rect className="cs-window" x="-17" y="-3.4" width="34" height="12.8" rx="3.4" />
-              <path className="cs-tape" d={`M${lx} ${ly + REEL_R - 0.6} L${rx} ${ry + REEL_R - 0.6}`} />
+              <rect className="cs-window" x="-17" y="-5.9" width="34" height="11" rx="5.5" />
+              {/* The tape counter between the reels. */}
+              <rect className="cs-counter" x="-3.4" y="-2.5" width="6.8" height="4.2" rx="0.5" />
+              <path className="cs-ticks" d="M-2.4 -2V-1.1M-1.2 -2V-1.4M0 -2V-1.1M1.2 -2V-1.4M2.4 -2V-1.1" />
+              <rect className="cs-counter-tape" x="0.5" y="-2.5" width="1.3" height="4.2" />
             </g>
 
             {REELS.map(([cx, cy], i) => (
               <g key={`reel${i}`} data-el={i === 0 ? 'reelL' : 'reelR'} data-part={i === 0 ? 'reel-left' : 'reel-right'}>
                 <g data-el={i === 0 ? 'faceL' : 'faceR'}>
+                  {/* Sized to stay inside the window wherever the reel looks. */}
+                  <circle className="cs-pack" cx={cx} cy={cy} r={REEL_R + 0.4} />
                   <circle className="cs-reel" cx={cx} cy={cy} r={REEL_R} />
                   <g data-el={i === 0 ? 'hubL' : 'hubR'}>
                     <circle className="cs-hub" cx={cx} cy={cy} r="2.3" />
@@ -638,7 +663,7 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
                 key={`lid${i}`}
                 data-el={i === 0 ? 'lidL' : 'lidR'}
                 data-part={i === 0 ? 'lid-left' : 'lid-right'}
-                clipPath={`url(#${clip(i)})`}
+                clipPath={`url(#${clip(`lid-${i}`)})`}
               >
                 <g data-el={i === 0 ? 'lidShapeL' : 'lidShapeR'}>
                   {/* Rests just above the reel (out of its clip); closing
@@ -670,12 +695,13 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
               ))}
             </g>
 
-            <g data-part="mouth">
-              <path className="cs-notch" d="M-12 17.5L-9.6 12H9.6L12 17.5" />
-              <path data-el="mSmile" className="cs-mouth" d="M-2.6 14.1Q0 16.4 2.6 14.1" />
-              <path data-el="mOpen" className="cs-mouth cs-mouth--fill" d="M-2.8 13.8Q0 17.6 2.8 13.8Z" opacity="0" />
-              <ellipse data-el="mO" className="cs-mouth cs-mouth--fill" cx="0" cy="14.9" rx="1.3" ry="1.6" opacity="0" />
-              <path data-el="mFlat" className="cs-mouth" d="M-2.2 14.9H2.2" opacity="0" />
+            <g data-part="notch">
+              <path className="cs-notch" d="M-14 17.5L-11.2 12.6H11.2L14 17.5" />
+              <circle className="cs-hole" cx="-7.6" cy="15.5" r="0.9" />
+              <circle className="cs-hole" cx="7.6" cy="15.5" r="0.9" />
+              <rect className="cs-hole" x="-4.6" y="14.7" width="1.6" height="1.6" />
+              <rect className="cs-hole" x="3" y="14.7" width="1.6" height="1.6" />
+              <circle className="cs-hole" cx="0" cy="14.4" r="0.6" />
             </g>
 
             <g data-el="zz" data-part="zz" opacity="0">

@@ -117,8 +117,9 @@ svg {
 }
 
 /* ─── Play state ───────────────────────────────────────────────
-   One attribute on <html> pauses every ambient loop (equalizer, mascot
-   bob, cover spin); each opts in with animation-play-state. */
+   One attribute on <html> pauses every ambient loop (equalizer, cover
+   spin, waveform); each opts in with animation-play-state. The mascot
+   reads it too and sits down. */
 
 :root {
   --play-state: running;
@@ -128,11 +129,11 @@ svg {
   --play-state: paused;
 }
 
-/* After ~10s with no input (src/lib/idle.js) the always-on loops hold in
-   place until the next mouse, scroll, key or touch: they're what keeps
-   the whole page repainting every frame when nobody's looking. */
-:root[data-idle='true'] .equalizer span,
-:root[data-idle='true'] .mascot__bob {
+/* After ~10s with no input (src/lib/idle.js) the always-on equalizer
+   holds in place until the next mouse, scroll, key or touch: it's what
+   keeps the whole page repainting every frame when nobody's looking. (The
+   mascot rests the same way, from JS.) */
+:root[data-idle='true'] .equalizer span {
   animation-play-state: paused;
 }
 

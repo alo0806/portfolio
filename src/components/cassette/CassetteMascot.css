@@ -3,13 +3,24 @@
    widths come from --cs-limb / --cs-line / --cs-fine, set on the <svg>
    from its size so they never get thinner than ~1.5px on screen. */
 
-.cassette .mascot__button {
+.mascot {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+/* The button is the hit area: just the figure's box. The SVG itself
+   ignores the pointer, so limbs reaching outside the box (legs dangling
+   over the player bar, a raised arm) never block what's under them. */
+.mascot__button {
+  border-radius: 30%;
   padding: 4px;
 }
 
 .cassette__svg {
   display: block;
   overflow: visible;
+  pointer-events: none;
 }
 
 .cs-limb {
@@ -30,29 +41,56 @@
   stroke-width: var(--cs-line);
 }
 
-.cs-screw {
-  fill: var(--cassette-ink);
-  opacity: 0.35;
+.cs-seam {
+  fill: none;
+  stroke: var(--cassette-ink);
+  stroke-width: var(--cs-fine);
+  opacity: 0.25;
 }
 
-.cs-label {
-  fill: var(--accent);
+.cs-screw circle {
+  fill: var(--cassette-reel);
+  stroke: var(--cassette-ink);
+  stroke-width: calc(var(--cs-fine) * 0.7);
 }
 
-.cs-label-text {
-  fill: var(--cassette-ink);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 6.6px;
-  letter-spacing: -0.02em;
+.cs-screw-slot {
+  stroke: var(--cassette-ink);
+  stroke-width: calc(var(--cs-fine) * 0.6);
 }
 
-.cs-side {
+.cs-roller {
+  fill: var(--cassette-reel);
+  stroke: var(--cassette-ink);
+  stroke-width: calc(var(--cs-fine) * 0.8);
+  opacity: 0.85;
+}
+
+.cs-roller-pin,
+.cs-hole {
   fill: var(--cassette-ink);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 3.6px;
   opacity: 0.7;
+}
+
+/* The paper label: index lines up top, the orange band through the
+   middle (behind the window), and the direction arrow below. */
+.cs-sticker {
+  fill: var(--cassette-label);
+  stroke: var(--cassette-ink);
+  stroke-width: calc(var(--cs-fine) * 0.6);
+  stroke-opacity: 0.35;
+}
+
+.cs-index {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: calc(var(--cs-fine) * 0.55);
+  opacity: 0.6;
+}
+
+.cs-band,
+.cs-arrow {
+  fill: var(--accent);
 }
 
 .cs-window {
@@ -61,10 +99,23 @@
   stroke-width: var(--cs-fine);
 }
 
-.cs-tape {
-  stroke: var(--cassette-ink);
-  stroke-width: var(--cs-fine);
-  opacity: 0.35;
+.cs-counter {
+  fill: var(--cassette-ink);
+}
+
+.cs-ticks {
+  stroke: var(--cassette-reel);
+  stroke-width: calc(var(--cs-fine) * 0.45);
+}
+
+.cs-counter-tape {
+  fill: var(--cassette-reel);
+  opacity: 0.85;
+}
+
+.cs-pack {
+  fill: var(--cassette-pack);
+  opacity: 0.55;
 }
 
 .cs-reel {
@@ -82,12 +133,11 @@
 }
 
 .cs-lid {
-  fill: var(--cassette-shell);
+  fill: var(--cassette-label);
 }
 
 .cs-lid-edge,
-.cs-caret,
-.cs-mouth {
+.cs-caret {
   fill: none;
   stroke: var(--cassette-ink);
   stroke-width: var(--cs-line);
@@ -97,10 +147,6 @@
 
 .cs-caret {
   stroke-width: var(--cs-limb);
-}
-
-.cs-mouth--fill {
-  fill: var(--cassette-ink);
 }
 
 .cs-notch {
@@ -121,9 +167,10 @@
   font-size: 5px;
 }
 
-/* On dark surfaces (indigo) the ink limbs would disappear: each gets a
-   light edge drawn underneath (the halo, hidden on paper), and the hands,
-   feet and z's a light outline. The cream body reads on both already. */
+/* On dark surfaces (indigo, or any page in the dark theme) the ink
+   limbs would disappear: each gets a light edge drawn underneath (the
+   halo, hidden on paper), and the hands, feet and z's a light outline.
+   The cream body reads on both already. */
 .cs-halo {
   display: none;
   fill: none;
@@ -132,13 +179,80 @@
   stroke-linecap: round;
 }
 
-[data-surface='dark'] .cs-halo {
+[data-surface='dark'] .cs-halo,
+:root[data-theme='dark'] .cs-halo {
   display: inline;
 }
 
 [data-surface='dark'] .cs-hand,
 [data-surface='dark'] .cs-foot,
-[data-surface='dark'] .cs-zz {
+[data-surface='dark'] .cs-zz,
+:root[data-theme='dark'] .cs-hand,
+:root[data-theme='dark'] .cs-foot,
+:root[data-theme='dark'] .cs-zz {
   stroke: var(--cassette-shell);
   stroke-width: calc(var(--cs-line) * 0.8);
+}
+
+/* ─── Speech bubble ─── */
+
+.mascot__bubble {
+  position: absolute;
+  z-index: 5;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  max-width: 220px;
+  width: max-content;
+  padding: 8px 14px;
+  border-radius: var(--r-md);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: var(--fs-small);
+  line-height: 1.4;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 6px) scale(0.96);
+  transform-origin: 50% 100%;
+  transition:
+    opacity var(--dur-fast) ease,
+    transform var(--dur-base) var(--ease-out);
+}
+
+.mascot__bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border: 7px solid transparent;
+  border-top-color: var(--ink);
+  transform: translateX(-50%);
+}
+
+.mascot__bubble[data-show='true'] {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+.mascot__bubble:empty {
+  visibility: hidden;
+}
+
+/* In the player bar the cassette sits at the right edge, so its bubble
+   opens leftward instead of centring (which would run off screen). */
+.mascot[data-align='end'] .mascot__bubble {
+  left: auto;
+  right: 0;
+  transform: translate(0, 6px) scale(0.96);
+  transform-origin: 90% 100%;
+}
+
+.mascot[data-align='end'] .mascot__bubble[data-show='true'] {
+  transform: translate(0, 0) scale(1);
+}
+
+.mascot[data-align='end'] .mascot__bubble::after {
+  left: auto;
+  right: calc(var(--mascot) / 2 - 7px);
+  transform: none;
 }
