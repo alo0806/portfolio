@@ -18,8 +18,8 @@ import './MascotLab.css'
 const BASES = [
   { value: null, label: 'Auto', detail: 'follows the player' },
   { value: 'idle', label: 'Idle', detail: 'breathing, weight shifts' },
-  { value: 'vibing', label: 'Vibing', detail: 'dances on the beat' },
-  { value: 'paused', label: 'Paused', detail: 'sits on the edge; drowsy at 8s, asleep at 22s' },
+  { value: 'vibing', label: 'Vibing', detail: 'grooves to the beat (seated) or dances (standing)' },
+  { value: 'paused', label: 'Paused', detail: 'sits on the edge, sleepy; asleep at 22s' },
   { value: 'asleep', label: 'Asleep', detail: 'skip straight to sleep' },
 ]
 const ACTIONS = [
@@ -133,6 +133,7 @@ export default function MascotLab() {
   const music = useMusic()
   const [base, setBase] = useState(null)
   const [expression, setExpression] = useState(null)
+  const [seated, setSeated] = useState(true)
   const [cue, setCue] = useState(null)
   const exportRef = useRef(null)
   // Large is 300px tall, or 220px on a phone so it fits the column.
@@ -177,6 +178,17 @@ export default function MascotLab() {
                 {item.label}
               </button>
             ))}
+          </div>
+        </div>
+        <div className="mlab__row">
+          <h2 className="mlab__label">Posture</h2>
+          <div className="mlab__chips">
+            <button type="button" className="mlab__chip" aria-pressed={seated} onClick={() => setSeated(true)}>
+              Seated (the site)
+            </button>
+            <button type="button" className="mlab__chip" aria-pressed={!seated} onClick={() => setSeated(false)}>
+              Standing
+            </button>
           </div>
         </div>
         <div className="mlab__row">
@@ -237,6 +249,7 @@ export default function MascotLab() {
                 <CassetteMascot
                   size={px(stage.size)}
                   align={stage.align ?? 'center'}
+                  seated={seated}
                   base={base ?? undefined}
                   expression={expression}
                   cue={cue}

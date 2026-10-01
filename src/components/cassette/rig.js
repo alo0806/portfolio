@@ -224,9 +224,10 @@ function shoulderMove(b) {
   return p
 }
 
-/* paused: sitting on the edge (the ground line), legs dangling over it
-   and swaying a little, hands on the ledge, reels still. `sleep` (0–1)
-   droops the lids, quiets the sway and, near 1, it's asleep. */
+/* sitting on the edge (the ground line), legs dangling over it and
+   swaying a little, hands on the ledge, reels still — the seated idle,
+   and paused. `sleep` (0–1) droops the lids (0.5 is sleepy), quiets the
+   sway and, near 1, it's asleep. */
 export const SIT_CY = GROUND - BODY.h / 2
 export function pausedPose(t, sleep, e) {
   const p = restPose()
@@ -242,6 +243,28 @@ export function pausedPose(t, sleep, e) {
   p.hry = 15.5
   p.lid = smooth(sleep / 0.9)
   p.zz = smooth((sleep - 0.8) / 0.2)
+  return p
+}
+
+/* seated vibing: the music's chill, so no dancing — sitting on the edge,
+   it sways gently from side to side over two beats, bobs a touch on
+   each beat, swings its legs in turn and taps one hand on the ledge.
+   The reels turn like a playing tape. `b` is the running beat count. */
+export function seatedVibePose(t, b, e) {
+  const p = pausedPose(t, 0, 0) // the seat, without the idle leg sway
+  const f = b - Math.floor(b)
+  const down = 0.5 + 0.5 * Math.cos(TAU * b) // 1 on the beat
+  const sway = Math.sin(Math.PI * b) // one way, then back, over two beats
+  p.rot = 1.8 * sway * e
+  p.cy += 0.7 * down * e
+  // Legs swing in turn, each lifting a little at the front of its swing.
+  p.flx += 2.4 * sway * e
+  p.frx -= 2.4 * sway * e
+  p.fly -= 2.2 * Math.max(0, sway) * e
+  p.fry -= 2.2 * Math.max(0, -sway) * e
+  // The right hand taps the ledge: up between beats, down on the beat.
+  p.hry -= 2.4 * Math.sin(Math.PI * f) ** 2 * e
+  p.spin = 0.55 * e
   return p
 }
 

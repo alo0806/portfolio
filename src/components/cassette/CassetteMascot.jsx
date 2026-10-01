@@ -31,6 +31,7 @@ import {
   lerpPose,
   limb,
   pausedPose,
+  seatedVibePose,
   toWorld,
   vibePose,
   waveAction,
@@ -44,8 +45,7 @@ const BLEND = 0.14 // seconds: how quickly one state eases into another
 const JUMP_S = 0.6
 const FLIP_S = 1.1
 const BUBBLE_MS = 3200
-const DROWSY_AFTER = 8 // seconds paused before the lids droop
-const ASLEEP_AFTER = 22 // … and before it falls asleep
+const ASLEEP_AFTER = 22 // seconds paused (sleepy from the start) before it falls asleep
 const BASES = ['idle', 'vibing', 'paused']
 
 // Lines name whatever is playing right now (or the placeholder).
@@ -56,13 +56,14 @@ function lineAt(index) {
     .replace('{artist}', song?.artist ?? nowPlaying.artist)
 }
 
-/* The cassette buddy: a cream tape with an orange "alo" label, whose two
-   reels are its eyes, and rubber-hose arms and legs. It moves with its
-   limbs and weight (no squash): breathing, leaning toward the cursor,
-   dancing to the music's real beat (sound/beat.js), sitting on the ledge
-   when the music is paused and dozing off, flipping over like a tape
-   when the song changes, waving (with the arm on your side) on hover, jumping when clicked, holding
-   up its speech bubble while it talks.
+/* The cassette buddy: a tape with a paper label and an orange band,
+   whose two reels are its eyes, and rubber-hose arms and legs. It moves
+   with its limbs and weight (no squash): breathing, leaning toward the
+   cursor, grooving to the music's real beat (sound/beat.js), getting
+   sleepy when the music is paused and dozing off, flipping over like a
+   tape when the song changes, waving (with the arm on your side) on
+   hover, jumping when clicked, holding up its speech bubble while it
+   talks.
 
    Every frame's pose is computed in rig.js and written straight to the
    SVG (attributes and transforms) from the shared ticker — at most 60
@@ -73,12 +74,22 @@ function lineAt(index) {
    - size: height in px of the whole figure's box (the cassette is about
      half of it; arms and legs need the rest)
    - align: which way the speech bubble opens ('center' | 'end')
+   - seated: sits on the ledge all the time (the default, for now — the
+     playlist is too chill to dance to): with music it sways, swings its
+     legs and taps the ledge to the beat. false: it stands and dances.
    - base: force 'idle' | 'vibing' | 'paused' | 'asleep' (the review
      page); otherwise it follows the player
    - expression: 'happy' | 'surprised' | 'sleepy' | null
    - cue: { name, id } — a new id plays that action once ('look',
      'songChange', 'hover', 'waveLeft', 'waveRight', 'click', 'talking') */
-export default function CassetteMascot({ size = 52, align = 'center', base, expression = null, cue }) {
+export default function CassetteMascot({
+  size = 52,
+  align = 'center',
+  seated = true,
+  base,
+  expression = null,
+  cue,
+}) {
   const reduced = useReducedMotion()
   const { playing } = usePlayer()
   const music = useMusic()
@@ -94,11 +105,11 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
 
   // The state the outside world asks for, read by the frame loop.
   const autoBase = music.available && music.playing ? 'vibing' : playing ? 'idle' : 'paused'
-  const wanted = useRef({ base: base ?? autoBase, expression, reduced })
+  const wanted = useRef({ base: base ?? autoBase, expression, reduced, seated })
   useEffect(() => {
-    wanted.current = { base: base ?? autoBase, expression, reduced }
+    wanted.current = { base: base ?? autoBase, expression, reduced, seated }
     api.current.wake?.()
-  }, [base, autoBase, expression, reduced])
+  }, [base, autoBase, expression, reduced, seated])
 
   const say = () => {
     let index = Math.floor(Math.random() * mascotLines.length)
@@ -252,7 +263,7 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
       if (baseName === 'paused') {
         if (!pausedSince) pausedSince = now
         const seconds = (now - pausedSince) / 1000
-        const goal = w.base === 'asleep' || idle ? 1 : seconds > ASLEEP_AFTER ? 1 : seconds > DROWSY_AFTER ? 0.5 : 0
+        const goal = w.base === 'asleep' || idle || seconds > ASLEEP_AFTER ? 1 : 0.5
         sleep += (goal - sleep) * (rm ? 1 : Math.min(1, dt * (goal > sleep ? 0.9 : 3)))
       } else {
         pausedSince = 0
@@ -273,7 +284,15 @@ export default function CassetteMascot({ size = 52, align = 'center', base, expr
         const weight = baseW[name]
         if (weight < 0.001) continue
         const p =
-          name === 'idle' ? idlePose(t, e) : name === 'vibing' ? vibePose(rm ? 0 : b, e) : pausedPose(t, sleep, e)
+          name === 'idle'
+            ? w.seated
+              ? pausedPose(t, 0, e)
+              : idlePose(t, e)
+            : name === 'vibing'
+              ? w.seated
+                ? seatedVibePose(t, rm ? 0 : b, e)
+                : vibePose(rm ? 0 : b, e)
+              : pausedPose(t, sleep, e)
         total += weight
         pose = pose ? lerpPose(pose, p, weight / total) : p
       }
