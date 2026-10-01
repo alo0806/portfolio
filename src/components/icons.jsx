@@ -44,14 +44,22 @@ export function NextIcon(props) {
   )
 }
 
-/* Next song: a music note with an arrow — a different shape from the
-   page prev/next buttons. */
-export function MusicNextIcon(props) {
+/* Previous / next song: two triangles and a bar — the classic skip
+   icon, distinct from the single-triangle page prev / next. */
+export function SongNextIcon(props) {
   return (
     <svg {...base} {...props}>
-      <path d="M7.5 13.5V4.2l4.5 1.4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      <ellipse cx="5.4" cy="13.8" rx="2.4" ry="1.9" fill="currentColor" />
-      <path d="M12 12.5h5.5M15.5 10.5l2 2-2 2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 5 L8.6 10 L2 15 Z M8.6 5 L15.2 10 L8.6 15 Z" fill="currentColor" />
+      <rect x="15.6" y="5" width="2.2" height="10" rx="1.1" fill="currentColor" />
+    </svg>
+  )
+}
+
+export function SongPrevIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M18 5 L11.4 10 L18 15 Z M11.4 5 L4.8 10 L11.4 15 Z" fill="currentColor" />
+      <rect x="2.2" y="5" width="2.2" height="10" rx="1.1" fill="currentColor" />
     </svg>
   )
 }

@@ -80,9 +80,14 @@ export function pause({ fade: seconds = SOUND.music.pauseFade } = {}) {
   update()
 }
 
-/* The "next song" button. While paused it just moves to the next song. */
+/* The next / previous song buttons. While paused they just move to the
+   song (it starts when play is pressed). */
 export function skip() {
   advance(SOUND.music.skipFade)
+}
+
+export function previous() {
+  advance(SOUND.music.skipFade, prevPlayable(index))
 }
 
 /* Picking a song from the queue: crossfade to it and play. Call from a
@@ -295,6 +300,14 @@ function nextPlayable(from) {
   return -1
 }
 
+function prevPlayable(from) {
+  for (let step = 1; step <= SONGS.length; step += 1) {
+    const candidate = (from - step + SONGS.length) % SONGS.length
+    if (!failed.has(candidate)) return candidate
+  }
+  return -1
+}
+
 function available() {
   return SONGS.length > 0 && failed.size < SONGS.length
 }
@@ -306,6 +319,7 @@ function build() {
   const loaded = d && d.song === index
   const duration = loaded && Number.isFinite(d.el.duration) ? d.el.duration : 0
   const next = available() ? nextPlayable(index) : -1
+  const prev = available() ? prevPlayable(index) : -1
   return {
     available: available(),
     songs: SONGS,
@@ -313,6 +327,7 @@ function build() {
     count: SONGS.length - failed.size,
     song: available() ? SONGS[index] : null,
     next: next >= 0 && next !== index ? SONGS[next] : null,
+    prev: prev >= 0 && prev !== index ? SONGS[prev] : null,
     playing: wanted,
     time: loaded && d.seekTo == null ? d.el.currentTime : resumeAt,
     duration,

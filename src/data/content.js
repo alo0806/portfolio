@@ -28,15 +28,17 @@ export const intro = {
    - credit: short text for the license link, e.g. 'CC BY 4.0'.
      Use null if the license doesn't ask for attribution.
    - creditUrl: where that link goes (the song or license page).
+   - cover: optional album art ('/covers/songs/name.jpg', in public/),
+     shown in the player's cover square. Square images work best.
    With no songs, the player works exactly as before (motion only) and
    shows `nowPlaying`. */
 export const playlist = [
-  { title: 'Greetings', artist: 'Low.F.M', file: '/audio/greetings.mp3', credit: null, creditUrl: null },
-  { title: 'Radio', artist: 'Riddiman & Joe Leytrick', file: '/audio/radio.mp3', credit: null, creditUrl: null },
-  { title: 'After the Rain', artist: 'Frad x Jordy Chandra', file: '/audio/after-the-rain.mp3', credit: null, creditUrl: null },
-  { title: 'Colorful Flowers', artist: 'Tokyo Music Walker', file: '/audio/colorful-flowers.mp3', credit: null, creditUrl: null },
-  { title: 'Butterfly', artist: 'Sleepy Fish', file: '/audio/butterfly.mp3', credit: null, creditUrl: null },
-  { title: 'East Side Manhattan', artist: 'Popoi', file: '/audio/east-side-manhattan.mp3', credit: null, creditUrl: null },
+  { title: 'Colorful Flowers', artist: 'Tokyo Music Walker', file: '/audio/colorful-flowers.mp3', cover: '/covers/songs/colorful-flowers.jpg', credit: null, creditUrl: null },
+  { title: 'Greetings', artist: 'Low.F.M', file: '/audio/greetings.mp3', cover: '/covers/songs/greetings.jpg', credit: null, creditUrl: null },
+  { title: 'Radio', artist: 'Riddiman & Joe Leytrick', file: '/audio/radio.mp3', cover: '/covers/songs/radio.jpg', credit: null, creditUrl: null },
+  { title: 'After the Rain', artist: 'Frad x Jordy Chandra', file: '/audio/after-the-rain.mp3', cover: '/covers/songs/after-the-rain.jpg', credit: null, creditUrl: null },
+  { title: 'Butterfly', artist: 'Sleepy Fish', file: '/audio/butterfly.mp3', cover: '/covers/songs/butterfly.jpg', credit: null, creditUrl: null },
+  { title: 'East Side Manhattan', artist: 'Popoi', file: '/audio/east-side-manhattan.mp3', cover: '/covers/songs/east-side-manhattan.jpg', credit: null, creditUrl: null },
 ]
 
 /* Shown in the player bar while the playlist is empty. */
