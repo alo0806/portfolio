@@ -156,6 +156,13 @@ export function getMusicOutput() {
   return ensureContext() ? { ctx, bus: musicBus } : null
 }
 
+/* The same for sounds that need their own nodes (the intro's scratch):
+   they connect to the effects bus, under the same level, filter, slider
+   and mute. Null if Web Audio isn't available. */
+export function getSfxOutput() {
+  return ensureContext() ? { ctx, bus: sfxBus } : null
+}
+
 // The first click or key press brings the context up (if not muted).
 if (typeof window !== 'undefined') {
   const unlock = () => {
@@ -296,6 +303,40 @@ function noiseBurst({ delay = 0, duration, gain, attack = 0.002, filters }) {
   source.stop(t + attack + duration + 0.05)
 }
 
+/* Vinyl in the room: a long, quiet loop of sparse pops over a hiss
+   that's been smoothed into a soft rumble (white noise run through a
+   gentle one-pole low-pass), so it reads as a record, not static. */
+let roomBuffer = null
+function getRoomCrackle() {
+  if (!roomBuffer) {
+    const { hiss, popsPerSecond, length } = SOUND.roomCrackle
+    const rate = ctx.sampleRate
+    roomBuffer = ctx.createBuffer(1, Math.round(rate * length), rate)
+    const data = roomBuffer.getChannelData(0)
+    const popChance = popsPerSecond / rate
+    let smooth = 0
+    for (let i = 0; i < data.length; i += 1) {
+      smooth += ((Math.random() * 2 - 1) - smooth) * 0.08
+      data[i] += smooth * hiss * 3
+      if (Math.random() < popChance) {
+        const amp = (Math.random() * 0.7 + 0.15) * (Math.random() < 0.5 ? -1 : 1)
+        const size = 6 + Math.floor(Math.random() * 30)
+        for (let j = 0; j < size && i + j < data.length; j += 1) {
+          data[i + j] += amp * Math.exp(-j / (size / 4))
+        }
+      }
+    }
+    // Ease the loop's seam so its restart can't click.
+    const seam = Math.round(rate * 0.05)
+    for (let i = 0; i < seam; i += 1) {
+      const k = i / seam
+      data[i] *= k
+      data[data.length - 1 - i] *= k
+    }
+  }
+  return roomBuffer
+}
+
 /* ─── The sounds ───────────────────────────────────────────────── */
 
 function playNote(freq, { soft = false, delay = 0 } = {}) {
@@ -310,6 +351,10 @@ function playNote(freq, { soft = false, delay = 0 } = {}) {
     gain: soft ? n.gain * SOUND.hoverNote.gainScale : n.gain,
   })
 }
+
+let lastTapDegree = -1
+let tapPile = 0
+let tapPileAt = 0
 
 function trackFrequency(index) {
   const track = SOUND.tracks[index] ?? SOUND.tracks[0]
@@ -458,6 +503,46 @@ export const sound = {
     })
   },
 
+  /* The intro's backdrop: a soft random note from the key per click.
+     Clicks in quick succession pile up and each note comes out softer. */
+  tap({ force = false } = {}) {
+    if (!gate('tap', force)) return
+    const t = SOUND.tap
+    const now = performance.now()
+    tapPile = Math.max(0, tapPile - ((now - tapPileAt) / 1000) * t.drain)
+    tapPileAt = now
+    const [low, high] = t.degrees
+    let degree = lastTapDegree
+    while (degree === lastTapDegree) degree = low + Math.floor(Math.random() * (high - low + 1))
+    lastTapDegree = degree
+    const n = SOUND.note
+    tone(scaleFrequency(degree, t.octave), {
+      type: n.type,
+      overtone: n.overtone,
+      lowpass: n.lowpass,
+      attack: n.attack * 1.5,
+      decay: t.decay,
+      gain: (n.gain * t.gain) / (1 + tapPile * t.soften),
+    })
+    tapPile += t.pile
+  },
+
+  /* A letter of the intro's name: its own soft note, rising letter by
+     letter through the scale. */
+  letter(index, { force = false } = {}) {
+    if (!gate('letter', force)) return
+    const l = SOUND.letter
+    const n = SOUND.note
+    tone(scaleFrequency(index, l.octave), {
+      type: n.type,
+      overtone: n.overtone,
+      lowpass: n.lowpass,
+      attack: n.attack * 2,
+      decay: l.decay,
+      gain: n.gain * l.gain,
+    })
+  },
+
   /* Turning sound on: a soft two-note hello. */
   /* Letting go of the volume slider: one soft note at the new level. */
   preview({ force = false } = {}) {
@@ -473,4 +558,81 @@ export const sound = {
       playNote(scaleFrequency(degree, c.octave), { delay: i * c.spacing }),
     )
   },
+}
+
+/* ─── The intro's room crackle ─────────────────────────────────────
+   A very quiet vinyl texture that loops under the intro. start() fades
+   it in (after the first interaction); handOff() fades it out on the
+   audio clock — from `at` seconds from now over `over` seconds — so it
+   can crossfade into the music even after the intro has gone; stop()
+   fades it out now. It holds while the tab is hidden. Muting turns it
+   down with everything else; if sound is off when it's asked for, it
+   starts as soon as sound comes back on (until it's stopped). */
+
+let room = null // { source, amp, handedOff }
+let roomWanted = false
+
+function startRoom() {
+  if (room || !roomWanted || !isAudible() || document.hidden) return
+  if (!ctx && !ensureContext()) return
+  if (ctx.state === 'suspended') ctx.resume().catch(() => {})
+  const c = SOUND.roomCrackle
+  const t = ctx.currentTime
+  const source = ctx.createBufferSource()
+  source.buffer = getRoomCrackle()
+  source.loop = true
+  const high = ctx.createBiquadFilter()
+  high.type = 'highpass'
+  high.frequency.value = c.highpass
+  const low = ctx.createBiquadFilter()
+  low.type = 'lowpass'
+  low.frequency.value = c.lowpass
+  const amp = ctx.createGain()
+  amp.gain.setValueAtTime(0.0001, t)
+  amp.gain.linearRampToValueAtTime(c.gain, t + c.fadeIn)
+  source.connect(high).connect(low).connect(amp).connect(sfxBus)
+  source.start(t, Math.random() * c.length)
+  room = { source, amp, handedOff: false }
+}
+
+function fadeRoom(at, over) {
+  if (!room) return
+  const { source, amp } = room
+  const t = ctx.currentTime + at
+  amp.gain.cancelScheduledValues(ctx.currentTime)
+  amp.gain.setValueAtTime(amp.gain.value, ctx.currentTime)
+  if (at > 0) amp.gain.setValueAtTime(amp.gain.value, t)
+  amp.gain.linearRampToValueAtTime(0.0001, t + over)
+  source.stop(t + over + 0.05)
+  room = null
+}
+
+export const roomCrackle = {
+  start() {
+    roomWanted = true
+    startRoom()
+  },
+  handOff({ at = 0, over = SOUND.roomCrackle.fadeOut } = {}) {
+    roomWanted = false
+    fadeRoom(at, over)
+  },
+  stop() {
+    roomWanted = false
+    fadeRoom(0, SOUND.roomCrackle.fadeOut)
+  },
+}
+
+if (typeof window !== 'undefined') {
+  subscribe(() => {
+    if (roomWanted) startRoom()
+  })
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (room) {
+        fadeRoom(0, 0.15)
+      }
+    } else {
+      startRoom()
+    }
+  })
 }
