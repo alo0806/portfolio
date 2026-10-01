@@ -1,0 +1,105 @@
+/* Project media: a box of fixed proportions (aspect-ratio set inline)
+   that the image, video or placeholder fills. */
+.media {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  border-radius: var(--r-md);
+  background: var(--line);
+}
+
+.media img,
+.media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.media--contain img,
+.media--contain video {
+  object-fit: contain;
+}
+
+/* No file yet: a palette frame, labelled. */
+.media--placeholder {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(140deg, var(--pal-a), var(--pal-b));
+}
+
+.media__placeholder-label {
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--pal-ink) 14%, transparent);
+  color: var(--pal-ink);
+  font-size: var(--fs-label);
+  font-weight: 500;
+}
+
+/* Reduced motion: the poster, and a play button over it. */
+.media__play {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ink) 78%, transparent);
+  color: var(--paper);
+}
+
+.media__play svg {
+  translate: 2px 0;
+}
+
+/* Pause / play for a looping clip, small in the corner. */
+.media__toggle {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: color-mix(in srgb, #000 55%, transparent);
+  color: #fff;
+  opacity: 0.8;
+  transition: opacity var(--dur-fast) ease;
+}
+
+.media__toggle:hover,
+.media__toggle:focus-visible {
+  opacity: 1;
+}
+
+.media__full {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, #000 55%, transparent);
+  color: #fff;
+  font-size: var(--fs-label);
+  font-weight: 500;
+}
+
+.media__full:hover {
+  background: color-mix(in srgb, #000 75%, transparent);
+}
+
+/* A piece of media with its caption underneath. */
+.media-figure {
+  margin: 0;
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.media-figure figcaption {
+  color: var(--muted-ink);
+  font-size: var(--fs-small);
+}

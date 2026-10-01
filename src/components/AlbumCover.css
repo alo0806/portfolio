@@ -12,10 +12,11 @@
   background: var(--sidebar);
 }
 
-.cover--image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* The image or video fills the square, corner to corner. */
+.cover__media {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
 }
 
 .cover__number {

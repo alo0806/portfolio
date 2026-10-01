@@ -1,0 +1,181 @@
+/* ─── Case study (/work/<slug>) ─────────────────────────────── */
+
+.case {
+  display: grid;
+  gap: var(--sp-6);
+}
+
+.case__back {
+  justify-self: start;
+  padding: 4px 0;
+  color: var(--muted-ink);
+  font-size: var(--fs-small);
+  font-weight: 500;
+}
+
+.case__back:hover,
+.case__back:focus-visible {
+  color: var(--ink);
+}
+
+/* Header: the cover beside the title block (stacked on narrow screens). */
+.case__head {
+  display: grid;
+  gap: var(--sp-3);
+  align-items: end;
+}
+
+@container (min-width: 620px) {
+  .case__head {
+    grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+    gap: var(--sp-4);
+  }
+}
+
+.case__cover {
+  overflow: hidden;
+  max-width: 220px;
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.case__intro {
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.case__tag {
+  justify-self: start;
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  background: var(--accent-tint);
+  color: var(--accent-ink);
+  font-size: var(--fs-label);
+  font-weight: 500;
+}
+
+.case__title {
+  font-size: var(--fs-h1);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.case__role {
+  color: var(--muted-ink);
+  font-weight: 500;
+}
+
+.case__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-2);
+  max-width: 520px;
+  margin: var(--sp-2) 0 0;
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--line);
+}
+
+.case__metric dt {
+  font-size: var(--fs-label);
+  color: var(--muted-ink);
+}
+
+.case__metric dd {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+/* The four parts. */
+.case__part {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.case__heading {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.case__text {
+  max-width: 62ch;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+/* Process: text, then its media; two pieces sit side by side when
+   there's room. */
+.case__block {
+  display: grid;
+  gap: var(--sp-2);
+  margin-top: var(--sp-1);
+}
+
+.case__media {
+  display: grid;
+  gap: var(--sp-2);
+  align-items: start;
+}
+
+@container (min-width: 620px) {
+  .case__media[data-count='2'] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.case__metrics--outcome {
+  margin-top: 0;
+}
+
+/* Previous / next case study. */
+.case__nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--line);
+}
+
+.case__step {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-2);
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--card);
+  transition:
+    translate var(--dur-base) var(--ease-out),
+    border-color var(--dur-fast) ease;
+}
+
+.case__step:hover {
+  translate: 0 -2px;
+  border-color: var(--line-strong);
+}
+
+.case__step--next {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.case__step-label {
+  display: block;
+  color: var(--muted-ink);
+  font-size: var(--fs-label);
+}
+
+.case__step-title {
+  display: block;
+  font-weight: 600;
+  line-height: var(--lh-snug);
+}
+
+.case__step svg {
+  flex-shrink: 0;
+  color: var(--muted-ink);
+}

@@ -1,18 +1,24 @@
 import { useRef } from 'react'
+import { Link } from 'react-router-dom'
 import AlbumCover from '../components/AlbumCover'
 import useFinePointer from '../hooks/useFinePointer'
 import useReducedMotion from '../hooks/useReducedMotion'
+import { setTrackDirection } from '../lib/trackNav'
 import { sound } from '../sound/engine'
 
 const MAX_TILT = 7 // degrees
 
-/* A project as an album: cover, a plain tag, title, one line, and three
-   metrics — laid out so a recruiter can scan tag and numbers at a glance.
+/* A Single as an album: cover, a plain tag, title, role and year, one
+   line, and three metrics — laid out so a recruiter can scan tag and
+   numbers at a glance. The whole card opens its case study: the title is
+   the link, stretched over the card, so there's one stop per card for
+   keyboard and screen reader users.
 
    On a mouse or trackpad the card tilts toward the cursor, a light sheen
    sweeps the cover on hover, and it presses in softly. Touch devices and
    reduced motion get a still card. */
-export default function AlbumCard({ number, title, status, tag, description, metrics, cover, image }) {
+export default function AlbumCard({ number, project }) {
+  const { slug, title, tag, role, year, oneLiner, metrics, cover } = project
   const cardRef = useRef(null)
   const fine = useFinePointer()
   const reduced = useReducedMotion()
@@ -45,14 +51,24 @@ export default function AlbumCard({ number, title, status, tag, description, met
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
     >
-      <AlbumCover title={title} number={number} cover={cover} image={image} />
+      <AlbumCover title={title} number={number} cover={cover} />
       <div className="album__body">
         <p className="album__tag">{tag}</p>
         <h3 className="album__title">
-          {title}
-          {status ? <span className="album__status"> ({status})</span> : null}
+          <Link
+            to={`/work/${slug}`}
+            viewTransition
+            className="album__link"
+            onClick={() => setTrackDirection('next')}
+          >
+            {title}
+          </Link>
         </h3>
-        <p className="album__desc">{description}</p>
+        <p className="album__role">
+          {role}
+          {year && year !== '—' ? ` · ${year}` : ''}
+        </p>
+        <p className="album__desc">{oneLiner}</p>
         <dl className="album__metrics">
           {metrics.map(({ label, value }) => (
             <div key={label} className="album__metric">

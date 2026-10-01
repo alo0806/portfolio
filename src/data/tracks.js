@@ -6,6 +6,7 @@ import {
   projects,
   tracks as trackList,
   work,
+  workSections,
 } from './content'
 
 /* Each page's "track length" is its estimated reading time, computed
@@ -13,21 +14,29 @@ import {
    the tracklist honest without touching this file. */
 
 const PAGE_TEXT = {
-  '/work': () => ({
-    texts: [
-      work.title,
-      work.linerNotesTitle,
-      linerNotes[0]?.text,
-      ...projects.flatMap((p) => [
-        p.title,
-        p.status,
-        p.tag,
-        p.description,
-        ...p.metrics.flatMap((m) => [m.label, m.value]),
-      ]),
-    ],
-    visuals: projects.length,
-  }),
+  // The archive starts collapsed, so its cards don't count.
+  '/work': () => {
+    const shown = workSections.filter((section) => !section.toggle)
+    const visible = projects.filter((p) => shown.some((section) => section.id === p.section))
+    return {
+      texts: [
+        work.title,
+        work.linerNotesTitle,
+        linerNotes[0]?.text,
+        ...shown.flatMap((section) =>
+          visible.some((p) => p.section === section.id) ? [section.title, section.subtitle] : [],
+        ),
+        ...visible.flatMap((p) => [
+          p.title,
+          p.tag,
+          p.role,
+          p.oneLiner,
+          ...p.metrics.flatMap((m) => [m.label, m.value]),
+        ]),
+      ],
+      visuals: visible.length,
+    }
+  },
   '/about': () => ({
     texts: [
       about.title,
@@ -55,6 +64,8 @@ export const TRACKS = trackList.map((track, index) => {
   }
 })
 
+/* A page's track: its own path, or the track it lives under — a case
+   study at /work/<slug> is part of My Work. */
 export function trackIndexFor(pathname) {
-  return TRACKS.findIndex((track) => track.path === pathname)
+  return TRACKS.findIndex((track) => pathname === track.path || pathname.startsWith(`${track.path}/`))
 }

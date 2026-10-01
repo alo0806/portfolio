@@ -82,6 +82,45 @@
   pointer-events: none;
 }
 
+/* ─── Sections ──────────────────────────────────────────────── */
+
+.work-section {
+  margin-top: var(--sp-8);
+}
+
+.work-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+
+.work-section__title {
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: var(--lh-snug);
+}
+
+.work-section__subtitle {
+  color: var(--muted-ink);
+  font-size: var(--fs-small);
+}
+
+.work-section__toggle {
+  margin-left: auto;
+  padding: 4px 0;
+  color: var(--muted-ink);
+  font-size: var(--fs-small);
+  font-weight: 500;
+}
+
+.work-section__toggle:hover,
+.work-section__toggle:focus-visible {
+  color: var(--ink);
+}
+
 /* ─── Album grid ────────────────────────────────────────────── */
 
 .albums {
@@ -93,6 +132,34 @@
 @container (min-width: 620px) {
   .albums {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Features: medium cards; Deep cuts, Demos, Early work: compact. */
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+
+.work-grid > li {
+  display: flex;
+}
+
+/* Collapsed (early work): the grid's own display would otherwise win
+   over the hidden attribute. */
+.work-grid[hidden] {
+  display: none;
+}
+
+@container (min-width: 620px) {
+  .work-grid--features {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-3);
+  }
+
+  .work-grid--compact {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -151,6 +218,28 @@
   pointer-events: none;
 }
 
+/* The title is the card's link (or button), stretched over the whole
+   card; the card shows its focus ring. */
+.album__link::before,
+.work-card__open::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.album__link:focus-visible,
+.work-card__open:focus-visible {
+  outline: none;
+}
+
+.album:has(.album__link:focus-visible),
+.work-card:has(.work-card__open:focus-visible) {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
 @media (hover: hover) {
   .album:hover {
     --lift: -4px;
@@ -204,6 +293,12 @@
   color: var(--muted-ink);
 }
 
+.album__role {
+  color: var(--muted-ink);
+  font-size: var(--fs-small);
+  font-weight: 500;
+}
+
 .album__desc {
   color: var(--muted-ink);
   font-size: var(--fs-small);
@@ -229,4 +324,125 @@
   font-weight: 700;
   font-size: 1.375rem;
   line-height: 1.1;
+}
+
+/* ─── Work cards (gallery): medium and compact ──────────────── */
+
+.work-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+  transition: translate var(--dur-base) var(--ease-out);
+}
+
+.work-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--shadow-card-hover);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .work-card:hover {
+    translate: 0 -3px;
+  }
+
+  .work-card:hover::after {
+    opacity: 1;
+  }
+}
+
+.work-card:active {
+  translate: 0 0;
+  scale: 0.985;
+  transition-duration: var(--dur-fast);
+}
+
+.work-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 4px;
+  padding: var(--sp-2);
+}
+
+.work-card__tag {
+  align-self: flex-start;
+  padding: 2px 9px;
+  border-radius: var(--r-pill);
+  background: var(--accent-tint);
+  color: var(--accent-ink);
+  font-size: var(--fs-label);
+  font-weight: 500;
+}
+
+/* Demos: an "In progress" tag that reads differently from the others. */
+.work-card__tag[data-progress='true'] {
+  background: transparent;
+  border: 1px dashed var(--line-strong);
+  color: var(--muted-ink);
+}
+
+.work-card__title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: var(--lh-snug);
+  letter-spacing: -0.02em;
+}
+
+.work-card__open {
+  text-align: left;
+}
+
+.work-card__role {
+  color: var(--muted-ink);
+  font-size: var(--fs-label);
+}
+
+.work-card__desc {
+  margin-top: 2px;
+  color: var(--muted-ink);
+  font-size: var(--fs-small);
+}
+
+.work-card__metric {
+  margin-top: auto;
+  padding-top: var(--sp-1);
+  border-top: 1px solid var(--line);
+  color: var(--muted-ink);
+  font-size: var(--fs-label);
+}
+
+.work-card__metric-value {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.work-card--feature .work-card__title {
+  font-size: var(--fs-h3);
+}
+
+.work-card--feature .work-card__body {
+  padding: var(--sp-3);
+}
+
+/* Compact cards: smaller type, tighter padding. */
+.work-card--compact .work-card__body {
+  padding: 12px;
+}
+
+.work-card--compact .work-card__title {
+  font-size: 0.9375rem;
 }
