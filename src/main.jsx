@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './styles/tokens.css'
 import './styles/global.css'
 import { routes } from './routes.jsx'
+import { watchIdle } from './lib/idle'
 
 const router = createBrowserRouter(routes)
 
@@ -22,6 +23,8 @@ window.addEventListener('unhandledrejection', (event) => {
     event.preventDefault()
   }
 })
+
+watchIdle()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
