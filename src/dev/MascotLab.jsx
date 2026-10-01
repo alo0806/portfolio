@@ -9,23 +9,24 @@ import { skip, useMusic } from '../sound/music'
 import './SoundLab.css'
 import './MascotLab.css'
 
-/* Dev-only (/mascot): the cassette buddy, for review before it replaces
-   the blob. Every state, action and expression has a button; "Play
-   music" runs the real player, so vibing follows the real beat tracker.
+/* Dev-only (/mascot): the cassette buddy, for reviewing changes to it.
+   Every state, action and expression has a button; "Play music" runs
+   the real player, so vibing follows the real beat tracker.
    It's shown large and at its real player-bar size, on paper and on
    indigo, standing on (or sitting at the edge of) a mock player bar. */
 
 const BASES = [
   { value: null, label: 'Auto', detail: 'follows the player' },
   { value: 'idle', label: 'Idle', detail: 'breathing, weight shifts' },
-  { value: 'vibing', label: 'Vibing', detail: 'dances on the beat' },
-  { value: 'paused', label: 'Paused', detail: 'sits on the edge; drowsy at 8s, asleep at 22s' },
+  { value: 'vibing', label: 'Vibing', detail: 'grooves to the beat (seated) or dances (standing)' },
+  { value: 'paused', label: 'Paused', detail: 'sits on the edge, sleepy; asleep at 22s' },
   { value: 'asleep', label: 'Asleep', detail: 'skip straight to sleep' },
 ]
 const ACTIONS = [
   { name: 'look', label: 'Look', detail: 'looks around (or move your cursor)' },
-  { name: 'songChange', label: 'Song change', detail: 'tape flip, A ↔ B' },
-  { name: 'hover', label: 'Hover', detail: 'waves (or hover it)' },
+  { name: 'songChange', label: 'Song change', detail: 'tape flip; the arrow turns around' },
+  { name: 'waveLeft', label: 'Wave (left arm)', detail: 'or hover its left side' },
+  { name: 'waveRight', label: 'Wave (right arm)', detail: 'or hover its right side' },
   { name: 'click', label: 'Click', detail: 'startled jump, then talks' },
   { name: 'talking', label: 'Talking', detail: 'holds up the bubble' },
 ]
@@ -38,8 +39,8 @@ const EXPRESSIONS = [
 const STAGES = [
   { size: 'large', surface: 'light', title: 'Large · paper' },
   { size: 'large', surface: 'dark', title: 'Large · indigo' },
-  { size: 52, surface: 'light', title: 'Player bar · paper', align: 'end' },
-  { size: 52, surface: 'dark', title: 'Player bar · indigo', align: 'end' },
+  { size: 68, surface: 'light', title: 'Player bar · paper', align: 'end' },
+  { size: 68, surface: 'dark', title: 'Player bar · indigo', align: 'end' },
   { size: 40, surface: 'light', title: 'Smallest (40px) · paper' },
 ]
 
@@ -132,6 +133,7 @@ export default function MascotLab() {
   const music = useMusic()
   const [base, setBase] = useState(null)
   const [expression, setExpression] = useState(null)
+  const [seated, setSeated] = useState(true)
   const [cue, setCue] = useState(null)
   const exportRef = useRef(null)
   // Large is 300px tall, or 220px on a phone so it fits the column.
@@ -176,6 +178,17 @@ export default function MascotLab() {
                 {item.label}
               </button>
             ))}
+          </div>
+        </div>
+        <div className="mlab__row">
+          <h2 className="mlab__label">Posture</h2>
+          <div className="mlab__chips">
+            <button type="button" className="mlab__chip" aria-pressed={seated} onClick={() => setSeated(true)}>
+              Seated (the site)
+            </button>
+            <button type="button" className="mlab__chip" aria-pressed={!seated} onClick={() => setSeated(false)}>
+              Standing
+            </button>
           </div>
         </div>
         <div className="mlab__row">
@@ -236,6 +249,7 @@ export default function MascotLab() {
                 <CassetteMascot
                   size={px(stage.size)}
                   align={stage.align ?? 'center'}
+                  seated={seated}
                   base={base ?? undefined}
                   expression={expression}
                   cue={cue}

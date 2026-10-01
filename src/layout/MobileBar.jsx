@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Clock from '../components/Clock'
 import CoverMark from '../components/CoverMark'
-import Mascot from '../components/Mascot'
+import CassetteMascot from '../components/cassette/CassetteMascot'
 import ThemeToggle from '../components/ThemeToggle'
 import { artist } from '../data/content'
 import { prepareTrackClick } from '../lib/trackNav'
@@ -88,7 +88,9 @@ export default function MobileBar() {
         </div>
         <div className="topbar__foot">
           <ThemeToggle />
-          <Mascot size={72} />
+          <div className="topbar__mascot">
+            <CassetteMascot size={72} />
+          </div>
         </div>
       </div>
     </header>

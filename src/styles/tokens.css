@@ -27,19 +27,19 @@
   --accent-ink: #a23d17; /* 5.9:1 on paper, 5.3:1 on sidebar */
   --accent-tint: rgba(255, 107, 53, 0.14);
 
-  /* Dark panels on the pages (liner notes, B-sides) and the mascot's
-     eyes, which stay light in either theme. */
+  /* Dark panels on the pages (liner notes, B-sides). */
   --panel-dark: var(--indigo);
   --panel-dark-line: transparent;
-  --eye: #fbfaf7;
   --icon-knockout: var(--sidebar); /* the "in" cut out of the LinkedIn mark */
 
   /* ─── Cassette mascot (the same in both themes: it's an object, so
      its outline stays dark even where the page's ink turns light) ─── */
-  --cassette-shell: #f4ecdb;
-  --cassette-notch: #e4d7bd;
+  --cassette-shell: #e4ddd0; /* the smoky plastic */
+  --cassette-label: #fbf8f0; /* the paper sticker */
+  --cassette-notch: #d6cdbb;
   --cassette-window: #dde3ea;
   --cassette-reel: #fbfaf7;
+  --cassette-pack: #6b4a38; /* the wound tape around each reel */
   --cassette-ink: #1b1a24;
 
   /* ─── Vinyl ─── */
@@ -123,13 +123,15 @@
   --spinup-ms: 400;
   --tonearm-ms: 420;
   --crackle-ms: 220;
-  --beat: 0.52s; /* ~115 bpm: equalizer, mascot bob */
+  --beat: 0.52s; /* ~115 bpm: the equalizer, and the mascot until it hears the music's beat */
 
   /* ─── Layout ─── */
   --sidebar-w: 300px;
   --content-max: 960px;
   --topbar-h: 60px;
   --player-h: 84px; /* room for the buttons and the song's time row */
+  --perch: 68px; /* the cassette mascot's box, standing on the player bar */
+  --perch-clear: 136px; /* page content keeps this far from the right edge, clear of it */
 
   /* ─── Cursor ───
      ONE switch: `blend` inverts whatever is underneath. Change to

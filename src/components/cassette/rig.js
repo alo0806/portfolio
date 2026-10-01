@@ -14,8 +14,8 @@
    - hlx, hly, hrx, hry — the hands, relative to the body centre
    - lx, ly — where the reels look, -1…1 across the window
    - reel (size), spin (turns per second), lid (0 open … 1 closed),
-     happy (reels become ^ ^), zz (asleep), and the mouth's four shapes
-     as weights: mSmile, mOpen, mO, mFlat */
+     happy (reels become ^ ^) and zz (asleep). It has no mouth: the
+     reels and the body do all the expressing. */
 
 export const VIEW_W = 100
 export const VIEW_H = 80
@@ -30,18 +30,18 @@ export const HAND_R = 2.3
 export const JOINTS = {
   shoulderL: [-BODY.w / 2, 3],
   shoulderR: [BODY.w / 2, 3],
-  hipL: [-15, BODY.h / 2],
-  hipR: [15, BODY.h / 2],
+  hipL: [-17, BODY.h / 2],
+  hipR: [17, BODY.h / 2],
 }
 export const ARM = [9, 9.5]
 export const LEG = [15, 15]
 
 export const REELS = [
-  [-8.5, 3],
-  [8.5, 3],
+  [-9, -0.4],
+  [9, -0.4],
 ]
-export const REEL_R = 4.6
-export const LOOK = [2.2, 1.3] // how far the reels travel inside the window
+export const REEL_R = 4.2
+export const LOOK = [2, 0.85] // how far the reels travel inside the window
 
 const TAU = Math.PI * 2
 export const clamp = (v, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v))
@@ -104,7 +104,6 @@ export const KEYS = [
   'flx', 'fly', 'frx', 'fry',
   'hlx', 'hly', 'hrx', 'hry',
   'lx', 'ly', 'reel', 'spin', 'lid', 'happy', 'zz',
-  'mSmile', 'mOpen', 'mO', 'mFlat',
 ]
 
 export function restPose() {
@@ -128,10 +127,6 @@ export function restPose() {
     lid: 0,
     happy: 0,
     zz: 0,
-    mSmile: 1,
-    mOpen: 0,
-    mO: 0,
-    mFlat: 0,
   }
 }
 
@@ -186,8 +181,6 @@ function bounceMove(b) {
   p.hrx += 2.4 * sway
   p.hly += 1.6 * down
   p.hry += 1.6 * down
-  p.mSmile = 0.6
-  p.mOpen = 0.4
   return p
 }
 
@@ -215,8 +208,6 @@ function twoStepMove(b) {
   p.hry -= 2 * swing
   p.hlx += (left + right) / 2
   p.hrx += (left + right) / 2
-  p.mSmile = 0.7
-  p.mOpen = 0.3
   return p
 }
 
@@ -230,14 +221,13 @@ function shoulderMove(b) {
   p.hly = 4 + 2 * half
   p.hrx = 31
   p.hry = 4 + 2 * (1 - half)
-  p.mSmile = 0.5
-  p.mOpen = 0.5
   return p
 }
 
-/* paused: sitting on the edge (the ground line), legs dangling over it
-   and swaying a little, hands on the ledge, reels still. `sleep` (0–1)
-   droops the lids, quiets the sway and, near 1, it's asleep. */
+/* sitting on the edge (the ground line), legs dangling over it and
+   swaying a little, hands on the ledge, reels still — the seated idle,
+   and paused. `sleep` (0–1) droops the lids (0.5 is sleepy), quiets the
+   sway and, near 1, it's asleep. */
 export const SIT_CY = GROUND - BODY.h / 2
 export function pausedPose(t, sleep, e) {
   const p = restPose()
@@ -252,34 +242,58 @@ export function pausedPose(t, sleep, e) {
   p.hrx = 32
   p.hry = 15.5
   p.lid = smooth(sleep / 0.9)
-  p.mSmile = 1 - smooth((sleep - 0.3) / 0.4)
-  p.mFlat = 1 - p.mSmile
   p.zz = smooth((sleep - 0.8) / 0.2)
+  return p
+}
+
+/* seated vibing: the music's chill, so no dancing — sitting on the edge,
+   it sways gently from side to side over two beats, bobs a touch on
+   each beat, swings its legs in turn and taps one hand on the ledge.
+   The reels turn like a playing tape. `b` is the running beat count. */
+export function seatedVibePose(t, b, e) {
+  const p = pausedPose(t, 0, 0) // the seat, without the idle leg sway
+  const f = b - Math.floor(b)
+  const down = 0.5 + 0.5 * Math.cos(TAU * b) // 1 on the beat
+  const sway = Math.sin(Math.PI * b) // one way, then back, over two beats
+  p.rot = 1.8 * sway * e
+  p.cy += 0.7 * down * e
+  // Legs swing in turn, each lifting a little at the front of its swing.
+  p.flx += 2.4 * sway * e
+  p.frx -= 2.4 * sway * e
+  p.fly -= 2.2 * Math.max(0, sway) * e
+  p.fry -= 2.2 * Math.max(0, -sway) * e
+  // The right hand taps the ledge: up between beats, down on the beat.
+  p.hry -= 2.4 * Math.sin(Math.PI * f) ** 2 * e
+  p.spin = 0.55 * e
   return p
 }
 
 /* ─── Actions: layered over whatever the base state is doing ───── */
 
-// hover: one arm waves.
-export function waveAction(p, t) {
+// hover: an arm waves — the one on the cursor's side (side -1 is its
+// left arm, 1 its right).
+export function waveAction(p, t, side = -1) {
   const q = { ...p }
-  q.hlx = -31 + 3.2 * Math.sin(t * TAU * 2.2)
-  q.hly = -19 + 1.2 * Math.cos(t * TAU * 4.4)
-  q.mSmile = 0.4
-  q.mOpen = 0.6
+  const x = side * (31 + 3.2 * Math.sin(t * TAU * 2.2))
+  const y = -19 + 1.2 * Math.cos(t * TAU * 4.4)
+  if (side < 0) {
+    q.hlx = x
+    q.hly = y
+  } else {
+    q.hrx = x
+    q.hry = y
+  }
   return q
 }
 
-// talking: one arm holds the speech bubble up; the mouth moves while
-// the words are babbled (`talking` 0–1 is how open it is right now).
+// talking: one arm holds the speech bubble up, and the body gives a
+// little bob with each babbled word (`talking` 0–1 follows the words).
 export function holdAction(p, t, talking) {
   const q = { ...p }
   q.hrx = 22 + 0.6 * Math.sin(t * TAU * 0.8)
   q.hry = -27 + 0.6 * Math.cos(t * TAU * 0.8)
-  q.mSmile = 1 - talking
-  q.mOpen = talking
-  q.mO = 0
-  q.mFlat = 0
+  q.cy -= 0.9 * talking
+  q.reel = p.reel * (1 + 0.05 * talking)
   return q
 }
 
@@ -297,17 +311,13 @@ export function jumpAction(p, k) {
   q.hrx = 40
   q.hry = -12
   q.reel = 1.22
-  q.mSmile = 0
-  q.mOpen = 0
-  q.mO = 1
-  q.mFlat = 0
   q.lid = 0
   return q
 }
 
 /* songChange: hop, turn over like a tape going from side A to side B
-   (the body narrows to nothing and opens again — the label swaps at the
-   middle), land, and settle into the knees (k: 0 → 1). */
+   (the body narrows to nothing and opens again — the label's arrow
+   flips at the middle), land, and settle into the knees (k: 0 → 1). */
 export function flipAction(p, k) {
   const q = { ...p }
   const hop = clamp(k / 0.8)
@@ -323,10 +333,6 @@ export function flipAction(p, k) {
   q.hly = p.hly + (-16 - p.hly) * up
   q.hrx = p.hrx + (30 - p.hrx) * up
   q.hry = p.hry + (-16 - p.hry) * up
-  q.mSmile = 0.3
-  q.mOpen = 0.7
-  q.mO = 0
-  q.mFlat = 0
   q.lid = 0
   // Landing: down into the knees and back up.
   if (k > 0.8) q.cy += 2.8 * Math.sin(Math.PI * clamp((k - 0.8) / 0.2))
@@ -336,7 +342,7 @@ export function flipAction(p, k) {
 /* ─── Expressions, over any state ─── */
 
 export const EXPRESSIONS = {
-  happy: (p) => ({ ...p, happy: 1, mSmile: 0.3, mOpen: 0.7, mO: 0, mFlat: 0 }),
-  surprised: (p) => ({ ...p, reel: 1.22, lid: 0, happy: 0, mSmile: 0, mOpen: 0, mO: 1, mFlat: 0 }),
-  sleepy: (p) => ({ ...p, lid: Math.max(p.lid, 0.55), happy: 0, mSmile: 0, mOpen: 0, mO: 0, mFlat: 1 }),
+  happy: (p) => ({ ...p, happy: 1 }),
+  surprised: (p) => ({ ...p, reel: 1.22, lid: 0, happy: 0 }),
+  sleepy: (p) => ({ ...p, lid: Math.max(p.lid, 0.55), happy: 0 }),
 }
