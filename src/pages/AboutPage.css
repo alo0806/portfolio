@@ -74,8 +74,14 @@
   opacity: 1;
 }
 
+/* The palette gradient shows until the photo loads (and stands in for
+   one that has no image yet). */
 .photo__image {
+  display: block;
+  width: 100%;
+  height: auto;
   aspect-ratio: 4 / 5;
+  object-fit: cover;
   background: linear-gradient(140deg, var(--pal-a), var(--pal-b));
 }
 
