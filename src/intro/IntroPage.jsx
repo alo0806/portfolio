@@ -11,6 +11,7 @@ import { intro } from '../data/content'
 import useReducedMotion from '../hooks/useReducedMotion'
 import { clearEntranceCue, markIntroSeen } from '../lib/session'
 import { readNumberToken } from '../lib/tokens'
+import { SOUND } from '../sound/config'
 import { sound } from '../sound/engine'
 import './IntroPage.css'
 
@@ -87,13 +88,13 @@ export default function IntroPage() {
     setLeaveDelay(leadIn)
 
     // Sound follows the picture: the thump as the needle lands (the arm's
-    // drop starts at 85% of its swing), crackle through the spin-up, and
-    // the music (if there is any) fading in under it. The music has to be
-    // started inside this click (browsers' autoplay rule), so it starts
-    // silent and its fade-in waits for the needle. "skip intro" never
-    // starts it.
+    // drop starts at 85% of its swing) and crackle through the spin-up.
+    // The music (if there is any) waits until those have had the stage
+    // (config: music.introDelay), then fades in. It has to be started
+    // inside this click (browsers' autoplay rule); music.js keeps it silent
+    // until then. "skip intro" never starts it.
     const needleAt = reduced ? 0 : (armMs * 0.85) / 1000
-    startPlaying({ delay: needleAt + 0.1 })
+    startPlaying({ delay: SOUND.music.introDelay, fadeIn: SOUND.music.introFade })
     if (reduced) {
       sound.needleDrop()
       return

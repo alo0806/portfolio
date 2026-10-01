@@ -40,6 +40,10 @@ export const SOUND = {
     pauseFade: 0.3, // pressing pause
     skipFade: 0.6, // the "next song" button and picking from the queue
     preloadLead: 20, // start downloading the next song this long before its crossfade
+    // "press play" on the intro: the needle and crackle get the stage first;
+    // the music comes in this long after the click, fading in gently.
+    introDelay: 2.5,
+    introFade: 1.5,
   },
 
   /* Minimum time between two plays of the same sound, in ms, so rapid

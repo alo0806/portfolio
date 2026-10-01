@@ -31,6 +31,8 @@ let index = 0
 let resumeAt = 0 // where to start the current song when it first loads
 let wanted = false // should music be playing?
 let pauseTimer = 0
+let delayTimer = 0
+let holdAt = null // during a delayed start: where the song will (re)start from
 let lastSaved = 0
 const failed = new Set()
 const listeners = new Set()
@@ -46,17 +48,40 @@ if (typeof window !== 'undefined') {
 /* ─── Public API ───────────────────────────────────────────────── */
 
 /* Start (or keep) playing. Call from a user gesture. `delay` holds the
-   fade-in back (the intro waits for the needle to land). */
+   music back (the intro lets its needle-drop and crackle play first).
+   Browsers only allow audio to start inside the click, so with a delay
+   the song starts now but silently; when the delay is up it goes back to
+   where it started and fades in, so none of it is missed. */
 export function play({ delay = 0, fadeIn = SOUND.music.fadeIn } = {}) {
+  const alreadyPlaying = wanted && Boolean(decks[active]) && !decks[active].el.paused && holdAt == null
   wanted = true
   window.clearTimeout(pauseTimer)
+  window.clearTimeout(delayTimer)
+  const waitingFrom = holdAt // already holding? keep its start point
+  holdAt = null
   if (!available()) return update()
 
   connect()
   const d = deck(active)
   wire(d)
   if (d.song !== index) load(d, index, resumeAt)
-  fade(d, 1, fadeIn, delay)
+  // A song already playing (e.g. "press play" again after going back to
+  // the record) just keeps going: no silence, no rewind.
+  if (delay > 0 && d.gain && !alreadyPlaying) {
+    holdAt = waitingFrom ?? d.seekTo ?? d.el.currentTime
+    fade(d, 0, 0)
+    delayTimer = window.setTimeout(() => {
+      const from = holdAt
+      holdAt = null
+      if (!wanted || decks[active] !== d) return update()
+      if (d.el.readyState >= 1) d.el.currentTime = from
+      else d.seekTo = from
+      fade(d, 1, fadeIn)
+      update()
+    }, delay * 1000)
+  } else {
+    fade(d, 1, fadeIn)
+  }
   d.el.play().catch((error) => {
     // Autoplay refused (no gesture): stay put, paused, and say so.
     if (error?.name !== 'NotAllowedError' || !wanted) return
@@ -69,6 +94,11 @@ export function play({ delay = 0, fadeIn = SOUND.music.fadeIn } = {}) {
 
 export function pause({ fade: seconds = SOUND.music.pauseFade } = {}) {
   wanted = false
+  window.clearTimeout(delayTimer)
+  if (holdAt != null) {
+    seek(holdAt) // paused before it came in: keep the start of the song
+    holdAt = null
+  }
   decks.forEach((d) => fade(d, 0, seconds))
   window.clearTimeout(pauseTimer)
   pauseTimer = window.setTimeout(() => {
@@ -105,6 +135,7 @@ export function playSong(songIndex) {
 }
 
 export function seek(seconds) {
+  if (holdAt != null) holdAt = Math.max(0, seconds) // still waiting to come in: start from here
   const d = decks[active]
   if (!d || d.song !== index) {
     resumeAt = Math.max(0, seconds)
@@ -222,6 +253,9 @@ function fade(d, to, seconds, delay = 0) {
 function advance(seconds, target = nextPlayable(index)) {
   const next = target
   if (next < 0 || failed.has(next)) return update()
+  // Moving on during a delayed start: the new song comes in normally.
+  window.clearTimeout(delayTimer)
+  holdAt = null
   const from = decks[active]
   const toIndex = decks[active] ? 1 - active : active
   const to = deck(toIndex)
@@ -329,7 +363,9 @@ function build() {
     next: next >= 0 && next !== index ? SONGS[next] : null,
     prev: prev >= 0 && prev !== index ? SONGS[prev] : null,
     playing: wanted,
-    time: loaded && d.seekTo == null ? d.el.currentTime : resumeAt,
+    // During a delayed start the song is running silently; show where it
+    // will actually begin instead.
+    time: holdAt ?? (loaded && d.seekTo == null ? d.el.currentTime : resumeAt),
     duration,
   }
 }
