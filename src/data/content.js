@@ -10,8 +10,8 @@
 
 export const artist = {
   name: 'Austin Lo',
-  subline: 'design engineer · cog sci @ UCLA',
-  bio: 'Placeholder. I design in Figma and build in React — interfaces that feel considered from the first frame to the last line of CSS.',
+  subline: 'Cognitive Science @ UCLA',
+  bio: 'I like designing things in Figma and then actually building them. Still learning, mostly by making stuff like this site.',
 }
 
 export const intro = {
@@ -140,20 +140,40 @@ export const projects = [
 export const about = {
   title: 'About the artist',
   paragraphs: [
-    'Placeholder. I study cognitive science at UCLA, which mostly means I spend a lot of time thinking about why people do the thing they do instead of the thing the interface expected.',
-    'Placeholder. I like the part of the work where a design stops being a picture and starts being something you can click — moving between Figma and the editor until the two agree.',
+    'In high school I knew I wanted to do something with design, but I didn’t really know what that looked like. A friend told me to try UI/UX, so I did, and somewhere along the way I got hooked on front-end: the part where something in your head turns into something you can actually click.',
+    'Now I study cognitive science at UCLA, which ended up being a good fit, since a lot of it is about how people think, and that’s most of design anyway. This site is the biggest thing I’ve built so far. I’m graduating in spring 2027 and looking for design engineering or front-end roles, so if you’re working on something fun, I’d love to hear about it.',
   ],
   hobbiesTitle: 'Off the record',
   hobbies: [
-    'Placeholder — long walks with a podcast',
-    'Placeholder — making playlists nobody asked for',
-    'Placeholder — mechanical keyboards I do not need',
-    'Placeholder — sketching interfaces on the bus',
+    'Watching the Warriors and letting the result decide my mood for the day (FRONT OFFICE DO SOMETHINGGG)',
+    'Gaming with friends, usually something chaotic',
+    'Music, all of it. Also a big raver',
   ],
+  /* Photos live in public/photos/ as 800×1000 WebP (the frames are 4:5).
+     `alt` describes the picture for screen readers; the caption is what
+     everyone sees. `palette` is the colour shown while it loads. */
   photos: [
-    { caption: 'Placeholder one', palette: 'sunset', tilt: '-3deg' },
-    { caption: 'Placeholder two', palette: 'mint', tilt: '2deg' },
-    { caption: 'Placeholder three', palette: 'plum', tilt: '-1.5deg' },
+    {
+      image: '/photos/burger.webp',
+      alt: 'Austin mid-bite into a burger in a kitchen, looking at the camera',
+      caption: 'my fatass caught in 4k',
+      palette: 'sunset',
+      tilt: '-3deg',
+    },
+    {
+      image: '/photos/taipei.webp',
+      alt: 'Taipei 101 lit up white and green at night',
+      caption: 'Taipei, Taiwan',
+      palette: 'mint',
+      tilt: '2deg',
+    },
+    {
+      image: '/photos/niteharts.webp',
+      alt: 'A festival stage at night: a giant heart sculpture hanging from a crane, light beams and a crowd with hands up',
+      caption: 'Niteharts',
+      palette: 'plum',
+      tilt: '-1.5deg',
+    },
   ],
 }
 

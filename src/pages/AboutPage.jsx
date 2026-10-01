@@ -26,11 +26,24 @@ export default function AboutPage() {
           ))}
         </ul>
       </Reveal>
-      <ul className="about__photos" aria-label="Photos (placeholders)">
-        {about.photos.map(({ caption, palette, tilt }) => (
+      <ul className="about__photos" aria-label="Photos">
+        {about.photos.map(({ image, alt, caption, palette, tilt }) => (
           <Reveal as="li" key={caption}>
             <figure className="photo" style={{ '--tilt': tilt }}>
-              <div className="photo__image" data-palette={palette} />
+              {image ? (
+                <img
+                  className="photo__image"
+                  data-palette={palette}
+                  src={image}
+                  alt={alt}
+                  width="800"
+                  height="1000"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <div className="photo__image" data-palette={palette} />
+              )}
               <figcaption className="photo__caption">{caption}</figcaption>
             </figure>
           </Reveal>
