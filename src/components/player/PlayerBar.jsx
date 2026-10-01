@@ -8,7 +8,7 @@ import { previous as previousSong, skip as skipSong, useMusic } from '../../soun
 import Mascot from '../Mascot'
 import SoundToggle from '../SoundToggle'
 import VolumeSlider from '../VolumeSlider'
-import { NextIcon, PrevIcon, SongNextIcon, SongPrevIcon } from '../icons'
+import { DoubleNextIcon, DoublePrevIcon, NextIcon, PrevIcon } from '../icons'
 import QueuePopover from './QueuePopover'
 import SeekBar from './SeekBar'
 import MiniRecord from './MiniRecord'
@@ -30,8 +30,8 @@ const MARQUEE_SPEED = 38 // px per second
      through this page (the clock lives in the artist panel)
    With songs in the playlist (content.js): "Now playing" is the real
    song, with its credit link when the license asks for one and a small
-   previous / next song buttons (double arrows) either side of the page
-   controls; a mini record shows the song's album art as its label (it
+   previous / next song buttons (single arrows) next to play, with the
+   page buttons (double arrows) outside them; a mini record shows the song's album art as its label (it
    turns while the music plays, and the label crossfades on song change);
    the record + title open the song queue; play / pause also starts and
    stops the music; and the orange bar shows the song instead of the
@@ -183,6 +183,18 @@ export default function PlayerBar() {
 
       <div className="player__center">
         <div className="player__controls">
+          <button
+            type="button"
+            className="player__btn player__btn--prev"
+            aria-label={`Previous track: ${prev.title}`}
+            title={`Previous page: ${prev.title}`}
+            onClick={() => {
+              const target = stepTrack(navigate, pathname, -1)
+              sound.switchTrack(target.number - 1)
+            }}
+          >
+            <DoublePrevIcon />
+          </button>
           {music.prev ? (
             <button
               type="button"
@@ -194,21 +206,9 @@ export default function PlayerBar() {
                 previousSong()
               }}
             >
-              <SongPrevIcon />
+              <PrevIcon />
             </button>
           ) : null}
-          <button
-            type="button"
-            className="player__btn player__btn--prev"
-            aria-label={`Previous track: ${prev.title}`}
-            title={`Previous: ${prev.title}`}
-            onClick={() => {
-              const target = stepTrack(navigate, pathname, -1)
-              sound.switchTrack(target.number - 1)
-            }}
-          >
-            <PrevIcon />
-          </button>
           <button
             type="button"
             className="player__btn player__btn--play"
@@ -223,18 +223,6 @@ export default function PlayerBar() {
               <span className="pp__half pp__half--r" />
             </span>
           </button>
-          <button
-            type="button"
-            className="player__btn player__btn--next"
-            aria-label={`Next track: ${next.title}`}
-            title={`Next: ${next.title}`}
-            onClick={() => {
-              const target = stepTrack(navigate, pathname, 1)
-              sound.switchTrack(target.number - 1)
-            }}
-          >
-            <NextIcon />
-          </button>
           {music.next ? (
             <button
               type="button"
@@ -246,9 +234,21 @@ export default function PlayerBar() {
                 skipSong()
               }}
             >
-              <SongNextIcon />
+              <NextIcon />
             </button>
           ) : null}
+          <button
+            type="button"
+            className="player__btn player__btn--next"
+            aria-label={`Next track: ${next.title}`}
+            title={`Next page: ${next.title}`}
+            onClick={() => {
+              const target = stepTrack(navigate, pathname, 1)
+              sound.switchTrack(target.number - 1)
+            }}
+          >
+            <DoubleNextIcon />
+          </button>
         </div>
         {music.available ? (
           <SeekBar time={music.time} duration={music.duration} />
