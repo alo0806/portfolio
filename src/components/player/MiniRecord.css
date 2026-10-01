@@ -1,0 +1,123 @@
+/* The player bar's mini record. Same recipe as the intro record
+   (Record.css): dark vinyl, fine grooves, a lead-in ring at the rim, a
+   faint uneven tint so rotation reads, and a reflection that doesn't
+   turn. It fills its box (the cover slot). */
+
+.minirec {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.45);
+}
+
+.minirec__disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--vinyl);
+  will-change: transform;
+}
+
+.minirec__grooves {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 0 94%, rgba(255, 255, 255, 0.08) 95%, transparent 97%),
+    conic-gradient(
+      from 20deg,
+      rgba(255, 255, 255, 0.03),
+      transparent 20%,
+      rgba(255, 255, 255, 0.05) 45%,
+      transparent 70%,
+      rgba(255, 255, 255, 0.03)
+    ),
+    repeating-radial-gradient(
+      circle,
+      var(--vinyl) 0,
+      var(--vinyl) 1.1px,
+      var(--vinyl-groove) 1.6px,
+      var(--vinyl) 2.1px
+    );
+}
+
+/* The centre label: 45% of the record's diameter. */
+.minirec__label {
+  position: absolute;
+  inset: 27.5%;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--vinyl-groove);
+}
+
+.minirec__face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.minirec__face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* No cover: the song's colour, with its number. */
+.minirec__face[data-palette] {
+  background: linear-gradient(140deg, var(--pal-a), var(--pal-b));
+  color: var(--pal-ink);
+}
+
+.minirec__number {
+  font-family: var(--font-display);
+  font-size: 0.5625rem;
+  font-weight: 800;
+  line-height: 1;
+  transform: translateY(-40%);
+}
+
+/* A new label fades in over the old one. */
+.minirec__face[data-entering='true'] {
+  animation: minirec-label-in var(--dur-base) var(--ease-out) both;
+}
+
+@keyframes minirec-label-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.minirec__hole {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% -50%;
+  background: var(--vinyl);
+}
+
+/* The reflection doesn't rotate — light stays where it is — and stays on
+   the vinyl, off the label. */
+.minirec__sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 210deg,
+    transparent 0 6%,
+    var(--vinyl-sheen) 12%,
+    transparent 19% 55%,
+    rgba(255, 255, 255, 0.09) 62%,
+    transparent 69%
+  );
+  -webkit-mask: radial-gradient(circle, transparent 0 27%, #000 28.5%);
+  mask: radial-gradient(circle, transparent 0 27%, #000 28.5%);
+}

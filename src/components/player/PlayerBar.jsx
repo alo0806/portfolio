@@ -11,6 +11,7 @@ import VolumeSlider from '../VolumeSlider'
 import { NextIcon, PrevIcon, SongNextIcon, SongPrevIcon } from '../icons'
 import QueuePopover from './QueuePopover'
 import SeekBar from './SeekBar'
+import MiniRecord from './MiniRecord'
 import { usePlayer } from './playerContext'
 import '../covers.css'
 import './PlayerBar.css'
@@ -30,11 +31,11 @@ const MARQUEE_SPEED = 38 // px per second
    With songs in the playlist (content.js): "Now playing" is the real
    song, with its credit link when the license asks for one and a small
    previous / next song buttons (double arrows) either side of the page
-   controls; the cover square shows the song's album art (and flips when
-   it changes, turning while playing); the cover + title open the song
-   queue; play / pause also starts and stops the music; and the orange
-   bar shows the song instead of the scroll, and can be clicked, dragged
-   or keyed to seek. */
+   controls; a mini record shows the song's album art as its label (it
+   turns while the music plays, and the label crossfades on song change);
+   the record + title open the song queue; play / pause also starts and
+   stops the music; and the orange bar shows the song instead of the
+   scroll, and can be clicked, dragged or keyed to seek. */
 
 // Songs have no artwork: each gets a palette (cycling) and its number.
 const SONG_PALETTES = ['sunset', 'plum', 'mint', 'citrus']
@@ -127,21 +128,15 @@ export default function PlayerBar() {
     ? {
         key: `song-${music.index}`,
         palette: SONG_PALETTES[music.index % SONG_PALETTES.length],
-        label: music.index + 1,
+        number: music.index + 1,
         image: song.cover,
       }
-    : { key: track.path, palette: track.cover, label: track.number }
+    : { key: track.path, palette: track.cover, number: track.number }
 
   const nowPlayingContent = (
     <>
-      <span className="player__cover" key={cover.key} data-palette={cover.palette} aria-hidden="true">
-        {cover.image ? (
-          <span className="player__cover-art player__cover-art--image">
-            <img src={cover.image} alt="" width="44" height="44" decoding="async" />
-          </span>
-        ) : (
-          <span className="player__cover-art">{cover.label}</span>
-        )}
+      <span className="player__cover" aria-hidden="true">
+        <MiniRecord label={cover} spinning={musicOn} />
       </span>
       <span className="player__meta">
         <span className="player__label">Now playing</span>
