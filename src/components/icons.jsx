@@ -44,9 +44,9 @@ export function NextIcon(props) {
   )
 }
 
-/* Previous / next song: two triangles and a bar — the classic skip
-   icon, distinct from the single-triangle page prev / next. */
-export function SongNextIcon(props) {
+/* Double arrows (two triangles and a bar) — the player bar's previous /
+   next page buttons, outside the single-arrow song buttons. */
+export function DoubleNextIcon(props) {
   return (
     <svg {...base} {...props}>
       <path d="M2 5 L8.6 10 L2 15 Z M8.6 5 L15.2 10 L8.6 15 Z" fill="currentColor" />
@@ -55,7 +55,7 @@ export function SongNextIcon(props) {
   )
 }
 
-export function SongPrevIcon(props) {
+export function DoublePrevIcon(props) {
   return (
     <svg {...base} {...props}>
       <path d="M18 5 L11.4 10 L18 15 Z M11.4 5 L4.8 10 L11.4 15 Z" fill="currentColor" />
