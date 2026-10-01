@@ -12,7 +12,8 @@ import './Ambient.css'
    within fixed bounds, so a big monitor doesn't get several times the
    work. It runs on the shared frame ticker, pauses off screen, and rests
    entirely while nothing moves (player paused, no ripples). Reduced
-   motion draws one still frame and ignores clicks. */
+   motion draws one still frame and skips the ripples; onPress (the
+   intro's click note) still fires on every press. */
 
 const TAU = Math.PI * 2
 const MAX_RIPPLES = 24
@@ -42,12 +43,17 @@ function makeGlow([r, g, b]) {
   return canvas
 }
 
-export default function Ambient({ className = '', interactive = false }) {
+export default function Ambient({ className = '', interactive = false, onPress }) {
   const canvasRef = useRef(null)
   const reduced = useReducedMotion()
   const { playing } = usePlayer()
   const playingRef = useRef(playing)
   const wakeRef = useRef(null)
+  const onPressRef = useRef(onPress)
+
+  useEffect(() => {
+    onPressRef.current = onPress
+  }, [onPress])
 
   useEffect(() => {
     playingRef.current = playing
@@ -198,7 +204,9 @@ export default function Ambient({ className = '', interactive = false }) {
     }
 
     const onPointerDown = (event) => {
-      if (!interactive || reduced) return
+      if (!interactive) return
+      onPressRef.current?.()
+      if (reduced) return
       const rect = canvas.getBoundingClientRect()
       ripple(event.clientX - rect.left, event.clientY - rect.top)
     }

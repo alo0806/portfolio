@@ -95,8 +95,8 @@
 .reveal-word {
   display: inline-block;
   overflow: clip;
-  padding-bottom: 0.14em;
-  margin-bottom: -0.14em;
+  padding-block: 0.14em; /* room for descenders, and the name's letters to lift */
+  margin-block: -0.14em;
   vertical-align: bottom;
 }
 
@@ -238,5 +238,82 @@
 @media (max-width: 560px) {
   .intro__clock {
     left: var(--sp-3);
+  }
+}
+
+/* ─── The name: letters that lift toward the cursor ───
+   useNameLetters moves each one (transform) and sets --tint (0–1), how
+   far it has taken on the accent colour. */
+
+.intro__letter {
+  display: inline-block;
+  color: color-mix(in oklab, var(--on-indigo), var(--accent) calc(var(--tint, 0) * 75%));
+}
+
+/* ─── "give it a spin" ───
+   A small note beside the record, until it's first scratched. */
+
+.intro__hint {
+  position: absolute;
+  left: 0;
+  top: 6%;
+  translate: -72% 0;
+  rotate: -8deg;
+  color: var(--on-indigo-muted);
+  font-size: var(--fs-small);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity var(--dur-base) ease;
+}
+
+/* Arriving is the inner span's; leaving is the outer one's. */
+.intro__hint-text {
+  display: block;
+  animation: fade-in var(--dur-slow) ease-out both;
+  animation-delay: calc(var(--tail-at) + 400ms);
+}
+
+.intro__hint-text::after {
+  content: ' ↘';
+}
+
+.intro__hint[data-hidden='true'],
+.intro[data-leaving='true'] .intro__hint {
+  opacity: 0;
+}
+
+/* ─── Sound on / off (the player bar's switch) ─── */
+
+.intro .intro__sound {
+  position: absolute;
+  right: calc(var(--sp-4) - 10px);
+  bottom: calc(var(--sp-3) - 9px);
+  z-index: 1;
+  color: var(--on-indigo-muted);
+  animation: fade-in var(--dur-slow) ease-out both;
+  animation-delay: calc(var(--tail-at) + 250ms);
+}
+
+.intro .intro__sound::before {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.intro .intro__sound:hover,
+.intro .intro__sound:focus-visible {
+  color: var(--on-indigo);
+}
+
+.intro .intro__sound[aria-pressed='true'] {
+  color: var(--on-indigo-muted);
+  opacity: 0.75;
+}
+
+@media (max-width: 560px) {
+  .intro__hint {
+    translate: -58% -40%;
+  }
+
+  .intro .intro__sound {
+    right: calc(var(--sp-3) - 10px);
   }
 }

@@ -14,7 +14,8 @@ const INTERACTIVE = 'a, button, [role="button"], label, summary'
 /* A dot that sits on the pointer and a soft ring that trails it.
    Mouse/trackpad only: touch devices and reduced motion keep the native
    cursor. Over text fields the custom cursor steps aside so the native
-   I-beam shows.
+   I-beam shows. Over anything marked data-cursor="grab" (the intro
+   record) it shows a grab state, and a grip while pressed.
 
    Appearance is switched by one token, --cursor-mode (tokens.css). The
    cursor also reports which surface it's over (data-surface="dark" on an
@@ -79,6 +80,7 @@ export default function Cursor() {
       const target = event.target instanceof Element ? event.target : null
       if (!target) return
       if (target.closest(TEXT_FIELDS)) root.dataset.state = 'text'
+      else if (target.closest('[data-cursor="grab"]')) root.dataset.state = 'grab'
       else if (target.closest(INTERACTIVE)) root.dataset.state = 'pointer'
       else root.dataset.state = 'default'
       root.dataset.surface = target.closest('[data-surface]')?.dataset.surface ?? 'light'

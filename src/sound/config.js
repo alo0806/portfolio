@@ -58,6 +58,8 @@ export const SOUND = {
     babble: 250,
     texture: 120,
     preview: 120,
+    tap: 70,
+    letter: 90,
   },
 
   /* Tracklist rows: each page has its own note (scale degree + octave).
@@ -159,5 +161,56 @@ export const SOUND = {
   preview: {
     degree: 0,
     octave: 5,
+  },
+
+  /* ─── The intro ─── */
+
+  /* Clicking the intro's backdrop: a random note from the key (never the
+     same one twice in a row). Each click adds to `pile`, which drains at
+     `drain` per second; the louder the pile, the softer the next note,
+     so spam-clicking stays gentle. */
+  tap: {
+    degrees: [0, 9], // scale degrees to pick from: D4 up to B5
+    octave: 4,
+    gain: 0.5, // × the plucked note's gain
+    decay: 0.7,
+    pile: 1,
+    drain: 3,
+    soften: 0.45, // gain ÷ (1 + pile × soften)
+  },
+
+  /* Hovering the letters of the name: one soft note per letter, rising
+     through the scale from the first letter to the last. */
+  letter: {
+    octave: 4,
+    gain: 0.22, // × the plucked note's gain
+    decay: 0.4,
+  },
+
+  /* The quiet vinyl texture under the intro, from the first interaction
+     until "press play" (crossfades into the music) or "skip intro". Mostly
+     sparse pops over a muffled hiss — not white noise. */
+  roomCrackle: {
+    gain: 0.5,
+    hiss: 0.035,
+    popsPerSecond: 7,
+    length: 8, // seconds in the loop
+    highpass: 160,
+    lowpass: 2400,
+    fadeIn: 1.4,
+    fadeOut: 0.6, // skip intro, leaving, a hidden tab
+  },
+
+  /* Scratching the intro record: a short stretch of the first song,
+     played at the record's speed (backwards too). One turn of the record
+     is 1.8s of audio, like a real 33⅓ rpm disc. */
+  scratch: {
+    gain: 0.9,
+    from: 0.3, // where in the song file the stretch starts (0–1)
+    bytes: 512 * 1024, // how much of the file to fetch for it
+    seconds: 10, // kept after decoding
+    degreesPerSecond: 200, // record speed that plays at normal pitch (33⅓ rpm)
+    fadeBelow: 90, // after letting go: fades out as the spin comes within this (deg/s) of idle
+    smoothing: 0.012, // seconds; how quickly level and speed follow (no clicks)
   },
 }

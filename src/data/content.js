@@ -16,10 +16,12 @@ export const artist = {
 
 export const intro = {
   greeting: 'Hi, I’m Austin Lo',
+  name: 'Austin Lo', // the part of the greeting whose letters react to the cursor
   aka: '(some people call me alo)',
   recordLabel: 'alo',
   play: 'press play',
   skip: 'skip intro',
+  hint: 'give it a spin', // beside the record until it's first scratched
 }
 
 /* ─── Background music ─────────────────────────────────────────

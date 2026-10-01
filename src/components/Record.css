@@ -175,3 +175,14 @@
     filter: none;
   }
 }
+
+/* Grabbable (the intro): it takes the pointer even though the stage
+   around it lets clicks through, and touch-drags turn it instead of
+   scrolling — on the record only. The cursor shows a grab state. */
+.record[data-scratchable='true'] {
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
