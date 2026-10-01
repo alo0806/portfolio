@@ -1,0 +1,138 @@
+/* The work gallery: above the player bar and sidebar, below the site's
+   custom cursor — the same layer and dark panel as the drawing toy. */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--indigo) 55%, transparent);
+  backdrop-filter: blur(4px);
+}
+
+.lightbox__panel {
+  position: absolute;
+  inset: clamp(12px, 3vw, 24px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--sp-2);
+  padding: clamp(16px, 3vw, 32px);
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--panel-dark);
+  border: 1px solid var(--indigo-line);
+  box-shadow: var(--shadow-card-hover);
+  color: var(--on-indigo);
+  outline: none;
+}
+
+.lightbox__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.lightbox__title {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: var(--lh-snug);
+}
+
+.lightbox__role {
+  margin-top: 2px;
+  color: var(--on-indigo-muted);
+  font-size: var(--fs-small);
+}
+
+.lightbox__line {
+  margin-top: var(--sp-1);
+  max-width: 60ch;
+}
+
+.lightbox__close,
+.lightbox__step {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--indigo-raised);
+  color: var(--on-indigo);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.lightbox__close:hover,
+.lightbox__step:hover {
+  transform: scale(1.06);
+}
+
+.lightbox__close:active,
+.lightbox__step:active {
+  transform: scale(0.94);
+}
+
+/* The media fills the middle row; each item keeps its own proportions
+   inside it (letterboxed, never cropped). */
+.lightbox__figure {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--sp-1);
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+}
+
+/* The stage is a size container, so the item can be as big as fits both
+   ways: as wide as the stage, or as tall — whichever runs out first
+   (--r is the item's width/height, set inline). */
+.lightbox__stage {
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  touch-action: pan-y; /* horizontal drags are swipes */
+}
+
+.lightbox__media {
+  width: min(100cqw, 100cqh * var(--r, 16 / 9));
+  height: auto;
+  background: transparent;
+}
+
+.lightbox__media.media--placeholder {
+  background: linear-gradient(140deg, var(--pal-a), var(--pal-b));
+}
+
+.lightbox__caption {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-2);
+  color: var(--on-indigo-muted);
+  font-size: var(--fs-small);
+  text-align: center;
+}
+
+.lightbox__count {
+  color: var(--on-indigo);
+}
+
+.lightbox__empty {
+  align-self: center;
+  justify-self: center;
+  color: var(--on-indigo-muted);
+}
+
+.lightbox__nav {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-2);
+}

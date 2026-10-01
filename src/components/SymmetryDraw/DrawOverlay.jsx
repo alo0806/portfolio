@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
+import { insetsBetween, OVERLAY_RADIUS as RADIUS } from '../../lib/growOverlay'
 import { duration, ease, prefersReducedMotion } from '../../lib/motion'
 import {
   COLORS,
@@ -19,17 +20,6 @@ import {
   undo,
 } from './engine'
 import { ClearIcon, CloseIcon, MinusIcon, MirrorIcon, PlusIcon, SaveIcon, UndoIcon } from './icons'
-
-const RADIUS = 22 // matches --r-lg, the card's corner
-
-/* Clip insets that frame `inner` (the card) inside `outer` (the panel). */
-function insetsBetween(outer, inner) {
-  const top = Math.max(0, inner.top - outer.top)
-  const right = Math.max(0, outer.right - inner.right)
-  const bottom = Math.max(0, outer.bottom - inner.bottom)
-  const left = Math.max(0, inner.left - outer.left)
-  return `inset(${top}px ${right}px ${bottom}px ${left}px round ${RADIUS}px)`
-}
 
 /* The drawing toy, opened: a near-fullscreen canvas that grows out of the
    card and shrinks back into it. It's rendered at the top of <body> (a

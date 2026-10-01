@@ -2,6 +2,7 @@ import { Navigate } from 'react-router-dom'
 import IntroRoute from './IntroRoute'
 import MainLayout from './layout/MainLayout'
 import AboutPage from './pages/AboutPage'
+import CaseStudyPage from './pages/CaseStudyPage'
 import PlaygroundPage from './pages/PlaygroundPage'
 import WorkPage from './pages/WorkPage'
 import Root from './Root'
@@ -17,6 +18,7 @@ export const routes = [
         element: <MainLayout />,
         children: [
           { path: '/work', element: <WorkPage /> },
+          { path: '/work/:slug', element: <CaseStudyPage /> },
           { path: '/about', element: <AboutPage /> },
           { path: '/playground', element: <PlaygroundPage /> },
         ],

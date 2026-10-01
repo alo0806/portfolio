@@ -92,48 +92,241 @@ export const linerNotes = [
   },
 ]
 
-/* cover.layout: 'stacked' | 'initial' | 'framed'
-   cover.palette: any palette name from tokens.css
-   image: optional — { src: '/covers/name.jpg', alt: 'what it shows' }.
-   Put images in /public/covers/. Without one, the typographic cover
-   is drawn instead. */
+/* ─── My Work ────────────────────────────────────────────────
+   The page's sections, in order. A section with no projects isn't shown.
+   `toggle` (archive only): it starts collapsed behind this button. */
+export const workSections = [
+  { id: 'singles', title: 'Singles', subtitle: 'Featured work' },
+  { id: 'features', title: 'Features', subtitle: 'Club and team work' },
+  { id: 'deepcuts', title: 'Deep cuts', subtitle: 'Smaller work' },
+  { id: 'demos', title: 'Demos', subtitle: 'Works in progress' },
+  {
+    id: 'archive',
+    title: 'Early work',
+    subtitle: 'From the archive',
+    toggle: { show: 'Show early work', hide: 'Hide early work' },
+  },
+]
+
+/* Every project. Files go in public/work/<slug>/ — see the README there
+   for sizes and formats.
+
+   slug       — its URL: Singles open at /work/<slug>
+   section    — 'singles' | 'features' | 'deepcuts' | 'demos' | 'archive'
+   tag        — a short label (Side project, Club, Challenge, …)
+   role, year — shown on the card / case study
+   oneLiner   — one sentence on the card
+   cover      — { image?, video?, poster?, alt?, palette, layout }
+                With no image or video, a typographic cover is drawn in
+                `palette` (any palette name from tokens.css) using
+                `layout`: 'stacked' | 'initial' | 'framed'.
+   metrics    — [{ label, value }]: Singles show three; Features show the
+                first one, if any
+   media      — the gallery (everything but Singles), and what case study
+                process blocks hold:
+                { type: 'image' | 'video', src, poster?, alt, caption?,
+                  ratio?, fullVideo? }
+                ratio is width/height ('16/9' by default) so nothing jumps
+                while it loads; fullVideo is an optional link to the
+                whole video. A placeholder (src: null) shows a coloured
+                frame in `palette`.
+   caseStudy  — Singles only: { context, role, process: [{ text, media }],
+                outcome, outcomeMetrics } */
+const placeholderMedia = (palette, count = 3) =>
+  Array.from({ length: count }, (_, i) => ({
+    type: 'image',
+    src: null,
+    palette,
+    alt: '',
+    caption: `Placeholder caption ${i + 1}.`,
+    ratio: i === 1 ? '4/5' : '16/10',
+  }))
+
+// The one placeholder clip (public/work/placeholder/) — safe to delete
+// once there's real video; see the README there.
+const placeholderClip = {
+  type: 'video',
+  src: '/work/placeholder/clip.mp4',
+  poster: '/work/placeholder/clip-poster.webp',
+  alt: 'Placeholder clip: a slowly shifting colour gradient',
+  caption: 'Placeholder clip. Short, muted and looping, like a rush video cut-down.',
+  ratio: '16/9',
+  fullVideo: null,
+}
+
+const placeholderCaseStudy = (palette) => ({
+  context: 'Placeholder. What this was, who it was for, and the problem it had to solve.',
+  role: 'Placeholder. What I owned, who I worked with, and the tools I used.',
+  process: [
+    {
+      text: 'Placeholder. Where it started: research, references, the first rough ideas.',
+      media: placeholderMedia(palette, 1),
+    },
+    {
+      text: 'Placeholder. How it changed: the decisions, what got cut, and why.',
+      media: placeholderMedia(palette, 2),
+    },
+    {
+      text: 'Placeholder. How it was built and shipped.',
+      media: [],
+    },
+  ],
+  outcome: 'Placeholder. What happened once it was out, and what I would do differently.',
+  outcomeMetrics: [
+    { label: 'Result', value: '—' },
+    { label: 'Reach', value: '—' },
+    { label: 'Time', value: '—' },
+  ],
+})
+
 export const projects = [
+  /* ─── Singles ─── */
   {
-    title: 'Project One',
+    slug: 'this-site',
+    title: 'This site',
+    section: 'singles',
     tag: 'Side project',
-    description: 'Placeholder. One line about what it does and who it is for.',
-    metrics: [
-      { label: 'Users', value: '—' },
-      { label: 'Shipped', value: '—' },
-      { label: 'Role', value: '—' },
-    ],
+    role: 'Design & front-end',
+    year: '2026',
+    oneLiner: 'Placeholder. A portfolio pressed like a record: a tracklist for pages and a player bar that plays.',
     cover: { palette: 'sunset', layout: 'stacked' },
-    image: null,
-  },
-  {
-    title: 'Project Two',
-    tag: 'Internship',
-    description: 'Placeholder. One line about the problem and what changed.',
     metrics: [
-      { label: 'Impact', value: '—' },
-      { label: 'Team', value: '—' },
-      { label: 'Length', value: '—' },
+      { label: 'Built', value: '—' },
+      { label: 'Stack', value: '—' },
+      { label: 'Time', value: '—' },
     ],
-    cover: { palette: 'plum', layout: 'initial' },
-    image: null,
+    media: [],
+    caseStudy: placeholderCaseStudy('sunset'),
   },
   {
-    title: 'InnoDesign redesign',
-    status: 'In progress',
-    tag: 'Club',
-    description: 'Placeholder. A self-directed rework, audited before redrawn.',
+    slug: 'lambda-rush',
+    title: 'Lambda rush & party campaign',
+    section: 'singles',
+    tag: 'Campaign',
+    role: 'Creative lead',
+    year: '—',
+    oneLiner: 'Placeholder. Rush videos, posters and socials for a semester of events.',
+    cover: { video: placeholderClip.src, poster: placeholderClip.poster, alt: placeholderClip.alt, palette: 'plum', layout: 'initial' },
     metrics: [
-      { label: 'Pages', value: '—' },
+      { label: 'Views', value: '—' },
+      { label: 'Pieces', value: '—' },
+      { label: 'Events', value: '—' },
+    ],
+    media: [],
+    caseStudy: {
+      ...placeholderCaseStudy('plum'),
+      process: [
+        { text: 'Placeholder. The brief and the first cut.', media: [placeholderClip] },
+        { text: 'Placeholder. Posters and socials that matched it.', media: placeholderMedia('plum', 2) },
+      ],
+    },
+  },
+  {
+    slug: 'spotify-widgets',
+    title: 'Spotify widgets',
+    section: 'singles',
+    tag: 'Concept',
+    role: 'UI design',
+    year: '—',
+    oneLiner: 'Placeholder. Home-screen widgets for what you are listening to.',
+    cover: { palette: 'mint', layout: 'framed' },
+    metrics: [
+      { label: 'Widgets', value: '—' },
+      { label: 'Sizes', value: '—' },
       { label: 'Tests', value: '—' },
-      { label: 'Stage', value: '—' },
     ],
-    cover: { palette: 'citrus', layout: 'framed' },
-    image: null,
+    media: [],
+    caseStudy: placeholderCaseStudy('mint'),
+  },
+
+  /* ─── Features ─── */
+  {
+    slug: 'tsa-creative-media',
+    title: 'TSA creative media',
+    section: 'features',
+    tag: 'Club',
+    role: 'Creative media',
+    year: '—',
+    oneLiner: 'Placeholder. Graphics and video for the chapter.',
+    cover: { palette: 'citrus', layout: 'stacked' },
+    metrics: [{ label: 'Pieces', value: '—' }],
+    media: [placeholderClip, ...placeholderMedia('citrus', 2)],
+  },
+  {
+    slug: 'smc-honor-society',
+    title: 'SMC honor society publicity',
+    section: 'features',
+    tag: 'Team',
+    role: 'Publicity',
+    year: '—',
+    oneLiner: 'Placeholder. Posters and socials for meetings and drives.',
+    cover: { palette: 'plum', layout: 'framed' },
+    metrics: [],
+    media: placeholderMedia('plum', 3),
+  },
+
+  /* ─── Deep cuts ─── */
+  {
+    slug: 'yellow-theme-challenge',
+    title: 'Yellow theme challenge (8 days)',
+    section: 'deepcuts',
+    tag: 'Challenge',
+    role: 'Design',
+    year: '—',
+    oneLiner: 'Placeholder. One colour, eight days.',
+    cover: { palette: 'citrus', layout: 'initial' },
+    metrics: [],
+    media: placeholderMedia('citrus', 3),
+  },
+  {
+    slug: 'switch-menu-remake',
+    title: 'Nintendo Switch menu remake',
+    section: 'deepcuts',
+    tag: 'Remake',
+    role: 'UI & motion',
+    year: '—',
+    oneLiner: 'Placeholder. The home menu, rebuilt.',
+    cover: { palette: 'sunset', layout: 'framed' },
+    metrics: [],
+    media: placeholderMedia('sunset', 2),
+  },
+  {
+    slug: 'line-emotes',
+    title: 'Line emotes',
+    section: 'deepcuts',
+    tag: 'Illustration',
+    role: 'Illustration',
+    year: '—',
+    oneLiner: 'Placeholder. A set of sticker emotes.',
+    cover: { palette: 'mint', layout: 'stacked' },
+    metrics: [],
+    media: placeholderMedia('mint', 3),
+  },
+
+  /* ─── Early work ─── */
+  {
+    slug: 'ap-art-3d',
+    title: 'AP Art 3D',
+    section: 'archive',
+    tag: 'School',
+    role: 'Sculpture',
+    year: '2022',
+    oneLiner: 'Placeholder. The AP 3D portfolio.',
+    cover: { palette: 'plum', layout: 'initial' },
+    metrics: [],
+    media: placeholderMedia('plum', 3),
+  },
+  {
+    slug: 'house-t-shirts',
+    title: 'High school house t-shirts',
+    section: 'archive',
+    tag: 'School',
+    role: 'Apparel design',
+    year: '—',
+    oneLiner: 'Placeholder. Shirts for the house teams.',
+    cover: { palette: 'sunset', layout: 'stacked' },
+    metrics: [],
+    media: placeholderMedia('sunset', 2),
   },
 ]
 

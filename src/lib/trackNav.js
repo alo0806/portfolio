@@ -37,7 +37,15 @@ export function directionBetween(fromPath, toPath) {
   const from = trackIndexFor(fromPath)
   const to = trackIndexFor(toPath)
   if (from < 0 || to < 0) return 'next'
+  // Within one track (My Work ↔ a case study): deeper is forward.
+  if (from === to) return toPath.split('/').length >= fromPath.split('/').length ? 'next' : 'prev'
   return to >= from ? 'next' : 'prev'
+}
+
+/* For links inside a track (a case study's back / previous / next), which
+   know their own direction. */
+export function setTrackDirection(direction) {
+  setDirection(direction)
 }
 
 /* Prev/next from the player bar. Wrapping keeps its own direction:
