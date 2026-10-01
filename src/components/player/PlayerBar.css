@@ -258,7 +258,7 @@
 @media (min-width: 900px) {
   .player__center:has(.seek) {
     gap: 5px;
-    translate: 0 6px;
+    translate: 0 4px;
   }
 }
 

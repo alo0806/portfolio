@@ -121,7 +121,7 @@
   --sidebar-w: 300px;
   --content-max: 960px;
   --topbar-h: 60px;
-  --player-h: 76px;
+  --player-h: 84px; /* room for the buttons and the song's time row */
 
   /* ─── Cursor ───
      ONE switch: `blend` inverts whatever is underneath. Change to
