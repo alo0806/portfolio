@@ -26,9 +26,8 @@
   min-width: 0;
 }
 
-/* The cover is keyed by track, so it remounts — and flips in — on every
-   track change (the direction follows the slide). The art inside turns
-   slowly while playing. */
+/* The cover slot holds the mini record (MiniRecord.css). It flips in
+   once, when the player first appears. */
 .player__cover {
   flex-shrink: 0;
   display: block;
@@ -50,41 +49,6 @@
   from {
     opacity: 0;
     transform: perspective(300px) rotateY(calc(var(--flip) * 90deg));
-  }
-}
-
-.player__cover-art {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  border-radius: 10px;
-  background: linear-gradient(140deg, var(--pal-a), var(--pal-b));
-  color: var(--pal-ink);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.125rem;
-  line-height: 1;
-  animation: cover-spin 14s linear infinite;
-  animation-play-state: var(--play-state);
-}
-
-/* Album art, clipped to the same rounded square (and turning with it). */
-.player__cover-art--image {
-  overflow: hidden;
-  background: var(--line);
-}
-
-.player__cover-art--image img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-@keyframes cover-spin {
-  to {
-    transform: rotate(360deg);
   }
 }
 
