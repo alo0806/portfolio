@@ -202,26 +202,23 @@
 
 /* ─── Album grid ────────────────────────────────────────────── */
 
-/* A discography row: four across on desktop, two on tablets and
-   phones. */
-.albums {
+/* One grid for every section, so every card is the same width: four
+   across on desktop (a short section leaves its empty slots on the
+   right), two on tablets and phones. Singles stand out by their covers,
+   stats and place at the top, not their size. */
+.albums,
+.work-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--sp-2);
 }
 
 @container (min-width: 820px) {
-  .albums {
+  .albums,
+  .work-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--sp-3);
   }
-}
-
-/* Features: medium cards; Deep cuts, Demos, Early work: compact. */
-.work-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--sp-2);
 }
 
 .work-grid > li {
@@ -232,17 +229,6 @@
    over the hidden attribute. */
 .work-grid[hidden] {
   display: none;
-}
-
-@container (min-width: 620px) {
-  .work-grid--features {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--sp-3);
-  }
-
-  .work-grid--compact {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
 }
 
 .albums > li {
@@ -381,13 +367,8 @@
   color: var(--accent-ink);
 }
 
-/* The one-liner, two lines at most. */
+/* The one-liner: written to fit two lines, never cut off. */
 .album__desc {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
   color: var(--muted-ink);
   font-size: var(--fs-label);
   line-height: 1.45;
@@ -529,12 +510,19 @@
   font-size: 1.125rem;
 }
 
-.work-card--feature .work-card__title {
-  font-size: var(--fs-h3);
+/* Feature cards are the Singles' width, so they share their type: the
+   body is a size container and the title scales with it. */
+.work-card--feature .work-card__body {
+  container-type: inline-size;
 }
 
-.work-card--feature .work-card__body {
-  padding: var(--sp-3);
+.work-card--feature .work-card__title {
+  font-size: clamp(0.9375rem, 8.5cqi, 1.1875rem);
+}
+
+.work-card--feature .work-card__desc {
+  font-size: var(--fs-label);
+  line-height: 1.45;
 }
 
 /* Compact cards: smaller type, tighter padding. */
