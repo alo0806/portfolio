@@ -181,7 +181,7 @@ export const projects = [
     role: 'Marketing Associate (remote)',
     year: '2024',
     oneLiner: 'Short-form videos for an AI study app’s TikTok and Instagram, made in a small team for students studying for exams.',
-    cover: { image: '/work/gizmo/logo.png', alt: 'The Gizmo logo', palette: 'plum', layout: 'framed' },
+    cover: { image: '/work/gizmo/cover.webp', alt: 'Gizmo’s purple axolotl mascot, mid-step with a thumbs up', palette: 'plum', layout: 'framed' },
     // Every figure comes from src/data/gizmo-stats.json (node
     // scripts/gizmo-stats.js): the Gizmo account during my time on the
     // team, Jan 1 – Oct 31 2024 — not only my own posts.
