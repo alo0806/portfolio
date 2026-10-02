@@ -16,8 +16,11 @@ public/work/
     clip-poster.webp    its first frame, shown before it plays
   lambda-rush/
     …
-  placeholder/          the placeholder clip — delete once there's real video
 ```
+
+Keep the original, full-size files outside the project (yours are in
+`astnlo.port-originals/`, next to it): everything in `public/` is deployed
+and committed, so only the converted WebP files belong here.
 
 ## Images
 
@@ -26,7 +29,9 @@ public/work/
   for covers (they're square).
 - Give every image an `alt` in `content.js` (what's in it, for screen
   readers) and set `ratio` to its width / height, e.g. `'4/5'` or
-  `'16/9'`, so the page doesn't jump while it loads.
+  `'16/9'`, so the page doesn't jump while it loads. For a small image
+  (an emote, an icon), add `width` (its pixel width) so the gallery never
+  enlarges it past 1.5x and blurs it.
 - To make WebP: Squoosh (squoosh.app) in the browser, or export from Figma
   as PNG and convert.
 
