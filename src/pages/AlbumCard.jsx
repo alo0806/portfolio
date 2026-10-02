@@ -51,7 +51,7 @@ export default function AlbumCard({ number, project }) {
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
     >
-      <AlbumCover title={title} number={number} cover={cover} />
+      <AlbumCover title={title} number={number} cover={cover} motion="hover" />
       <div className="album__body">
         <p className="album__tag">{tag}</p>
         <h3 className="album__title">

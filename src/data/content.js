@@ -167,7 +167,7 @@ export const projects = [
     role: 'Team project, CS 188',
     year: '2025',
     oneLiner: 'A Chrome extension and web app that rounds up online purchases and donates the change, so giving becomes a habit instead of a decision.',
-    cover: { image: '/work/aspiration/cover.webp', alt: 'The Aspiration logo: a white sprout on a green circle', palette: 'mint', layout: 'framed' },
+    cover: { art: 'aspiration', palette: 'mint' },
     // From our CS 188 blog post, user research write-ups and poster (Fall
     // 2025), kept out of the repo in data/. Interview counts are the blog's
     // (18 + 13); the 80% / 27% / 63% are the poster's summary of 30 of them.
@@ -347,7 +347,7 @@ export const projects = [
     role: 'Marketing Associate (remote)',
     year: '2024',
     oneLiner: 'Short-form videos for an AI study app’s TikTok and Instagram, made in a small team for students studying for exams.',
-    cover: { image: '/work/gizmo/cover.webp', alt: 'Gizmo’s purple axolotl mascot, meditating among floating books', palette: 'plum', layout: 'framed' },
+    cover: { art: 'gizmo', palette: 'plum' },
     // Every figure comes from src/data/gizmo-stats.json (node
     // scripts/gizmo-stats.js): the Gizmo account during my time on the
     // team, Jan 1 – Oct 31 2024 — not only my own posts.
@@ -443,7 +443,7 @@ export const projects = [
     role: 'Design & build',
     year: '2026',
     oneLiner: 'A portfolio that works like a record player: the intro is a turntable, pages are tracks, and the player bar actually plays.',
-    cover: { image: '/work/this-site/cover.webp', palette: 'sunset', layout: 'stacked' },
+    cover: { art: 'record', palette: 'sunset' },
     // Every number here is measured on the production build or taken
     // from the repo's history (see "By the numbers" for how).
     metrics: [
@@ -530,7 +530,7 @@ export const projects = [
     role: 'Social chair',
     year: '2025–26',
     oneLiner: 'I pulled ten events’ worth of presale data together to figure out how to price our tickets.',
-    cover: { palette: 'citrus', layout: 'stacked' },
+    cover: { art: 'pricing', palette: 'citrus' },
     // Every figure comes from my analysis notes and dashboard (kept out of
     // the repo with the raw exports in data/, which hold buyers' personal
     // details). Only aggregated numbers live here, and no money totals:
