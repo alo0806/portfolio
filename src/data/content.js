@@ -131,8 +131,11 @@ export const workSections = [
                 from being blown up past it; fullVideo is an optional
                 link to the whole video. A placeholder (src: null) shows a coloured
                 frame in `palette`.
-   caseStudy  — Singles only: { context, role, process: [{ text, media }],
-                outcome, outcomeMetrics } */
+   caseStudy  — Singles only: { context, role, process, outcome,
+                outcomeMetrics }. context, role and outcome are a
+                paragraph each (or a list of paragraphs); process is a
+                list of steps: { title?, text (one paragraph or a list),
+                media } */
 const placeholderMedia = (palette, count = 3) =>
   Array.from({ length: count }, (_, i) => ({
     type: 'image',
@@ -175,17 +178,103 @@ export const projects = [
     title: 'This site',
     section: 'singles',
     tag: 'Side project',
-    role: 'Design & front-end',
+    role: 'Design & build',
     year: '2026',
-    oneLiner: 'Placeholder. A portfolio pressed like a record: a tracklist for pages and a player bar that plays.',
-    cover: { palette: 'sunset', layout: 'stacked' },
+    oneLiner: 'My portfolio, pressed like a record: pages are tracks, the player bar actually plays, and a cassette naps when the music stops.',
+    cover: { image: '/work/this-site/cover.webp', palette: 'sunset', layout: 'stacked' },
     metrics: [
-      { label: 'Built', value: '—' },
-      { label: 'Stack', value: '—' },
-      { label: 'Time', value: '—' },
+      { label: 'Built in', value: '2 weeks' },
+      { label: 'Pull requests', value: '27' },
+      { label: 'Dependencies', value: '3' },
     ],
     media: [],
-    caseStudy: placeholderCaseStudy('sunset'),
+    caseStudy: {
+      context: [
+        'I’m graduating in 2027 and looking for design engineering and front-end roles, so I needed a portfolio. I didn’t want a template with my name on it. I wanted something that felt like me, and that showed I can take a design all the way to something you can actually click.',
+        'Music is a big part of who I am, so the site ended up as a record: the intro is a turntable, the pages are tracks, and the player bar at the bottom really plays.',
+      ],
+      role: 'Everything: the concept, visual design, motion, sound and writing. I built it with Claude Code as my pair programmer. I wrote the brief for every change, made the design calls, and checked each one in the browser at full desktop and phone size before it shipped.',
+      process: [
+        {
+          title: 'One long scroll',
+          text: [
+            'It started as a single scrolling page with a blob character that followed you down it, and every section washed the page in its own colour. Next came a softer redesign inspired by the game GRIS, where the colour is something you earn as you scroll.',
+            'Both looked nice, but they were all mood and no structure. The work was buried somewhere in a long scroll, and nothing about it said much about me.',
+          ],
+          media: [
+            { type: 'image', src: '/work/this-site/01.webp', alt: 'The first version: a large serif headline, "I design and build things on the web", next to a pink blob with eyes', caption: 'Day 2: one page, one blob.', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/02.webp', alt: 'The GRIS-inspired redesign: pale watercolour washes, thin type and a small goo blob', caption: 'The GRIS-inspired redesign.', ratio: '16/10' },
+          ],
+        },
+        {
+          title: 'Real pages, then a record',
+          text: [
+            'So I rebuilt it with real pages: a starry intro, an iris that opens into the site, and a sidebar you can always navigate from. The structure worked, but space was a borrowed theme.',
+            'The same day I re-themed the whole thing as a music player. The intro became a vinyl record you press play on, the sidebar became a tracklist, and each page’s “track length” is its real reading time, worked out from the text on it, so the tracklist stays honest as the content changes.',
+          ],
+          media: [
+            { type: 'image', src: '/work/this-site/03.webp', alt: 'The starry intro: "Austin Lo" over a dark sky with a "step inside" button', caption: 'The starry intro…', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/04.webp', alt: 'The rebuilt layout: a sidebar with numbered links and a project grid', caption: '…and the rebuilt layout.', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/05.webp', alt: 'The record-player intro: an orange-labelled vinyl, "Hi, I’m Austin Lo" and a press play button', caption: 'Re-themed as a record.', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/06.webp', alt: 'My Work as a tracklist: the sidebar lists pages with reading times, and a player bar runs along the bottom', caption: 'Pages became tracks.', ratio: '16/10' },
+          ],
+        },
+        {
+          title: 'Sound, then music (twice)',
+          text: [
+            'Every sound effect is synthesized in the browser, with no audio files: a needle drop when you press play, a soft click on the buttons, a note for each track. They’re all in one key (D major pentatonic), so clicking around plays something that sounds like a tune.',
+            'My first try at adding background music shipped too much at once: the music, audio-reactive visuals and a locked resume, all in one change. Things broke in ways that were hard to untangle, so I reverted the whole thing and rebuilt the music in small steps: the player, a seek bar, the queue, album art, a tiny spinning record, and a short delay so the music doesn’t talk over the press-play sounds.',
+          ],
+          media: [
+            { type: 'image', src: '/work/this-site/07.webp', alt: 'The player bar: a tiny vinyl record with the album art as its label, song controls, a seek bar and a volume slider', caption: 'The player bar now: a mini record, song and page controls, the seek bar and volume.', ratio: '1600/219' },
+          ],
+        },
+        {
+          title: 'Things to play with',
+          text: 'I wanted people to poke at it. You can grab the intro record and scratch it: it plays a slice of the first song forwards and backwards at your speed. Clicking the background plays notes, the letters of my name lift toward your cursor, and the Playground has a kaleidoscope drawing toy that grows out of its card.',
+          media: [
+            { type: 'image', src: '/work/this-site/08.webp', alt: 'The intro today: the record with a tonearm and a small "give it a spin" note beside it', caption: 'The intro today: give it a spin.', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/09.webp', alt: 'The drawing toy open full screen, with an orange kaleidoscope pattern', caption: 'The symmetry drawing toy.', ratio: '16/10' },
+          ],
+        },
+        {
+          title: 'Making it fast',
+          text: [
+            'At full screen on a fast monitor, the site lagged. I measured it in Chrome rather than guessing. The cause wasn’t the code I expected: any animation that runs all the time, even a tiny equalizer, made the browser redraw the whole page 165 times a second, which kept the graphics card about 30% busy while nobody was doing anything.',
+            'The fix: every animation now runs off one shared loop that stops when nothing is moving, things off screen or paused rest, and after 10 seconds without input the always-on loops hold still. The idle page now uses about 1% instead of 30%, and nothing visible changed.',
+          ],
+          media: [],
+        },
+        {
+          title: 'From blob to cassette',
+          text: [
+            'The blob had been there since day one, but it never fit a record player. I replaced it with a cassette whose reels are its eyes. It follows your cursor, waves with whichever arm is nearer, and flips over like a tape when the song changes.',
+            'I cut a few things along the way. The mouth went because it didn’t feel right, and the “alo” on its label read as corny, so it’s plain label detail now. It used to dance, but the playlist is too chill for that, so it sits on the edge of the player bar, sways to the beat, and gets sleepy when the music stops.',
+          ],
+          media: [
+            { type: 'image', src: '/work/this-site/10.webp', alt: 'The old mascot: an orange blob with eyes, sitting in the player bar', caption: 'Before: the blob.', ratio: '840/388' },
+            { type: 'image', src: '/work/this-site/11.webp', alt: 'The new mascot: a cassette tape with arms and legs, standing on the edge of the player bar', caption: 'After: the cassette.', ratio: '840/388' },
+          ],
+        },
+        {
+          title: 'Room for the work',
+          text: 'Last, I built the structure for the projects themselves: featured case studies like this one, a gallery for club and smaller work that grows out of its card, and buttons to jump between sections. My original project files were about 250 MB; converted to WebP they’re about 12 MB, and they load as you scroll.',
+          media: [
+            { type: 'image', src: '/work/this-site/12.webp', alt: 'My Work today: liner notes, section buttons and the featured project cards', caption: 'My Work today.', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/13.webp', alt: 'The gallery open over the page, showing an illustrated TSA event poster', caption: 'The gallery.', ratio: '16/10' },
+          ],
+        },
+      ],
+      outcome: [
+        'It’s live at astnlo.com, built on just React and React Router, with no other libraries. Every sound is generated in the browser, and it keeps working with reduced motion turned on, on phones, and with a keyboard.',
+        'What I’d do differently: keep every change small from the start (the music revert taught me that), and test at full screen on a fast monitor early, not after it already felt slow.',
+      ],
+      outcomeMetrics: [
+        { label: 'Idle GPU', value: '30% → 1%' },
+        { label: 'Synthesized sounds', value: '13' },
+        { label: 'Image weight', value: '−95%' },
+      ],
+    },
   },
   {
     slug: 'lambda-rush',

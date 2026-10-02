@@ -101,6 +101,13 @@
   letter-spacing: -0.02em;
 }
 
+.case__subheading {
+  margin-top: var(--sp-2);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
 .case__text {
   max-width: 62ch;
   font-size: 1.0625rem;
