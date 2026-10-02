@@ -89,8 +89,8 @@ export const work = {
 /* Newest first; the Work page shows the first entry. */
 export const linerNotes = [
   {
-    date: '2026-09-30',
-    text: 'Placeholder. Re-pressed the whole site as a record — a tracklist for pages and a player bar that actually does things.',
+    date: '2026-10',
+    text: 'Rebuilt this site as a record player and finally put my work in it. Next up: a Spotify-style widget for the B-sides page and a redesign of my fraternity’s ticket flow. Graduating spring 2027 and looking for design engineering and front-end roles.',
   },
 ]
 
@@ -184,7 +184,7 @@ export const projects = [
         'We landed on giving. Matthew, who’s involved in UCLA’s Effective Altruism club, pointed out the gap: most people think they should donate, but almost no one does it consistently. And most platforms make you choose between a big one-time gift and a monthly subscription, which doesn’t work for students and young people on tight budgets.',
         'Aspiration has two parts: a web app, prototyped with Lovable (React, TypeScript, Tailwind and Supabase), and a Chrome extension, built separately. Purchases were simulated, since we didn’t want to collect anyone’s real bank details.',
       ],
-      role: 'Placeholder (notes: storyboarding). What I worked on, who I worked with, and the tools I used.',
+      role: 'It was a team of four, and we all did a bit of everything: interviews, synthesis, design, and testing. I also made the paper storyboards that turned our research into the first flows.',
       process: [
         {
           title: 'Research, round 1',
@@ -193,7 +193,7 @@ export const projects = [
             'Nearly everyone had donated at least once, mostly to charities, and some to churches or other nonprofits. But they gave inconsistently. The open format gave us a broad picture, but it wasn’t deep enough to build a strong problem statement on.',
           ],
           media: [
-            { type: 'image', src: '/work/aspiration/research-pie-sketch.webp', alt: 'Hand-drawn pie chart of where people had given: charity, church, nonprofit, other, and nonmonetary', caption: 'Where people had given [placeholder: by name]', ratio: '800/822', width: 400 },
+            { type: 'image', src: '/work/aspiration/research-pie-sketch.webp', alt: 'Hand-drawn pie chart of where people had given: charity, church, nonprofit, other, and nonmonetary', caption: 'Where people had given', ratio: '800/822', width: 400 },
           ],
         },
         {
@@ -232,8 +232,8 @@ export const projects = [
           text: 'We storyboarded the problem and the idea on paper, with personas and a scenario: a student asked to donate at a booth on campus, unsure where the money would even go.',
           media: [
             { type: 'image', src: '/work/aspiration/storyboard-comic.webp', alt: 'Storyboard comic: a student passes an animal welfare booth, wonders where the money would even go, gives reluctantly, then finds Aspiration on their phone', caption: 'Storyboard, by me', ratio: '1000/1333' },
-            { type: 'image', src: '/work/aspiration/storyboard-paper.webp', alt: 'Paper storyboard panels drawn in pen, taped to green paper', caption: 'Paper storyboard [placeholder: by name]', ratio: '1400/1115' },
-            { type: 'image', src: '/work/aspiration/storyboard-board.webp', alt: 'Storyboards, two persona cards and a scenario laid out on a wooden floor', caption: 'Storyboards, personas, scenario [placeholder: by name]', ratio: '1400/1230' },
+            { type: 'image', src: '/work/aspiration/storyboard-paper.webp', alt: 'Paper storyboard panels drawn in pen, taped to green paper', caption: 'Paper storyboard, by me', ratio: '1400/1115' },
+            { type: 'image', src: '/work/aspiration/storyboard-board.webp', alt: 'Storyboards, two persona cards and a scenario laid out on a wooden floor', caption: 'Personas and scenario storyboard, by Matthew Day', ratio: '1400/1230' },
           ],
         },
         {
@@ -297,7 +297,8 @@ export const projects = [
         },
       ],
       next: {
-        text: 'Placeholder. My own redesign of charity selection, and a monthly cap / pause control.',
+        text: 'Testing pointed at two fixes. Charity selection needs to feel low-stakes: a short description and impact for each charity, and a clear note that you can change it anytime. And people want a way to limit their giving, so I’d add a monthly cap and a pause button right on the dashboard.',
+        showImages: false, // turn on once the images below are real
         media: [
           { type: 'image', src: null, palette: 'mint', alt: '', caption: 'Placeholder', ratio: '4/3' },
           { type: 'image', src: null, palette: 'mint', alt: '', caption: 'Placeholder', ratio: '4/3' },
@@ -326,8 +327,8 @@ export const projects = [
           why: 'We first wanted to measure whether Aspiration changed how often people give, but that wasn’t realistic in a quarter. So we asked two questions we could answer in a session: does it make donating feel simple, and do people feel informed and in control?',
         },
       ],
-      outcome: 'We presented Aspiration at the CS 188 final showcase. Placeholder: more to come.',
-      differently: 'Placeholder.',
+      outcome: 'We presented it at the CS 188 final showcase, and our whole team got A’s. It’s still my favorite class I’ve taken.',
+      differently: 'I’d start with structured interviews instead of finding out halfway that our first round wasn’t deep enough. And I’d want to test with more people, and over a longer stretch. Four sessions with fake money can tell you if a flow is usable, but not whether people would actually keep donating.',
       numbers: [
         { value: '18 → 13', label: 'Interviews per round', context: 'Semi-structured, then structured' },
         { value: '4', label: 'Usability sessions', context: '1 pilot + 3 full, with UCLA students' },
@@ -359,7 +360,7 @@ export const projects = [
     media: [],
     caseStudy: {
       summary: 'TikTok and Instagram videos for an AI study app, made in a small team to get students to know the app and download it. The numbers are the account’s during my time on the team.',
-      context: 'Gizmo is an AI study app that turns your notes into flashcards and quizzes. The team needed a steady stream of short videos on TikTok and Instagram to get students to know the app and download it.',
+      context: 'Gizmo is an AI study app that turns notes into flashcards and quizzes. Its audience is students, so most of its marketing lived on TikTok and Instagram.',
       role: 'I was a Marketing Associate on a small remote team from January to October 2024. I made short-form videos for Gizmo’s TikTok and Instagram, aimed at students, to build awareness and drive app downloads.',
       process: [
         {
@@ -547,7 +548,7 @@ export const projects = [
         'As social chair for my fraternity, Lambda Phi Epsilon, I found pricing was mostly guesswork.',
         'We had about a year of presale forms and payment records, so I put them together to see what actually worked.',
       ],
-      role: 'Placeholder. What I did on the analysis and the events, who I worked with, and the tools I used.',
+      role: 'I did the analysis mostly on my own: pulling every event’s forms and payment records together, cleaning them up, and finding the patterns. As social chair and publicity, I also designed the flyers and promoted every event on the chapter’s social media.',
       process: [
         {
           title: 'Pulling it together',
@@ -648,8 +649,9 @@ export const projects = [
           why: 'After Dark 9/25 was the first weekend of fall, and 89% of its buyers had never bought from us before. That’s the night for the full ladder.',
         },
       ],
-      outcome: 'Placeholder. Whether these findings changed how later events were priced, e.g. After Dark 9/25.',
-      differently: 'Placeholder.',
+      // TODO: update this after the next event (how the new ladder did).
+      outcome: 'The findings are getting their first real test now. I’m trying the new price ladders at our upcoming events one at a time and adjusting as I go.',
+      differently: 'I’d fix the forms before the analysis. Every event’s form was a little different: one tier’s price was never recorded, one column had no label, and only one form asked how people heard about us. Same fields every time, including each tier’s price and a referral question, would have made all of this faster and more certain.',
       numbers: [
         { value: '10', label: 'Events analyzed', context: 'Nine in the charts; one left out as an outlier' },
         { value: '812', label: 'Different buyers', context: 'Matched across events by phone, then name' },
@@ -668,9 +670,9 @@ export const projects = [
     title: 'Fraternity Flyers',
     section: 'features',
     tag: 'Club',
-    role: 'Social chair',
+    role: 'Social Chair & Publicity',
     year: '2025–26',
-    oneLiner: 'Flyers for fall rush and the chapter’s events.',
+    oneLiner: 'Rush and event flyers for my fraternity, including two collabs.',
     cover: { image: '/work/flyers/cover.webp', alt: 'The chapter crest: Greek letters over a dragon', palette: 'plum', layout: 'framed' },
     metrics: [{ label: 'Flyers', value: '6' }],
     media: [
@@ -684,14 +686,14 @@ export const projects = [
   },
   {
     slug: 'tsa-creative-media',
-    title: 'TSA Creative Media',
+    title: 'Taiwanese Student Association',
     section: 'features',
     tag: 'Club',
-    role: 'Creative media',
-    year: '—',
-    oneLiner: 'Graphics and video for the chapter.',
+    role: 'Creative Media Team',
+    year: '2025–2026',
+    oneLiner: 'Designed 34 board member intros and 3 event graphics over the year.',
     cover: { image: '/work/tsa-creative-media/cover.webp', palette: 'citrus', layout: 'stacked' },
-    metrics: [{ label: 'Pieces', value: '—' }],
+    metrics: [{ label: 'Graphics', value: '37' }],
     media: [
       { type: 'image', src: '/work/tsa-creative-media/01.webp', alt: 'Illustrated poster of a girl and a bear eating grass jelly and aiyu desserts in a meadow', caption: 'BYO 仙草 & 愛玉', ratio: '3/4' },
       { type: 'image', src: '/work/tsa-creative-media/02.webp', alt: 'Illustrated poster of a girl and a bear at a New Year’s Eve reunion dinner', caption: 'New Year’s Eve reunion dinner', ratio: '3/4' },
@@ -734,14 +736,14 @@ export const projects = [
   },
   {
     slug: 'smc-honor-society',
-    title: 'SMC Honor Society Publicity',
+    title: 'SMC Honor Society',
     section: 'features',
-    tag: 'Team',
-    role: 'Publicity',
-    year: '—',
-    oneLiner: 'Posters and socials for meetings and drives.',
+    tag: 'Club',
+    role: 'Publicity Committee',
+    year: '2023–2024',
+    oneLiner: 'Event and announcement graphics for the honor society.',
     cover: { image: '/work/smc-honor-society/cover.webp', palette: 'plum', layout: 'framed' },
-    metrics: [],
+    metrics: [{ label: 'Graphics', value: '4' }],
     media: [
       { type: 'image', src: '/work/smc-honor-society/01.webp', alt: 'General meeting announcement in a retro computer-window style, pink with a rainbow', caption: 'General meeting', ratio: '1/1' },
       { type: 'image', src: '/work/smc-honor-society/02.webp', alt: 'General meeting announcement with day and night meeting times', caption: 'General meeting: day & night', ratio: '1/1' },
@@ -757,7 +759,7 @@ export const projects = [
     section: 'deepcuts',
     tag: 'Concept',
     role: 'UI design',
-    year: '—',
+    year: '',
     oneLiner: 'Home-screen widgets for what you are listening to.',
     cover: { image: '/work/spotify-widgets/cover.webp', palette: 'mint', layout: 'framed' },
     metrics: [],
@@ -771,7 +773,7 @@ export const projects = [
     section: 'deepcuts',
     tag: 'Challenge',
     role: 'Design',
-    year: '—',
+    year: '',
     oneLiner: 'One colour, eight days.',
     cover: { image: '/work/yellow-theme-challenge/cover.webp', palette: 'citrus', layout: 'initial' },
     metrics: [],
@@ -792,7 +794,7 @@ export const projects = [
     section: 'deepcuts',
     tag: 'Remake',
     role: 'UI & motion',
-    year: '—',
+    year: '',
     oneLiner: 'The home menu, rebuilt.',
     cover: { image: '/work/switch-menu-remake/cover.webp', palette: 'sunset', layout: 'framed' },
     metrics: [],
@@ -807,7 +809,7 @@ export const projects = [
     title: 'AP Art 3D',
     section: 'archive',
     tag: 'School',
-    role: 'Sculpture',
+    role: '3D design',
     year: '2022',
     oneLiner: 'The AP 3D portfolio.',
     cover: { image: '/work/ap-art-3d/cover.webp', palette: 'plum', layout: 'initial' },
@@ -826,7 +828,7 @@ export const projects = [
     section: 'archive',
     tag: 'School',
     role: 'Apparel design',
-    year: '—',
+    year: '2023',
     oneLiner: 'Shirts for the house teams.',
     cover: { image: '/work/house-t-shirts/cover.webp', palette: 'sunset', layout: 'stacked' },
     metrics: [],
@@ -842,8 +844,8 @@ export const projects = [
     title: 'Line Emotes',
     section: 'archive',
     tag: 'Illustration',
-    role: 'Illustration',
-    year: '—',
+    role: 'Sticker design',
+    year: '2023',
     oneLiner: 'A set of sticker emotes.',
     cover: { image: '/work/line-emotes/cover.webp', palette: 'mint', layout: 'stacked' },
     metrics: [],

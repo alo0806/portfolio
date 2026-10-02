@@ -9,6 +9,8 @@ const dateFormat = new Intl.DateTimeFormat(undefined, {
   day: 'numeric',
   year: 'numeric',
 })
+// A note dated to the month ('2026-10') shows as "Oct 2026".
+const monthFormat = new Intl.DateTimeFormat(undefined, { month: 'short', year: 'numeric' })
 
 function alreadyTyped() {
   try {
@@ -67,7 +69,8 @@ export default function LinerNotes() {
   }, [typing])
 
   if (!latest) return null
-  const date = new Date(`${latest.date}T12:00:00`)
+  const monthOnly = latest.date.length === 7
+  const date = new Date(`${monthOnly ? `${latest.date}-15` : latest.date}T12:00:00`)
 
   return (
     <article className="notes" data-surface="dark" aria-labelledby="liner-notes-title">
@@ -76,7 +79,7 @@ export default function LinerNotes() {
           {work.linerNotesTitle}
         </h2>
         <time className="notes__date num" dateTime={latest.date}>
-          {dateFormat.format(date)}
+          {(monthOnly ? monthFormat : dateFormat).format(date)}
         </time>
       </div>
       <p className="notes__body" data-typing={typing ? 'true' : 'false'}>

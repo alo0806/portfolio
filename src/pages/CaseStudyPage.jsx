@@ -181,7 +181,7 @@ export default function CaseStudyPage() {
             {caseStudy.next.title ?? 'If I kept going'}
           </h2>
           {paragraphs(caseStudy.next.text)}
-          <MediaGroup media={caseStudy.next.media} />
+          {caseStudy.next.showImages === false ? null : <MediaGroup media={caseStudy.next.media} />}
         </Reveal>
       ) : null}
 
