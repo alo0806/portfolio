@@ -98,11 +98,11 @@ export const linerNotes = [
 export const workSections = [
   { id: 'singles', title: 'Singles', subtitle: 'Featured work' },
   { id: 'features', title: 'Features', subtitle: 'Club and team work' },
-  { id: 'deepcuts', title: 'Deep cuts', subtitle: 'Smaller work' },
+  { id: 'deepcuts', title: 'Deep Cuts', subtitle: 'Smaller work' },
   { id: 'demos', title: 'Demos', subtitle: 'Works in progress' },
   {
     id: 'archive',
-    title: 'Early work',
+    title: 'Early Work',
     subtitle: 'From the archive',
     toggle: { show: 'Show early work', hide: 'Hide early work' },
   },
@@ -175,7 +175,7 @@ export const projects = [
   /* ─── Singles ─── */
   {
     slug: 'gizmo',
-    title: 'Gizmo AI: social campaigns',
+    title: 'Gizmo AI: Social Campaigns',
     section: 'singles',
     tag: 'Marketing',
     role: 'Marketing Associate (remote)',
@@ -271,7 +271,7 @@ export const projects = [
   },
   {
     slug: 'this-site',
-    title: 'This site',
+    title: 'This Site',
     section: 'singles',
     tag: 'Side project',
     role: 'Design & build',
@@ -358,7 +358,7 @@ export const projects = [
   },
   {
     slug: 'event-pricing',
-    title: 'Pricing student events with data',
+    title: 'Pricing Student Events With Data',
     section: 'singles',
     tag: 'Analysis',
     role: 'Social chair',
@@ -539,12 +539,12 @@ export const projects = [
   },
   {
     slug: 'spotify-widgets',
-    title: 'Spotify widgets',
+    title: 'Spotify Widgets',
     section: 'singles',
     tag: 'Concept',
     role: 'UI design',
     year: '—',
-    oneLiner: 'Placeholder. Home-screen widgets for what you are listening to.',
+    oneLiner: 'Home-screen widgets for what you are listening to.',
     cover: { image: '/work/spotify-widgets/cover.webp', palette: 'mint', layout: 'framed' },
     metrics: [
       { label: 'Widgets', value: '—' },
@@ -569,7 +569,7 @@ export const projects = [
   /* ─── Features ─── */
   {
     slug: 'fraternity-flyers',
-    title: 'Fraternity flyers',
+    title: 'Fraternity Flyers',
     section: 'features',
     tag: 'Club',
     role: 'Social chair',
@@ -588,12 +588,12 @@ export const projects = [
   },
   {
     slug: 'tsa-creative-media',
-    title: 'TSA creative media',
+    title: 'TSA Creative Media',
     section: 'features',
     tag: 'Club',
     role: 'Creative media',
     year: '—',
-    oneLiner: 'Placeholder. Graphics and video for the chapter.',
+    oneLiner: 'Graphics and video for the chapter.',
     cover: { image: '/work/tsa-creative-media/cover.webp', palette: 'citrus', layout: 'stacked' },
     metrics: [{ label: 'Pieces', value: '—' }],
     media: [
@@ -638,12 +638,12 @@ export const projects = [
   },
   {
     slug: 'smc-honor-society',
-    title: 'SMC honor society publicity',
+    title: 'SMC Honor Society Publicity',
     section: 'features',
     tag: 'Team',
     role: 'Publicity',
     year: '—',
-    oneLiner: 'Placeholder. Posters and socials for meetings and drives.',
+    oneLiner: 'Posters and socials for meetings and drives.',
     cover: { image: '/work/smc-honor-society/cover.webp', palette: 'plum', layout: 'framed' },
     metrics: [],
     media: [
@@ -657,12 +657,12 @@ export const projects = [
   /* ─── Deep cuts ─── */
   {
     slug: 'yellow-theme-challenge',
-    title: 'Yellow theme challenge (8 days)',
+    title: 'Yellow Theme Challenge (8 Days)',
     section: 'deepcuts',
     tag: 'Challenge',
     role: 'Design',
     year: '—',
-    oneLiner: 'Placeholder. One colour, eight days.',
+    oneLiner: 'One colour, eight days.',
     cover: { image: '/work/yellow-theme-challenge/cover.webp', palette: 'citrus', layout: 'initial' },
     metrics: [],
     media: [
@@ -678,37 +678,16 @@ export const projects = [
   },
   {
     slug: 'switch-menu-remake',
-    title: 'Nintendo Switch menu remake',
+    title: 'Nintendo Switch Menu Remake',
     section: 'deepcuts',
     tag: 'Remake',
     role: 'UI & motion',
     year: '—',
-    oneLiner: 'Placeholder. The home menu, rebuilt.',
+    oneLiner: 'The home menu, rebuilt.',
     cover: { image: '/work/switch-menu-remake/cover.webp', palette: 'sunset', layout: 'framed' },
     metrics: [],
     media: [
       { type: 'image', src: '/work/switch-menu-remake/01.webp', alt: 'A recreated Nintendo Switch home menu: game tiles over a blurred Mario background', caption: 'The home menu', ratio: '16/9' },
-    ],
-  },
-  {
-    slug: 'line-emotes',
-    title: 'Line emotes',
-    section: 'deepcuts',
-    tag: 'Illustration',
-    role: 'Illustration',
-    year: '—',
-    oneLiner: 'Placeholder. A set of sticker emotes.',
-    cover: { image: '/work/line-emotes/cover.webp', palette: 'mint', layout: 'stacked' },
-    metrics: [],
-    media: [
-      { type: 'image', src: '/work/line-emotes/01.webp', alt: 'Chibi emote of a girl with a long blue braid: haha', caption: 'Haha', ratio: '346/316', width: 346 },
-      { type: 'image', src: '/work/line-emotes/02.webp', alt: 'Chibi emote of a girl with a long blue braid: love', caption: 'Love', ratio: '346/316', width: 346 },
-      { type: 'image', src: '/work/line-emotes/03.webp', alt: 'Chibi emote of a girl with a long blue braid: wow', caption: 'Wow', ratio: '346/316', width: 346 },
-      { type: 'image', src: '/work/line-emotes/04.webp', alt: 'Chibi emote of a girl with a long blue braid: bashful', caption: 'Bashful', ratio: '346/316', width: 346 },
-      { type: 'image', src: '/work/line-emotes/05.webp', alt: 'Chibi emote of a girl with a long blue braid: pat', caption: 'Pat', ratio: '346/316', width: 346 },
-      { type: 'image', src: '/work/line-emotes/06.webp', alt: 'Chibi emote of a girl with a long blue braid: shocked', caption: 'Shocked', ratio: '346/316', width: 346 },
-      { type: 'image', src: '/work/line-emotes/07.webp', alt: 'Chibi emote of a girl with a long blue braid: cry', caption: 'Cry', ratio: '346/316', width: 346 },
-      { type: 'image', src: '/work/line-emotes/08.webp', alt: 'Chibi emote of a girl with a long blue braid: angry', caption: 'Angry', ratio: '346/316', width: 346 },
     ],
   },
 
@@ -720,7 +699,7 @@ export const projects = [
     tag: 'School',
     role: 'Sculpture',
     year: '2022',
-    oneLiner: 'Placeholder. The AP 3D portfolio.',
+    oneLiner: 'The AP 3D portfolio.',
     cover: { image: '/work/ap-art-3d/cover.webp', palette: 'plum', layout: 'initial' },
     metrics: [],
     media: [
@@ -733,12 +712,12 @@ export const projects = [
   },
   {
     slug: 'house-t-shirts',
-    title: 'High school house t-shirts',
+    title: 'High School House T-Shirts',
     section: 'archive',
     tag: 'School',
     role: 'Apparel design',
     year: '—',
-    oneLiner: 'Placeholder. Shirts for the house teams.',
+    oneLiner: 'Shirts for the house teams.',
     cover: { image: '/work/house-t-shirts/cover.webp', palette: 'sunset', layout: 'stacked' },
     metrics: [],
     media: [
@@ -746,6 +725,27 @@ export const projects = [
       { type: 'image', src: '/work/house-t-shirts/02.webp', alt: 'House t-shirt design: Red Phoenix house, class of 2023, white line art on red', caption: 'Red Phoenix', ratio: '1/1' },
       { type: 'image', src: '/work/house-t-shirts/03.webp', alt: 'House t-shirt design: White Tiger house, class of 2023, black line art on white', caption: 'White Tiger', ratio: '1/1' },
       { type: 'image', src: '/work/house-t-shirts/04.webp', alt: 'House t-shirt design: Black Turtle house, class of 2023, white line art on black', caption: 'Black Turtle', ratio: '1/1' },
+    ],
+  },
+  {
+    slug: 'line-emotes',
+    title: 'Line Emotes',
+    section: 'archive',
+    tag: 'Illustration',
+    role: 'Illustration',
+    year: '—',
+    oneLiner: 'A set of sticker emotes.',
+    cover: { image: '/work/line-emotes/cover.webp', palette: 'mint', layout: 'stacked' },
+    metrics: [],
+    media: [
+      { type: 'image', src: '/work/line-emotes/01.webp', alt: 'Chibi emote of a girl with a long blue braid: haha', caption: 'Haha', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/02.webp', alt: 'Chibi emote of a girl with a long blue braid: love', caption: 'Love', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/03.webp', alt: 'Chibi emote of a girl with a long blue braid: wow', caption: 'Wow', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/04.webp', alt: 'Chibi emote of a girl with a long blue braid: bashful', caption: 'Bashful', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/05.webp', alt: 'Chibi emote of a girl with a long blue braid: pat', caption: 'Pat', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/06.webp', alt: 'Chibi emote of a girl with a long blue braid: shocked', caption: 'Shocked', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/07.webp', alt: 'Chibi emote of a girl with a long blue braid: cry', caption: 'Cry', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/08.webp', alt: 'Chibi emote of a girl with a long blue braid: angry', caption: 'Angry', ratio: '346/316', width: 346 },
     ],
   },
 ]
@@ -792,6 +792,6 @@ export const about = {
 
 export const playground = {
   title: 'B-sides',
-  lead: 'Placeholder. Small experiments, toys, and things that didn’t make the album.',
+  lead: 'Small experiments, toys, and things that didn’t make the album.',
   status: 'Coming soon',
 }
