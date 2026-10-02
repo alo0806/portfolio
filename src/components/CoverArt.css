@@ -59,7 +59,7 @@
   fill: currentColor;
 }
 
-/* ─── Aspiration: a coin drops onto the logo's sprout, which grows ─── */
+/* ─── Aspiration: the logo's sprout, still ─── */
 .ca-asp-disc {
   fill: var(--pal-a);
 }
@@ -72,94 +72,17 @@
   stroke-linejoin: round;
 }
 
-.ca-asp-sprout {
-  transform-origin: 50% 100%;
-  animation: ca-asp-sprout 7s var(--ease-out) infinite;
-}
-
-.ca-asp-leaf {
-  transform-origin: 0% 100%;
-  animation: ca-asp-leaf 7s var(--ease-overshoot) infinite;
-}
-
-.ca-asp-coin {
-  animation: ca-asp-coin 7s infinite;
-}
-
-.ca-coin {
-  fill: var(--cover-sunset-b);
-  stroke: currentColor;
-  stroke-width: 1.6;
-}
-
-.ca-coin-text {
-  fill: currentColor;
-  font-size: 7.5px;
-  font-weight: 800;
-  text-anchor: middle;
-}
-
-/* Falls to the ground line, sinks in; reappears at the top later. */
-@keyframes ca-asp-coin {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
-  }
-  26% {
-    transform: translateY(56px);
-    opacity: 1;
-  }
-  32%,
-  80% {
-    transform: translateY(60px);
-    opacity: 0;
-  }
-  81% {
-    transform: translateY(0);
-    opacity: 0;
-  }
-  92%,
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* As it lands, the sprout grows a little and its new leaf opens out. */
-@keyframes ca-asp-sprout {
-  0%,
-  27% {
-    transform: scale(1);
-  }
-  42%,
-  82% {
-    transform: scale(1.08);
-  }
-  96%,
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes ca-asp-leaf {
-  0%,
-  27% {
-    transform: scale(1);
-  }
-  36% {
-    transform: scale(1.18);
-  }
-  44%,
-  100% {
-    transform: scale(1);
-  }
-}
-
 /* ─── Gizmo: a minimal axolotl, floating, gills swaying, blinking ─── */
 .ca-giz-head,
 .ca-giz-body {
   fill: var(--cover-plum-body);
+}
+
+.ca-giz-arm {
+  fill: none;
+  stroke: var(--cover-plum-body);
+  stroke-width: 7;
+  stroke-linecap: round;
 }
 
 .ca-giz-gill {
@@ -271,14 +194,6 @@
   fill: var(--accent);
 }
 
-.ca-label-text {
-  fill: currentColor;
-  font-size: 7px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  text-anchor: middle;
-}
-
 .ca-hole {
   fill: var(--indigo);
 }
@@ -289,9 +204,14 @@
 }
 
 /* Turns about its own centre: the group's box is the record itself. */
+/* Longhands, not the shorthand: at this specificity the shorthand would
+   reset animation-play-state and override the paused default above. */
 .cover-art .ca-rec-spin {
   transform-origin: 50% 50%;
-  animation: ca-rec-spin 9s linear infinite;
+  animation-name: ca-rec-spin;
+  animation-duration: 9s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
 @keyframes ca-rec-spin {
