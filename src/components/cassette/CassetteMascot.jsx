@@ -31,6 +31,7 @@ import {
   lerpPose,
   limb,
   pausedPose,
+  scratchAction,
   seatedVibePose,
   stirAction,
   toWorld,
@@ -78,7 +79,7 @@ function fill(text) {
 
    How sleepy it is changes how it reacts. Drowsy, it nods off now and
    then; a click gets a yawn and a stretch instead of a jump, and a
-   sleepy line; hovering gets a slow, low wave. Asleep, it snores (the
+   sleepy line; hovering gets no wave, just a slow scratch of its head. Asleep, it snores (the
    z's rise and fade with its breath); a click only makes it stir and
    mumble in its sleep, hovering does nothing, and the third poke in a
    row wakes it with a start.
@@ -350,11 +351,14 @@ export default function CassetteMascot({
         if (hoverSide) waveSide = hoverSide
         else if (px !== null && box) waveSide = px > box.left + pose.cx * box.ppu ? 1 : -1
       }
-      // Drowsy, it waves slow and low; asleep, it doesn't wave at all.
+      // Awake, it waves; drowsy, it only scratches its head with that
+      // hand; asleep, it doesn't react at all.
       const awakeEnough = sleep < ASLEEP_AT
-      const lazy = clamp((sleep - DROWSY_AT) / 0.3)
-      act('waveLeft', hovering && awakeEnough && waveSide < 0, (p) => waveAction(p, rm ? 0 : t, -1, lazy))
-      act('waveRight', hovering && awakeEnough && waveSide > 0, (p) => waveAction(p, rm ? 0 : t, 1, lazy))
+      const drowsy = sleep >= DROWSY_AT && awakeEnough
+      act('waveLeft', hovering && !drowsy && awakeEnough && waveSide < 0, (p) => waveAction(p, rm ? 0 : t, -1))
+      act('waveRight', hovering && !drowsy && awakeEnough && waveSide > 0, (p) => waveAction(p, rm ? 0 : t, 1))
+      act('scratchLeft', hovering && drowsy && waveSide < 0, (p) => scratchAction(p, rm ? 0 : t, -1), 0.25)
+      act('scratchRight', hovering && drowsy && waveSide > 0, (p) => scratchAction(p, rm ? 0 : t, 1), 0.25)
       const talking = now < talkUntil ? 1 : 0
       const words = talkingWords * SOUND.babble.gap
       const sinceTalk = talkUntil ? (now - (talkUntil - BUBBLE_MS)) / 1000 : 99
