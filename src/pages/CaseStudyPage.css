@@ -360,93 +360,37 @@
   background: var(--tone);
 }
 
-/* ─── Scatter ─── */
-
-.scatter__frame {
-  display: grid;
-  gap: 6px;
-  font-size: var(--fs-label);
-  color: var(--muted-ink);
+/* ─── Chart.js charts (the pricing case study) ───
+   They break out to the full content width; the text beside them stays
+   at reading width. */
+.chartjs {
+  max-width: none;
 }
 
-.scatter__axis--x {
-  justify-self: center;
-}
-
-/* The plot: a gutter on the left for the y ticks, one below for the x. */
-.scatter__plot {
+.chartjs__canvas {
   position: relative;
-  height: 260px;
-  margin: 8px 8px 22px 34px;
+  height: 280px;
 }
 
-.scatter__grid {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(var(--p) * 1%);
-  border-top: 1px solid var(--line);
+.chartjs[data-kind='scatter'] .chartjs__canvas,
+.chartjs[data-kind='cumulative'] .chartjs__canvas {
+  height: 360px;
 }
 
-.scatter__tick {
-  position: absolute;
-  right: calc(100% + 8px);
-  top: 0;
-  translate: 0 -50%;
-  line-height: 1;
-}
-
-.scatter__tick--x {
-  right: auto;
-  top: calc(100% + 8px);
-  left: calc(var(--p) * 1%);
-  translate: -50% 0;
-}
-
-.scatter__point {
-  position: absolute;
-  left: calc(var(--x) * 1%);
-  bottom: calc(var(--y) * 1%);
-  translate: -50% 50%;
-  display: block;
-  width: 12px;
-  height: 12px;
-}
-
-.scatter__point .chart-mark {
-  display: block;
-}
-
-.scatter__label {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  white-space: nowrap;
-  line-height: 1;
-  color: var(--ink);
-  text-shadow:
-    0 0 3px var(--card),
-    0 0 3px var(--card),
-    0 0 3px var(--card);
-}
-
-.scatter__label[data-place='right'] {
-  translate: 10px -50%;
-}
-.scatter__label[data-place='right-up'] {
-  translate: 10px calc(-50% - 7px);
-}
-.scatter__label[data-place='right-down'] {
-  translate: 10px calc(-50% + 7px);
-}
-.scatter__label[data-place='left'] {
-  translate: calc(-100% - 10px) -50%;
-}
-.scatter__label[data-place='above'] {
-  translate: -50% calc(-100% - 9px);
-}
-.scatter__label[data-place='below'] {
-  translate: -50% 9px;
+@container (max-width: 620px) {
+  .chartjs__canvas {
+    height: 260px;
+  }
+  .chartjs[data-kind='scatter'] .chartjs__canvas {
+    height: 320px;
+  }
+  /* Its legend of nine events sits under the plot. */
+  .chartjs[data-kind='cumulative'] .chartjs__canvas {
+    height: 440px;
+  }
+  .chartjs[data-kind='perTicket'] .chartjs__canvas {
+    height: 340px;
+  }
 }
 
 /* The numbers behind a chart, as a table. */
@@ -460,6 +404,10 @@
 
 .chart-data summary:hover {
   color: var(--ink);
+}
+
+.chart-data__scroll {
+  overflow-x: auto;
 }
 
 .chart-data table {

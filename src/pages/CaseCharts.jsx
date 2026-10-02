@@ -1,7 +1,10 @@
-/* Case-study charts, in plain CSS and HTML: a bar list and a scatter.
-   Colors come from the --chart-* tokens (each ≥3:1 on the card), and
-   color is never the only cue: venues also have their own shape, and
-   estimates are outlined or hollow and labelled. */
+/* Case-study charts: a bar list in plain CSS and HTML, and Chart.js
+   charts for the pricing case study (loaded only there). Colors come
+   from the --chart-* tokens (each ≥3:1 on the card), and color is never
+   the only cue: venues also have their own shape, and estimates are
+   outlined, pale or hollow and labelled. */
+import { useEffect, useRef } from 'react'
+import { prefersReducedMotion } from '../lib/motion'
 
 const SHAPES = {
   frat: <rect x="1.2" y="1.2" width="9.6" height="9.6" />,
@@ -90,77 +93,130 @@ function BarChart({ chart }) {
   )
 }
 
-/* Points placed by percentage over a plain grid, each with its own
-   label (`place` says which side it sits on, so neighbours don't
-   collide at phone width). The drawing is hidden from screen readers;
-   the table under it holds the same numbers. */
-function ScatterChart({ chart }) {
-  const { x, y, points } = chart
-  const at = (axis, v) => ((v - axis.min) / (axis.max - axis.min)) * 100
-  const fmt = (axis, v) => `${axis.prefix ?? ''}${v}`
-  const toneName = Object.fromEntries(
-    (chart.legend ?? []).filter((item) => !item.est).map((item) => [item.tone, item.label]),
-  )
+const VENUE = { frat: 'Frat house', roof: 'Rooftop', yard: 'Backyard' }
+const eventName = (event) => `${event.name} ${event.date}`
+
+/* The numbers behind each Chart.js chart, as a table: the canvas is one
+   picture to a screen reader, so this is its text version. */
+function chartTable(chart) {
+  switch (chart.kind) {
+    case 'scatter':
+      return {
+        head: ['Event', 'Venue', 'Average price paid', 'Presales'],
+        rows: chart.events.map((e) => [eventName(e), VENUE[e.venue], `$${e.price.toFixed(2)}${e.est ? ' (est.)' : ''}`, e.sold]),
+      }
+    case 'cumulative':
+      return {
+        head: ['Event', ...['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'].map((d) => `${d} days out`), 'Event day'],
+        rows: chart.events.map((e) => [eventName(e), ...e.cum.map((v) => `${v}%`)]),
+      }
+    case 'perTicket':
+      return {
+        head: ['Event', 'Venue', 'Pricing', 'Average paid per ticket'],
+        rows: [...chart.events]
+          .sort((a, b) => b.price - a.price)
+          .map((e) => [eventName(e), VENUE[e.venue], e.pricing, `$${e.price.toFixed(2)}${e.est ? ' (est.)' : ''}`]),
+      }
+    case 'venue':
+      return { head: ['Venue', 'Average presales'], rows: chart.bars.map((bar) => [bar.label, bar.value]) }
+    default:
+      return { head: ['Day', 'Purchases'], rows: chart.bars.map((bar) => [bar.name ?? bar.label, bar.value]) }
+  }
+}
+
+const VENUE_LEGEND = [
+  { tone: 'frat', label: 'Frat house' },
+  { tone: 'roof', label: 'Rooftop' },
+  { tone: 'yard', label: 'Backyard' },
+]
+
+/* A Chart.js chart (the pricing case study). Chart.js arrives in its own
+   chunk, fetched only when one of these mounts, and each chart draws the
+   first time it's scrolled into view so its entry animation is seen
+   (no animation under reduced motion). It redraws, still, when the
+   theme changes. */
+function ChartJsFigure({ chart }) {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    let lib = null
+    let instance = null
+    let visible = false
+    let alive = true
+    const draw = (animate) => {
+      if (!lib || !visible || !alive) return
+      instance?.destroy()
+      instance = lib.drawChart(canvas, chart, { animate })
+    }
+    // The chart's type is drawn on a canvas, so wait for the font too.
+    Promise.all([import('./pricingCharts'), document.fonts?.load('12px "Bricolage Grotesque"')]).then(([module]) => {
+      lib = module
+      draw(!prefersReducedMotion())
+    })
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        io.disconnect()
+        visible = true
+        draw(!prefersReducedMotion())
+      },
+      { rootMargin: '0px 0px -10% 0px' },
+    )
+    io.observe(canvas)
+    const themeWatch = new MutationObserver(() => draw(false))
+    themeWatch.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => {
+      alive = false
+      io.disconnect()
+      themeWatch.disconnect()
+      instance?.destroy()
+    }
+  }, [chart])
+
+  const table = chartTable(chart)
   return (
-    <figure className="bar-chart scatter">
+    <figure className="bar-chart chartjs" data-kind={chart.kind}>
       <figcaption className="bar-chart__title">{chart.title}</figcaption>
-      <Legend items={chart.legend} />
-      <div className="scatter__frame" aria-hidden="true">
-        <span className="scatter__axis">{y.label}</span>
-        <div className="scatter__plot">
-          {y.ticks.map((t) => (
-            <span key={t} className="scatter__grid" style={{ '--p': at(y, t) }}>
-              <span className="scatter__tick">{fmt(y, t)}</span>
-            </span>
-          ))}
-          {x.ticks.map((t) => (
-            <span key={t} className="scatter__tick scatter__tick--x" style={{ '--p': at(x, t) }}>
-              {fmt(x, t)}
-            </span>
-          ))}
-          {points.map((p) => (
-            <span key={p.label} className="scatter__point" style={{ '--x': at(x, p.x), '--y': at(y, p.y) }}>
-              <Mark tone={p.tone} est={p.est} />
-              <span className="scatter__label" data-place={p.place ?? 'right'}>
-                {p.label}
-              </span>
-            </span>
-          ))}
-        </div>
-        <span className="scatter__axis scatter__axis--x">{x.label}</span>
+      {chart.kind === 'perTicket' ? (
+        <Legend items={[...VENUE_LEGEND, { tone: 'muted', est: true, label: 'Pale: estimate' }]} />
+      ) : null}
+      <div className="chartjs__canvas">
+        <canvas ref={canvasRef} role="img" aria-label={`${chart.title}. The numbers are in the table below.`} />
       </div>
       {chart.note ? <p className="bar-chart__note">{chart.note}</p> : null}
       <details className="chart-data">
         <summary>Show the data</summary>
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Event</th>
-              <th scope="col">Venue</th>
-              <th scope="col">{x.name}</th>
-              <th scope="col">{y.name}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {points.map((p) => (
-              <tr key={p.label}>
-                <th scope="row">{p.label}</th>
-                <td>{toneName[p.tone]}</td>
-                <td className="num">
-                  {x.prefix}
-                  {p.x.toFixed(2)}
-                  {p.est ? ' (est.)' : ''}
-                </td>
-                <td className="num">{p.y}</td>
+        <div className="chart-data__scroll">
+          <table>
+            <thead>
+              <tr>
+                {table.head.map((cell) => (
+                  <th key={cell} scope="col">
+                    {cell}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {table.rows.map(([first, ...rest]) => (
+                <tr key={first}>
+                  <th scope="row">{first}</th>
+                  {rest.map((cell, k) => (
+                    <td key={k} className={typeof cell === 'number' || /^[$\d]/.test(cell) ? 'num' : undefined}>
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </details>
     </figure>
   )
 }
 
 export default function Chart({ chart }) {
-  return chart.type === 'scatter' ? <ScatterChart chart={chart} /> : <BarChart chart={chart} />
+  return chart.type === 'chartjs' ? <ChartJsFigure chart={chart} /> : <BarChart chart={chart} />
 }

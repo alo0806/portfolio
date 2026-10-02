@@ -146,6 +146,23 @@ const placeholderMedia = (palette, count = 3) =>
     ratio: i === 1 ? '4/5' : '16/10',
   }))
 
+/* The nine events in the pricing case study, from my analysis dashboard
+   (the raw exports stay in the gitignored data/ folder). `price` is the
+   average paid per ticket, `sold` the presales, and `cum` the share of
+   presales sold by 10, 9 … 1 days out and on the day, from a 10pm
+   start. `est`: the price is an estimate. No money totals here. */
+const pricingEvents = [
+  { name: 'Halloween', date: '10/25', venue: 'frat', pricing: 'flat', price: 10, sold: 43, place: 'right-down', cum: [0, 0, 0, 0, 0, 11.6, 20.9, 30.2, 62.8, 81.4, 100] },
+  { name: 'Lost in Lambda', date: '11/22', venue: 'roof', pricing: 'ladder', price: 13.73, sold: 78, place: 'above', cum: [3.8, 5.8, 5.8, 5.8, 5.8, 5.8, 9.6, 23.1, 50, 86.5, 100] },
+  { name: 'After Dark', date: '1/9', venue: 'roof', pricing: 'ladder', price: 14, sold: 57, place: 'right-down', dash: [6, 4], cum: [0, 0, 0, 0, 0, 0, 0, 7.5, 26.4, 79.2, 100] },
+  { name: 'Inferno', date: '2/7', venue: 'frat', pricing: 'ladder', price: 18, sold: 157, est: true, place: 'below', cum: [2.5, 3.8, 5.1, 10.8, 14.6, 33.1, 38.9, 54.1, 71.3, 81.5, 100] },
+  { name: 'W9 Rager', date: '3/7', venue: 'frat', pricing: 'member / general', price: 12.5, sold: 173, place: 'left', dash: [6, 4], cum: [0, 0, 0, 0, 1.2, 2.9, 9.8, 16.2, 29.5, 56.1, 100] },
+  { name: 'Drift', date: '4/3', venue: 'yard', pricing: 'flat', price: 10, sold: 55, place: 'right-up', cum: [0, 0, 0, 0, 0, 0, 0, 1.9, 3.7, 14.8, 100] },
+  { name: 'Soundwave', date: '4/24', venue: 'yard', pricing: 'flat', price: 14, sold: 61, place: 'right-up', dash: [6, 4], cum: [0, 0, 0, 0, 0, 0, 0, 13.1, 21.3, 27.9, 100] },
+  { name: 'Lucid Dream', date: '4/30', venue: 'frat', pricing: 'member / general', price: 12.7, sold: 160, place: 'left', dash: [2, 3], cum: [0, 0, 0, 0, 0, 0, 0, 6.2, 23.8, 48.8, 100] },
+  { name: 'After Dark', date: '9/25', venue: 'yard', pricing: 'ladder', price: 12.93, sold: 157, est: true, place: 'below', dash: [2, 3], cum: [0, 0, 0, 0, 0, 0, 0, 6.4, 13.4, 24.2, 100] },
+]
+
 const placeholderCaseStudy = (palette) => ({
   context: 'Placeholder. What this was, who it was for, and the problem it had to solve.',
   role: 'Placeholder. What I owned, who I worked with, and the tools I used.',
@@ -398,87 +415,48 @@ export const projects = [
               title: 'Raising the price barely changed turnout',
               text: 'Going from $10 to $18 didn’t shrink the crowd. The venue moved the numbers, not the price.',
               chart: {
-                type: 'scatter',
+                type: 'chartjs',
+                kind: 'scatter',
                 title: 'Average price paid vs presales, by event',
-                legend: [
-                  { tone: 'frat', label: 'Frat house' },
-                  { tone: 'roof', label: 'Rooftop' },
-                  { tone: 'yard', label: 'Backyard' },
-                  { tone: 'yard', est: true, label: 'Hollow: price is an estimate' },
-                ],
-                x: { name: 'Average price paid', label: 'Average price paid per ticket', min: 8, max: 20, ticks: [8, 10, 12, 14, 16, 18, 20], prefix: '$' },
-                y: { name: 'Presales', label: 'Presales', min: 0, max: 180, ticks: [0, 50, 100, 150] },
-                points: [
-                  { label: 'Halloween', x: 10, y: 43, tone: 'frat', place: 'right-down' },
-                  { label: 'Drift', x: 10, y: 55, tone: 'yard', place: 'right-up' },
-                  { label: 'Lost in Lambda', x: 13.73, y: 78, tone: 'roof', place: 'above' },
-                  { label: 'After Dark 1/9', x: 14, y: 57, tone: 'roof', place: 'right-down' },
-                  { label: 'Soundwave', x: 14, y: 61, tone: 'yard', place: 'right-up' },
-                  { label: 'W9 Rager', x: 12.5, y: 173, tone: 'frat', place: 'left' },
-                  { label: 'Lucid Dream', x: 12.7, y: 160, tone: 'frat', place: 'left' },
-                  { label: 'After Dark 9/25', x: 12.93, y: 157, tone: 'yard', est: true, place: 'right' },
-                  { label: 'Inferno', x: 18, y: 157, tone: 'frat', est: true, place: 'below' },
-                ],
-                note: 'Nine events. Inferno is plotted at its $18 tier price. W9 Rager’s count includes girls; Halloween was guys only.',
+                note: 'Hover a point for the event; click a venue to hide it. Hollow points are estimates: Inferno is plotted at its $18 tier price. W9 Rager’s count includes girls; Halloween was guys only.',
+                events: pricingEvents,
               },
             },
             {
               title: 'Most people buy in the last two days',
               text: 'About two thirds of presales came in the final 48 hours, and nearly half on the last day. After Dark 9/25 sold 76% of its tickets on the last day alone.',
               chart: {
-                title: 'Presales by days before the event',
-                bars: [
-                  { label: '9–10 days', value: 3 },
-                  { label: '8–9', value: 2 },
-                  { label: '7–8', value: 9 },
-                  { label: '6–7', value: 8 },
-                  { label: '5–6', value: 37 },
-                  { label: '4–5', value: 27 },
-                  { label: '3–4', value: 79 },
-                  { label: '2–3', value: 133 },
-                  { label: '1–2 days', value: 184, highlight: true },
-                  { label: 'Last day', value: 422, highlight: true },
-                ],
-                note: 'Tickets, all nine events combined. Days are counted back from a 10pm start.',
+                type: 'chartjs',
+                kind: 'cumulative',
+                title: 'Share of presales sold by days before the event',
+                note: 'Click an event in the legend to hide it. Days are counted back from a 10pm start.',
+                events: pricingEvents,
               },
             },
             {
               title: 'Ladders beat flat pricing',
               text: 'Events with a price ladder, where tickets get pricier as the event gets closer, made about 40% more per head than flat $10 ones, with the same size crowd. The higher tiers still sold: at Lost in Lambda, more than half the tickets went at the top $17 tier.',
               chart: {
+                type: 'chartjs',
+                kind: 'perTicket',
                 title: 'Average paid per ticket',
-                valueWidth: '11ch',
-                legend: [
-                  { tone: 'hi', label: 'Price ladder' },
-                  { tone: 'muted', label: 'Flat price' },
-                  { tone: 'split', label: 'Member / general price' },
-                  { tone: 'muted', est: true, label: 'Outlined: estimate' },
-                ],
-                bars: [
-                  { group: 'Price ladder', label: 'Inferno', value: 18, display: '$18.00', tone: 'hi', est: true },
-                  { group: 'Price ladder', label: 'After Dark 1/9', value: 14, display: '$14.00', tone: 'hi' },
-                  { group: 'Price ladder', label: 'Lost in Lambda', value: 13.73, display: '$13.73', tone: 'hi' },
-                  { group: 'Price ladder', label: 'After Dark 9/25', value: 12.93, display: '$12.93', tone: 'hi', est: true },
-                  { group: 'Member / general price', label: 'Lucid Dream', value: 12.7, display: '$12.70', tone: 'split' },
-                  { group: 'Member / general price', label: 'W9 Rager', value: 12.5, display: '$12.50', tone: 'split' },
-                  { group: 'Flat price', label: 'Soundwave', value: 14, display: '$14.00', tone: 'muted' },
-                  { group: 'Flat price', label: 'Drift', value: 10, display: '$10.00', tone: 'muted' },
-                  { group: 'Flat price', label: 'Halloween', value: 10, display: '$10.00', tone: 'muted' },
-                ],
-                note: 'Inferno counts every ticket at its $18 tier. After Dark 9/25 assumes the first 65 at $10 and the rest at $15.',
+                note: 'Flat $10 events sit at the bottom. Pale bars are estimates: Inferno counts every ticket at its $18 tier, and After Dark 9/25 assumes the first 65 at $10 and the rest at $15.',
+                events: pricingEvents,
               },
             },
             {
               title: 'A backyard can draw a frat-house crowd',
               text: 'A frat house reliably draws the biggest crowd, but it costs a lot more than a backyard or a rooftop. After Dark 9/25 drew 157 in a backyard: a frat-house-size crowd at a fraction of the cost.',
               chart: {
+                type: 'chartjs',
+                kind: 'venue',
                 title: 'Average presales by venue',
-                bars: [
-                  { label: 'Frat house', value: 163.3, display: '163.3', tone: 'frat' },
-                  { label: 'Backyard', value: 91, display: '91', tone: 'yard' },
-                  { label: 'Rooftop', value: 67.5, display: '67.5', tone: 'roof' },
-                ],
                 note: 'Halloween was guys only, so it’s left out of the frat house average.',
+                bars: [
+                  { venue: 'frat', label: 'Frat house', value: 163.3 },
+                  { venue: 'roof', label: 'Rooftop', value: 67.5 },
+                  { venue: 'yard', label: 'Backyard', value: 91 },
+                ],
               },
             },
           ],
@@ -487,23 +465,20 @@ export const projects = [
           title: 'Promotion',
           text: 'Buying peaks on Thursday and Friday evenings, mostly between 7pm and 1am, and Sunday is dead. So that’s when the flyers went out.',
           chart: {
+            type: 'chartjs',
+            kind: 'days',
             title: 'Purchases by day of the week',
-            bars: [
-              { label: 'Monday', value: 57 },
-              { label: 'Tuesday', value: 82 },
-              { label: 'Wednesday', value: 137 },
-              { label: 'Thursday', value: 211, highlight: true },
-              { label: 'Friday', value: 296, highlight: true },
-              { label: 'Saturday', value: 114 },
-              { label: 'Sunday', value: 14 },
-            ],
             note: 'All nine events combined, from the form timestamps.',
+            bars: [
+              { label: 'Mon', name: 'Monday', value: 57 },
+              { label: 'Tue', name: 'Tuesday', value: 82 },
+              { label: 'Wed', name: 'Wednesday', value: 137 },
+              { label: 'Thu', name: 'Thursday', value: 211, highlight: true },
+              { label: 'Fri', name: 'Friday', value: 296, highlight: true },
+              { label: 'Sat', name: 'Saturday', value: 114 },
+              { label: 'Sun', name: 'Sunday', value: 14 },
+            ],
           },
-          media: [
-            { type: 'image', src: '/work/flyers/03.webp', alt: 'Flyer: After Dark, Friday 9/25 at 10pm', caption: 'After Dark 9/25', ratio: '4/5' },
-            { type: 'image', src: '/work/flyers/05.webp', alt: 'Flyer: Drift, with two cars and a halftone texture', caption: 'Drift', ratio: '4/5' },
-            { type: 'image', src: '/work/flyers/06.webp', alt: 'Flyer: Soundwave, a collab with another chapter, 4/24 at 10pm', caption: 'Soundwave', ratio: '1279/1600' },
-          ],
         },
       ],
       decisions: [
