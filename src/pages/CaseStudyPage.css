@@ -192,9 +192,10 @@
   font-size: 11px;
 }
 
-/* ─── A before/after bar chart ─── */
+/* ─── Charts (CaseCharts.jsx) ─── */
 
 .bar-chart {
+  --reserve: 7ch; /* room beside the longest bar for its value */
   margin: 0;
   display: grid;
   gap: var(--sp-2);
@@ -205,7 +206,23 @@
   background: var(--card);
 }
 
+@container (max-width: 480px) {
+  .bar-chart {
+    padding: var(--sp-2);
+  }
+}
+
 .bar-chart__title {
+  font-weight: 600;
+}
+
+.bar-chart__group {
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.bar-chart__group-name {
+  font-size: var(--fs-label);
   font-weight: 600;
 }
 
@@ -223,6 +240,9 @@
 }
 
 .bar-chart__row dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--muted-ink);
   font-size: var(--fs-small);
 }
@@ -234,13 +254,31 @@
   margin: 0;
 }
 
+/* Each tone is one data color; a bar, swatch or shape picks it up. */
+[data-tone] {
+  --tone: var(--chart-muted);
+}
+[data-tone='hi'] {
+  --tone: var(--chart-hi);
+}
+[data-tone='frat'] {
+  --tone: var(--chart-frat);
+}
+[data-tone='roof'] {
+  --tone: var(--chart-roof);
+}
+[data-tone='yard'] {
+  --tone: var(--chart-yard);
+}
+
 /* Bars are scaled against the largest value; a tiny one still shows. */
 .bar-chart__bar {
   display: block;
-  width: max(4px, calc(var(--v) * (100% - 7ch)));
+  flex-shrink: 0;
+  width: max(4px, calc(var(--v) * (100% - var(--reserve))));
   height: 20px;
   border-radius: 4px;
-  background: var(--line-strong);
+  background: var(--tone, var(--chart-muted));
 }
 
 /* Zero means nothing at all, not a sliver. */
@@ -248,17 +286,207 @@
   width: 0;
 }
 
-.bar-chart__row[data-highlight='true'] .bar-chart__bar {
-  background: var(--accent);
+.bar-chart__row[data-highlight='true'] dt {
+  color: var(--ink);
+}
+
+.bar-chart__row[data-highlight='true'] .bar-chart__value {
+  font-weight: 600;
+}
+
+/* Two fills that aren't color alone: stripes (member / general price)
+   and an outline over a pale fill (an estimate). */
+.bar-chart__bar[data-tone='split'],
+.chart-swatch[data-tone='split'] {
+  background: repeating-linear-gradient(135deg, var(--tone) 0 3px, transparent 3px 6px);
+  box-shadow: inset 0 0 0 1.5px var(--tone);
+}
+
+.bar-chart__bar[data-est='true'],
+.chart-swatch[data-est='true'] {
+  background: color-mix(in srgb, var(--tone) 22%, transparent);
+  box-shadow: inset 0 0 0 2px var(--tone);
 }
 
 .bar-chart__value {
   font-size: var(--fs-small);
+  white-space: nowrap;
 }
 
 .bar-chart__note {
   color: var(--muted-ink);
   font-size: var(--fs-label);
+}
+
+/* Legend: a shape or swatch, then its name. */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px var(--sp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-label);
+  color: var(--muted-ink);
+}
+
+.chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart-mark {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  fill: var(--tone);
+  stroke: var(--tone);
+  stroke-width: 0;
+  overflow: visible;
+}
+
+/* Hollow shape: an estimate. */
+.chart-mark[data-est='true'] {
+  fill: var(--card);
+  stroke-width: 2;
+}
+
+.chart-swatch {
+  flex-shrink: 0;
+  width: 14px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--tone);
+}
+
+/* ─── Scatter ─── */
+
+.scatter__frame {
+  display: grid;
+  gap: 6px;
+  font-size: var(--fs-label);
+  color: var(--muted-ink);
+}
+
+.scatter__axis--x {
+  justify-self: center;
+}
+
+/* The plot: a gutter on the left for the y ticks, one below for the x. */
+.scatter__plot {
+  position: relative;
+  height: 260px;
+  margin: 8px 8px 22px 34px;
+}
+
+.scatter__grid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--p) * 1%);
+  border-top: 1px solid var(--line);
+}
+
+.scatter__tick {
+  position: absolute;
+  right: calc(100% + 8px);
+  top: 0;
+  translate: 0 -50%;
+  line-height: 1;
+}
+
+.scatter__tick--x {
+  right: auto;
+  top: calc(100% + 8px);
+  left: calc(var(--p) * 1%);
+  translate: -50% 0;
+}
+
+.scatter__point {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  bottom: calc(var(--y) * 1%);
+  translate: -50% 50%;
+  display: block;
+  width: 12px;
+  height: 12px;
+}
+
+.scatter__point .chart-mark {
+  display: block;
+}
+
+.scatter__label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  white-space: nowrap;
+  line-height: 1;
+  color: var(--ink);
+  text-shadow:
+    0 0 3px var(--card),
+    0 0 3px var(--card),
+    0 0 3px var(--card);
+}
+
+.scatter__label[data-place='right'] {
+  translate: 10px -50%;
+}
+.scatter__label[data-place='right-up'] {
+  translate: 10px calc(-50% - 7px);
+}
+.scatter__label[data-place='right-down'] {
+  translate: 10px calc(-50% + 7px);
+}
+.scatter__label[data-place='left'] {
+  translate: calc(-100% - 10px) -50%;
+}
+.scatter__label[data-place='above'] {
+  translate: -50% calc(-100% - 9px);
+}
+.scatter__label[data-place='below'] {
+  translate: -50% 9px;
+}
+
+/* The numbers behind a chart, as a table. */
+.chart-data summary {
+  justify-self: start;
+  cursor: pointer;
+  color: var(--muted-ink);
+  font-size: var(--fs-label);
+  font-weight: 500;
+}
+
+.chart-data summary:hover {
+  color: var(--ink);
+}
+
+.chart-data table {
+  width: 100%;
+  margin-top: var(--sp-1);
+  border-collapse: collapse;
+  font-size: var(--fs-label);
+}
+
+.chart-data th,
+.chart-data td {
+  padding: 4px 6px 4px 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  font-weight: 400;
+}
+
+.chart-data thead th {
+  color: var(--muted-ink);
+  font-weight: 500;
+}
+
+/* A finding inside a Process step: a smaller heading. */
+.case__finding-title {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-body);
+  font-weight: 700;
 }
 
 /* ─── Decisions & tradeoffs ─── */
