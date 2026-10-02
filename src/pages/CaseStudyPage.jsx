@@ -34,8 +34,9 @@ function Figure({ item }) {
 }
 
 /* A Single's case study, at /work/<slug>: the header (tag, title, role,
-   year, metrics), then Context, My role, Process (text with images and
-   videos between) and Outcome. It's part of the My Work track — the
+   year, metrics), then Context, My role, Process (steps, each with an
+   optional title, one or more paragraphs, then its images and videos)
+   and Outcome. It's part of the My Work track — the
    sidebar keeps My Work lit — and opening it, or the next case study,
    slides forward like changing track; "Back to tracklist" and the
    previous one slide back. Any other slug goes to My Work. */
@@ -77,14 +78,22 @@ export default function CaseStudyPage() {
         <h2 className="case__heading" id="case-context">
           Context
         </h2>
-        <p className="case__text">{caseStudy.context}</p>
+        {[caseStudy.context].flat().map((paragraph, k) => (
+          <p key={k} className="case__text">
+            {paragraph}
+          </p>
+        ))}
       </Reveal>
 
       <Reveal as="section" className="case__part" aria-labelledby="case-role">
         <h2 className="case__heading" id="case-role">
           My role
         </h2>
-        <p className="case__text">{caseStudy.role}</p>
+        {[caseStudy.role].flat().map((paragraph, k) => (
+          <p key={k} className="case__text">
+            {paragraph}
+          </p>
+        ))}
       </Reveal>
 
       <section className="case__part" aria-labelledby="case-process">
@@ -95,7 +104,12 @@ export default function CaseStudyPage() {
         </Reveal>
         {caseStudy.process.map((block, i) => (
           <Reveal key={i} className="case__block">
-            <p className="case__text">{block.text}</p>
+            {block.title ? <h3 className="case__subheading">{block.title}</h3> : null}
+            {[block.text].flat().map((paragraph, k) => (
+              <p key={k} className="case__text">
+                {paragraph}
+              </p>
+            ))}
             {block.media?.length ? (
               <div className="case__media" data-count={Math.min(block.media.length, 2)}>
                 {block.media.map((item, j) => (
@@ -111,7 +125,11 @@ export default function CaseStudyPage() {
         <h2 className="case__heading" id="case-outcome">
           Outcome
         </h2>
-        <p className="case__text">{caseStudy.outcome}</p>
+        {[caseStudy.outcome].flat().map((paragraph, k) => (
+          <p key={k} className="case__text">
+            {paragraph}
+          </p>
+        ))}
         <Metrics items={caseStudy.outcomeMetrics} className="case__metrics--outcome" />
       </Reveal>
 
