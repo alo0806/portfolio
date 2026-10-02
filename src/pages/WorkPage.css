@@ -392,17 +392,36 @@
   border-top: 1px solid var(--line);
 }
 
+/* Number on top, label underneath (markup stays label-then-number), so
+   the three numbers share one line however their labels wrap. */
+.album__metric {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 4px;
+  min-width: 0;
+}
+
 .album__metric dt {
+  order: 2;
   font-size: var(--fs-label);
+  line-height: 1.35;
   color: var(--muted-ink);
 }
 
 .album__metric dd {
-  margin: 2px 0 0;
+  order: 1;
+  margin: 0;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.375rem;
+  font-size: clamp(1.0625rem, 5cqi, 1.375rem);
+  font-variant-numeric: tabular-nums;
   line-height: 1.1;
+  white-space: nowrap;
+}
+
+.work-card__metric-value {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ─── Work cards (gallery): medium and compact ──────────────── */

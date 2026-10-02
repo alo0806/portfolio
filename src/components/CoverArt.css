@@ -1,0 +1,426 @@
+/* ─── Animated cover scenes (CoverArt.jsx) ──────────────────────
+   Drawn in the cover's own ink (--pal-ink) over its palette gradient.
+   Every animation here is transform or opacity only, and starts paused:
+   it runs only while the cover is on screen, and, on a card, only while
+   that card is hovered or focused (or on touch screens, simply while on
+   screen). The idle pause holds them; reduced motion shows the resting
+   frame. */
+
+.cover--art {
+  display: grid;
+}
+
+.cover-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: var(--pal-ink);
+  font-family: var(--font-display);
+}
+
+.cover-art .ca-anim {
+  animation-play-state: paused;
+  transform-box: fill-box;
+}
+
+.cover-art[data-inview='true'][data-mode='view'] .ca-anim,
+.album:is(:hover, :focus-within) .cover-art[data-inview='true'] .ca-anim {
+  animation-play-state: running;
+}
+
+@media (hover: none) {
+  .cover-art[data-inview='true'] .ca-anim {
+    animation-play-state: running;
+  }
+}
+
+:root[data-idle='true'] .cover-art .ca-anim {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover-art .ca-anim {
+    animation: none !important;
+  }
+}
+
+/* Shared strokes and fills */
+.ca-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ca-fill {
+  fill: currentColor;
+}
+
+/* ─── Aspiration: a coin drops into the jar, a new leaf unfolds ─── */
+.ca-glass {
+  fill: color-mix(in srgb, var(--pal-b) 35%, transparent);
+}
+
+.ca-asp-level {
+  fill: currentColor;
+  opacity: 0.22;
+  transform-origin: 50% 100%;
+  transform: scaleY(0.5);
+  animation: ca-asp-level 7s var(--ease-in-out) infinite;
+}
+
+.ca-asp-leaf {
+  transform-origin: 0% 100%;
+  transform: scale(0.55);
+  animation: ca-asp-leaf 7s var(--ease-out) infinite;
+}
+
+.ca-asp-coin {
+  animation: ca-asp-coin 7s infinite;
+}
+
+.ca-coin {
+  fill: var(--cover-sunset-b);
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+.ca-coin-text {
+  fill: currentColor;
+  font-size: 7.5px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+@keyframes ca-asp-coin {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  26% {
+    transform: translateY(34px);
+    opacity: 1;
+  }
+  31%,
+  80% {
+    transform: translateY(38px);
+    opacity: 0;
+  }
+  81% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  92%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes ca-asp-leaf {
+  0%,
+  28% {
+    transform: scale(0.55);
+  }
+  44%,
+  82% {
+    transform: scale(1);
+  }
+  96%,
+  100% {
+    transform: scale(0.55);
+  }
+}
+
+@keyframes ca-asp-level {
+  0%,
+  27% {
+    transform: scaleY(0.5);
+  }
+  40%,
+  82% {
+    transform: scaleY(0.68);
+  }
+  96%,
+  100% {
+    transform: scaleY(0.5);
+  }
+}
+
+/* ─── Gizmo: a flashcard flips, a view counter ticks up ─── */
+.ca-card {
+  fill: var(--pal-ink);
+}
+
+.ca-card-back {
+  fill: var(--pal-ink);
+  opacity: 0.3;
+}
+
+.ca-card-text {
+  fill: var(--cover-plum-a);
+  font-size: 17px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.ca-giz-front,
+.ca-giz-back {
+  transform-origin: 50% 50%;
+}
+
+.ca-giz-front {
+  animation: ca-giz-front 8s var(--ease-in-out) infinite;
+}
+
+.ca-giz-back {
+  transform: scaleX(0);
+  animation: ca-giz-back 8s var(--ease-in-out) infinite;
+}
+
+/* Front folds to an edge, the back opens out of it; then back again. */
+@keyframes ca-giz-front {
+  0%,
+  30% {
+    transform: scaleX(1);
+  }
+  38%,
+  84% {
+    transform: scaleX(0);
+  }
+  92%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ca-giz-back {
+  0%,
+  38% {
+    transform: scaleX(0);
+  }
+  46%,
+  76% {
+    transform: scaleX(1);
+  }
+  84%,
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+.ca-pill {
+  fill: var(--pal-ink);
+  opacity: 0.2;
+}
+
+.ca-digit {
+  fill: currentColor;
+  font-size: 8px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-anchor: middle;
+}
+
+/* Each reel rolls up one digit at a time: the ones every 0.8s, the tens
+   every 8s, so the count only ever goes up (and wraps, out of sight). */
+.ca-giz-ones {
+  animation: ca-giz-reel 8s steps(10, end) infinite;
+}
+
+.ca-giz-tens {
+  animation: ca-giz-reel 80s steps(10, end) infinite;
+}
+
+@keyframes ca-giz-reel {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100px);
+  }
+}
+
+/* ─── This site: the record, turning slowly ─── */
+.ca-shadow {
+  fill: color-mix(in srgb, var(--vinyl) 25%, transparent);
+}
+
+.ca-vinyl {
+  fill: var(--vinyl);
+}
+
+.ca-groove {
+  fill: none;
+  stroke: var(--vinyl-groove);
+  stroke-width: 0.9;
+}
+
+.ca-label {
+  fill: var(--accent);
+}
+
+.ca-label-text {
+  fill: currentColor;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  text-anchor: middle;
+}
+
+.ca-hole {
+  fill: var(--indigo);
+}
+
+.ca-sheen {
+  fill: var(--vinyl-sheen);
+  opacity: 0.45;
+}
+
+/* Turns about its own centre: the group's box is the record itself. */
+.cover-art .ca-rec-spin {
+  transform-origin: 50% 50%;
+  animation: ca-rec-spin 9s linear infinite;
+}
+
+@keyframes ca-rec-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ─── Event pricing: the ladder steps up, the crowd stays level ─── */
+.ca-level {
+  stroke: currentColor;
+  stroke-width: 0.9;
+  stroke-dasharray: 2 2.5;
+  opacity: 0.55;
+}
+
+.ca-bar {
+  fill: currentColor;
+  opacity: 0.85;
+  transform-origin: 50% 100%;
+}
+
+.ca-price {
+  fill: currentColor;
+  font-size: 7.5px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+/* Rest: the full ladder. Then the bars settle low and climb back one
+   step at a time, each price appearing as its bar arrives. */
+.ca-bar-1 {
+  animation: ca-bar-1 8s var(--ease-out) infinite;
+}
+.ca-bar-2 {
+  animation: ca-bar-2 8s var(--ease-out) infinite;
+}
+.ca-bar-3 {
+  animation: ca-bar-3 8s var(--ease-out) infinite;
+}
+.ca-price-1 {
+  animation: ca-price-1 8s ease infinite;
+}
+.ca-price-2 {
+  animation: ca-price-2 8s ease infinite;
+}
+.ca-price-3 {
+  animation: ca-price-3 8s ease infinite;
+}
+
+@keyframes ca-bar-1 {
+  0%,
+  10% {
+    transform: scaleY(1);
+  }
+  20%,
+  26% {
+    transform: scaleY(0.08);
+  }
+  38%,
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes ca-bar-2 {
+  0%,
+  10% {
+    transform: scaleY(1);
+  }
+  20%,
+  40% {
+    transform: scaleY(0.08);
+  }
+  52%,
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes ca-bar-3 {
+  0%,
+  10% {
+    transform: scaleY(1);
+  }
+  20%,
+  54% {
+    transform: scaleY(0.08);
+  }
+  66%,
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes ca-price-1 {
+  0%,
+  10% {
+    opacity: 1;
+  }
+  16%,
+  32% {
+    opacity: 0;
+  }
+  38%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes ca-price-2 {
+  0%,
+  10% {
+    opacity: 1;
+  }
+  16%,
+  46% {
+    opacity: 0;
+  }
+  52%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes ca-price-3 {
+  0%,
+  10% {
+    opacity: 1;
+  }
+  16%,
+  60% {
+    opacity: 0;
+  }
+  66%,
+  100% {
+    opacity: 1;
+  }
+}
