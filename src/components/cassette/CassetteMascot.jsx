@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import { mascotLines, nowPlaying } from '../../data/content'
+import { mascotAsleepLines, mascotLines, mascotSleepyLines, mascotWakeLines, nowPlaying } from '../../data/content'
 import useReducedMotion from '../../hooks/useReducedMotion'
 import { isIdle, onIdleChange } from '../../lib/idle'
 import { onFrame } from '../../lib/ticker'
@@ -32,9 +32,11 @@ import {
   limb,
   pausedPose,
   seatedVibePose,
+  stirAction,
   toWorld,
   vibePose,
   waveAction,
+  yawnAction,
 } from './rig'
 
 // Updates per second: 60 while it's dancing, acting or following the
@@ -44,16 +46,25 @@ const CALM_FRAME = 1000 / 30
 const BLEND = 0.14 // seconds: how quickly one state eases into another
 const JUMP_S = 0.6
 const FLIP_S = 1.1
+const YAWN_S = 1.8
+const STIR_S = 0.9
 const BUBBLE_MS = 3200
 const ASLEEP_AFTER = 22 // seconds paused (sleepy from the start) before it falls asleep
 const BASES = ['idle', 'vibing', 'paused']
+// How sleepy it is (the frame loop's `sleep`, 0–1) decides how it reacts.
+const DROWSY_AT = 0.3
+const ASLEEP_AT = 0.85
+// Poking it this many times while it's asleep (each within POKE_MS of
+// the last) wakes it up; fewer, and it only stirs and talks in its sleep.
+const WAKE_POKES = 3
+const POKE_MS = 6000
 
-// Lines name whatever is playing right now (or the placeholder).
-function lineAt(index) {
+// What it says, by mood. Lines name whatever is playing right now (or
+// the placeholder).
+const LINES = { awake: mascotLines, drowsy: mascotSleepyLines, asleep: mascotAsleepLines, waking: mascotWakeLines }
+function fill(text) {
   const song = getMusic().song
-  return mascotLines[index]
-    .replace('{song}', song?.title ?? nowPlaying.song)
-    .replace('{artist}', song?.artist ?? nowPlaying.artist)
+  return text.replace('{song}', song?.title ?? nowPlaying.song).replace('{artist}', song?.artist ?? nowPlaying.artist)
 }
 
 /* The cassette buddy: a tape with a paper label and an orange band,
@@ -64,6 +75,13 @@ function lineAt(index) {
    tape when the song changes, waving (with the arm on your side) on
    hover, jumping when clicked, holding up its speech bubble while it
    talks.
+
+   How sleepy it is changes how it reacts. Drowsy, it nods off now and
+   then; a click gets a yawn and a stretch instead of a jump, and a
+   sleepy line; hovering gets a slow, low wave. Asleep, it snores (the
+   z's rise and fade with its breath); a click only makes it stir and
+   mumble in its sleep, hovering does nothing, and the third poke in a
+   row wakes it with a start.
 
    Every frame's pose is computed in rig.js and written straight to the
    SVG (attributes and transforms) from the shared ticker — at most 60
@@ -81,7 +99,8 @@ function lineAt(index) {
      page); otherwise it follows the player
    - expression: 'happy' | 'surprised' | 'sleepy' | null
    - cue: { name, id } — a new id plays that action once ('look',
-     'songChange', 'hover', 'waveLeft', 'waveRight', 'click', 'talking') */
+     'songChange', 'hover', 'waveLeft', 'waveRight', 'click', 'talking',
+     'yawn', 'stir') */
 export default function CassetteMascot({
   size = 52,
   align = 'center',
@@ -95,13 +114,15 @@ export default function CassetteMascot({
   const music = useMusic()
   const uid = useId().replace(/:/g, '')
   const [line, setLine] = useState('')
+  const [mood, setMood] = useState('awake') // of the line being said
   const [side, setSide] = useState('A')
 
   const svgRef = useRef(null)
   const api = useRef({})
   const hideTimerRef = useRef(0)
   const hoverTimerRef = useRef(0)
-  const lastLineRef = useRef(-1)
+  const lastLineRef = useRef({})
+  const pokesRef = useRef({ count: 0, at: 0 })
 
   // The state the outside world asks for, read by the frame loop.
   const autoBase = music.available && music.playing ? 'vibing' : playing ? 'idle' : 'paused'
@@ -111,11 +132,13 @@ export default function CassetteMascot({
     api.current.wake?.()
   }, [base, autoBase, expression, reduced, seated])
 
-  const say = () => {
-    let index = Math.floor(Math.random() * mascotLines.length)
-    if (index === lastLineRef.current) index = (index + 1) % mascotLines.length
-    lastLineRef.current = index
-    const text = lineAt(index)
+  const say = (lineMood = 'awake') => {
+    const lines = LINES[lineMood]
+    let index = Math.floor(Math.random() * lines.length)
+    if (index === lastLineRef.current[lineMood]) index = (index + 1) % lines.length
+    lastLineRef.current[lineMood] = index
+    const text = fill(lines[index])
+    setMood(lineMood)
     setLine(text)
     sound.babble(text)
     api.current.talk?.(text)
@@ -233,7 +256,9 @@ export default function CassetteMascot({
       write(el.closed, 'opacity', clamp((pose.lid - 0.85) / 0.15).toFixed(3))
       write(el.closed, 'transform', `translate(${ox} ${oy})`)
       write(el.happy, 'transform', `translate(${ox} ${oy})`)
-      write(el.zz, 'opacity', clamp(pose.zz).toFixed(3))
+      // The z's rise and brighten with each sleeping breath.
+      write(el.zz, 'opacity', (clamp(pose.zz) * (0.55 + 0.45 * pose.snore)).toFixed(3))
+      write(el.zz, 'transform', `translate(${(0.6 * pose.snore).toFixed(2)} ${(-2.2 * pose.snore).toFixed(2)})`)
     }
 
     const readBox = (now) => {
@@ -304,14 +329,19 @@ export default function CassetteMascot({
         if (a.weight < 0.002) a.weight = 0
         if (a.weight > 0) pose = lerpPose(pose, layer(pose), a.weight)
       }
-      const jump = actions.click?.started ? (now - actions.click.started) / 1000 / JUMP_S : 2
-      const flip = actions.songChange?.started ? (now - actions.songChange.started) / 1000 / FLIP_S : 2
+      const progress = (name, seconds) => (actions[name]?.started ? (now - actions[name].started) / 1000 / seconds : 2)
+      const jump = progress('click', JUMP_S)
+      const flip = progress('songChange', FLIP_S)
+      const yawn = progress('yawn', YAWN_S)
+      const stir = progress('stir', STIR_S)
       if (flip < 1 && flip >= 0.4 && !flipped) {
         flipped = true
         setSide((s) => (s === 'A' ? 'B' : 'A'))
       }
       act('songChange', flip < 1 && !rm, (p) => flipAction(p, clamp(flip)), 0.04)
       act('click', jump < 1 && !rm, (p) => jumpAction(p, clamp(jump)), 0.04)
+      act('yawn', yawn < 1 && !rm, (p) => yawnAction(p, clamp(yawn)), 0.06)
+      act('stir', stir < 1 && !rm, (p) => stirAction(p, clamp(stir)), 0.04)
       // Wave with the arm on the cursor's side (or the one the review page
       // asked for). Each arm has its own weight, so moving the cursor
       // across hands the wave from one arm to the other smoothly.
@@ -320,13 +350,17 @@ export default function CassetteMascot({
         if (hoverSide) waveSide = hoverSide
         else if (px !== null && box) waveSide = px > box.left + pose.cx * box.ppu ? 1 : -1
       }
-      act('waveLeft', hovering && waveSide < 0, (p) => waveAction(p, rm ? 0 : t, -1))
-      act('waveRight', hovering && waveSide > 0, (p) => waveAction(p, rm ? 0 : t, 1))
+      // Drowsy, it waves slow and low; asleep, it doesn't wave at all.
+      const awakeEnough = sleep < ASLEEP_AT
+      const lazy = clamp((sleep - DROWSY_AT) / 0.3)
+      act('waveLeft', hovering && awakeEnough && waveSide < 0, (p) => waveAction(p, rm ? 0 : t, -1, lazy))
+      act('waveRight', hovering && awakeEnough && waveSide > 0, (p) => waveAction(p, rm ? 0 : t, 1, lazy))
       const talking = now < talkUntil ? 1 : 0
       const words = talkingWords * SOUND.babble.gap
       const sinceTalk = talkUntil ? (now - (talkUntil - BUBBLE_MS)) / 1000 : 99
       const bob = !rm && sinceTalk < words ? Math.abs(Math.sin((sinceTalk * Math.PI) / SOUND.babble.gap)) : 0
-      act('talking', talking && jump >= 1, (p) => holdAction(p, rm ? 0 : t, bob), 0.18)
+      // Holds the bubble up — not mid-jump, mid-yawn or asleep.
+      act('talking', talking && jump >= 1 && yawn >= 1 && awakeEnough, (p) => holdAction(p, rm ? 0 : t, bob), 0.18)
 
       // Looking: the reels follow the cursor (or the scripted target); far
       // to one side, the body leans that way too.
@@ -369,12 +403,15 @@ export default function CassetteMascot({
     }
 
     // Has anything still got to move?
+    const running = (now, name, seconds) => actions[name]?.started && now - actions[name].started < seconds * 1000 + 400
     const busy = (now) =>
       energy > 0 ||
       hovering ||
       now < talkUntil ||
-      (actions.click?.started && now - actions.click.started < JUMP_S * 1000 + 400) ||
-      (actions.songChange?.started && now - actions.songChange.started < FLIP_S * 1000 + 400) ||
+      running(now, 'click', JUMP_S) ||
+      running(now, 'songChange', FLIP_S) ||
+      running(now, 'yawn', YAWN_S) ||
+      running(now, 'stir', STIR_S) ||
       Boolean(lookAt)
 
     const tick = (now) => {
@@ -422,8 +459,14 @@ export default function CassetteMascot({
           flipped = false
           ;(actions.songChange ??= { weight: 0, started: 0 }).started = now
           if (wanted.current.reduced) setSide((s) => (s === 'A' ? 'B' : 'A'))
-        } else if (name === 'click') {
+        } else if (name === 'click' || name === 'yawn' || name === 'stir') {
+          ;(actions[name] ??= { weight: 0, started: 0 }).started = now
+        } else if (name === 'wake') {
+          // Woken with a start: the startled jump, then back to drowsy,
+          // with the clock to falling asleep again started over.
           ;(actions.click ??= { weight: 0, started: 0 }).started = now
+          sleep = Math.min(sleep, 0.5)
+          pausedSince = now
         } else if (name === 'look') {
           const until = now + 4200
           const points = [
@@ -444,6 +487,9 @@ export default function CassetteMascot({
           }
         }
         wake()
+      },
+      mood() {
+        return sleep >= ASLEEP_AT ? 'asleep' : sleep >= DROWSY_AT ? 'drowsy' : 'awake'
       },
       hover(on, side = 0) {
         hovering = on
@@ -509,20 +555,41 @@ export default function CassetteMascot({
   }, [songIndex])
 
   const onClick = () => {
-    api.current.play?.('click')
-    say()
+    const now = performance.now()
+    const current = api.current.mood?.() ?? 'awake'
+    if (current === 'asleep') {
+      const pokes = pokesRef.current
+      pokes.count = now - pokes.at < POKE_MS ? pokes.count + 1 : 1
+      pokes.at = now
+      if (pokes.count >= WAKE_POKES) {
+        pokes.count = 0
+        api.current.play?.('wake')
+        say('waking')
+      } else {
+        api.current.play?.('stir')
+        say('asleep')
+      }
+      return
+    }
+    pokesRef.current.count = 0
+    api.current.play?.(current === 'drowsy' ? 'yawn' : 'click')
+    say(current)
   }
 
-  // The review page's buttons.
+  // The review page's buttons. Run a tick later, as a callback, since
+  // they set the bubble's state.
   useEffect(() => {
-    if (!cue) return
-    if (cue.name === 'talking') say()
-    else if (cue.name === 'click') onClick()
-    else if (cue.name === 'hover' || cue.name === 'waveLeft' || cue.name === 'waveRight') {
-      api.current.hover?.(true, cue.name === 'waveLeft' ? -1 : cue.name === 'waveRight' ? 1 : 0)
-      window.clearTimeout(hoverTimerRef.current)
-      hoverTimerRef.current = window.setTimeout(() => api.current.hover?.(false), 2200)
-    } else api.current.play?.(cue.name)
+    if (!cue) return undefined
+    const timer = window.setTimeout(() => {
+      if (cue.name === 'talking') say(api.current.mood?.() ?? 'awake')
+      else if (cue.name === 'click') onClick()
+      else if (cue.name === 'hover' || cue.name === 'waveLeft' || cue.name === 'waveRight') {
+        api.current.hover?.(true, cue.name === 'waveLeft' ? -1 : cue.name === 'waveRight' ? 1 : 0)
+        window.clearTimeout(hoverTimerRef.current)
+        hoverTimerRef.current = window.setTimeout(() => api.current.hover?.(false), 2200)
+      } else api.current.play?.(cue.name)
+    })
+    return () => window.clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cue?.id])
 
@@ -544,8 +611,13 @@ export default function CassetteMascot({
   const clip = (name) => `cs-${uid}-${name}`
 
   return (
-    <div className="mascot cassette" data-align={align} style={{ '--mascot': `${(size * VIEW_W) / VIEW_H}px` }}>
-      <p className="mascot__bubble" role="status" data-show={line ? 'true' : 'false'}>
+    <div
+      className="mascot cassette"
+      data-align={align}
+      data-seated={seated ? 'true' : 'false'}
+      style={{ '--mascot': `${(size * VIEW_W) / VIEW_H}px` }}
+    >
+      <p className="mascot__bubble" role="status" data-show={line ? 'true' : 'false'} data-mood={mood}>
         {line}
       </p>
       <button

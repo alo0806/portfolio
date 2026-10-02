@@ -29,6 +29,8 @@ const ACTIONS = [
   { name: 'waveRight', label: 'Wave (right arm)', detail: 'or hover its right side' },
   { name: 'click', label: 'Click', detail: 'startled jump, then talks' },
   { name: 'talking', label: 'Talking', detail: 'holds up the bubble' },
+  { name: 'yawn', label: 'Yawn', detail: 'a click while drowsy' },
+  { name: 'stir', label: 'Stir', detail: 'a click while asleep (the 3rd poke wakes it)' },
 ]
 const EXPRESSIONS = [
   { value: null, label: 'None' },

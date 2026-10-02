@@ -14,8 +14,9 @@
    - hlx, hly, hrx, hry — the hands, relative to the body centre
    - lx, ly — where the reels look, -1…1 across the window
    - reel (size), spin (turns per second), lid (0 open … 1 closed),
-     happy (reels become ^ ^) and zz (asleep). It has no mouth: the
-     reels and the body do all the expressing. */
+     happy (reels become ^ ^), zz (asleep) and snore (0–1, the sleeping
+     breath the z's rise and fade with). It has no mouth: the reels and
+     the body do all the expressing. */
 
 export const VIEW_W = 100
 export const VIEW_H = 80
@@ -103,7 +104,7 @@ export const KEYS = [
   'cx', 'cy', 'rot', 'sx',
   'flx', 'fly', 'frx', 'fry',
   'hlx', 'hly', 'hrx', 'hry',
-  'lx', 'ly', 'reel', 'spin', 'lid', 'happy', 'zz',
+  'lx', 'ly', 'reel', 'spin', 'lid', 'happy', 'zz', 'snore',
 ]
 
 export function restPose() {
@@ -127,6 +128,7 @@ export function restPose() {
     lid: 0,
     happy: 0,
     zz: 0,
+    snore: 0,
   }
 }
 
@@ -227,11 +229,18 @@ function shoulderMove(b) {
 /* sitting on the edge (the ground line), legs dangling over it and
    swaying a little, hands on the ledge, reels still — the seated idle,
    and paused. `sleep` (0–1) droops the lids (0.5 is sleepy), quiets the
-   sway and, near 1, it's asleep. */
+   sway and, near 1, it's asleep.
+
+   Drowsy (around 0.5), it nods off every few seconds: it sinks, the
+   hands slide off the ledge and the lids fall shut, then it catches
+   itself with a little jerk. Asleep, it breathes slow and deep, slumped
+   to one side, and the z's rise and fade with each breath (snore). */
 export const SIT_CY = GROUND - BODY.h / 2
+const NOD_S = 7
 export function pausedPose(t, sleep, e) {
   const p = restPose()
   const sway = (1 - sleep * 0.8) * e
+  const asleep = smooth((sleep - 0.8) / 0.2)
   p.cy = SIT_CY - 0.5 * (0.5 + 0.5 * Math.sin((t * TAU) / (4 + sleep * 2))) * e
   p.flx = REST.cx + JOINTS.hipL[0] - 1 + Math.sin(t * 1.7) * 2.2 * sway
   p.frx = REST.cx + JOINTS.hipR[0] + 1 + Math.sin(t * 1.7 + 2.4) * 2.2 * sway
@@ -242,7 +251,30 @@ export function pausedPose(t, sleep, e) {
   p.hrx = 32
   p.hry = 15.5
   p.lid = smooth(sleep / 0.9)
-  p.zz = smooth((sleep - 0.8) / 0.2)
+  p.zz = asleep
+
+  // Nodding off: only while drowsy, not awake or fully asleep.
+  const drowsy = smooth((sleep - 0.25) / 0.2) * (1 - asleep)
+  if (drowsy > 0 && e > 0) {
+    const phase = (t % NOD_S) / NOD_S
+    // Sinks slowly from 55% to 88% of the cycle, then catches itself.
+    const nod = (phase < 0.88 ? smooth((phase - 0.55) / 0.33) : 1 - smooth((phase - 0.88) / 0.05)) * drowsy * e
+    p.cy += 1.4 * nod
+    p.rot += 1.2 * nod
+    p.hly += 1.8 * nod
+    p.hry += 1.8 * nod
+    p.lid += (1 - p.lid) * nod
+  }
+
+  // Asleep: a slow, deep breath, slumped a little to one side.
+  if (asleep > 0) {
+    const breath = 0.5 + 0.5 * Math.sin((t * TAU) / 4.6)
+    p.cy += (0.6 - 1.1 * breath) * asleep * e
+    p.rot += -2.2 * asleep
+    p.hly += 1.2 * asleep
+    p.hry += 1.2 * asleep
+    p.snore = breath * asleep * e
+  }
   return p
 }
 
@@ -271,11 +303,12 @@ export function seatedVibePose(t, b, e) {
 /* ─── Actions: layered over whatever the base state is doing ───── */
 
 // hover: an arm waves — the one on the cursor's side (side -1 is its
-// left arm, 1 its right).
-export function waveAction(p, t, side = -1) {
+// left arm, 1 its right). `lazy` (0–1, drowsy): a slow, low half-wave.
+export function waveAction(p, t, side = -1, lazy = 0) {
   const q = { ...p }
-  const x = side * (31 + 3.2 * Math.sin(t * TAU * 2.2))
-  const y = -19 + 1.2 * Math.cos(t * TAU * 4.4)
+  const speed = 2.2 - 1.4 * lazy
+  const x = side * (31 + (3.2 - 1.4 * lazy) * Math.sin(t * TAU * speed))
+  const y = -19 + 13 * lazy + (1.2 - 0.8 * lazy) * Math.cos(t * TAU * speed * 2)
   if (side < 0) {
     q.hlx = x
     q.hly = y
@@ -312,6 +345,36 @@ export function jumpAction(p, k) {
   q.hry = -12
   q.reel = 1.22
   q.lid = 0
+  return q
+}
+
+/* click while drowsy: a big yawn and stretch instead of a jump — both
+   arms reach up overhead, the body rises with them and the reels squeeze
+   shut, held for a moment, then it all sinks back (k: 0 → 1). */
+export function yawnAction(p, k) {
+  const q = { ...p }
+  const up = smooth(k / 0.35) * (1 - smooth((k - 0.7) / 0.3))
+  q.hlx = p.hlx + (-15 - p.hlx) * up
+  q.hly = p.hly + (-31 - p.hly) * up
+  q.hrx = p.hrx + (15 - p.hrx) * up
+  q.hry = p.hry + (-31 - p.hry) * up
+  q.cy -= 2.6 * up
+  q.reel = p.reel * (1 + 0.06 * up)
+  q.lid = p.lid + (1 - p.lid) * up
+  return q
+}
+
+/* click while asleep: it stirs without waking — a small jolt, a wobble,
+   one hand flops up and down, and the lids crack open for a moment
+   before falling shut again (k: 0 → 1). */
+export function stirAction(p, k) {
+  const q = { ...p }
+  const jolt = Math.sin(Math.PI * clamp(k / 0.25))
+  const peek = Math.sin(Math.PI * clamp((k - 0.15) / 0.55))
+  q.cy -= 1.6 * jolt
+  q.rot = p.rot + 2.4 * Math.sin(k * TAU * 2) * (1 - k)
+  q.hly = p.hly - 7 * peek
+  q.lid = p.lid - 0.45 * peek
   return q
 }
 

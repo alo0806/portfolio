@@ -78,6 +78,30 @@ export const mascotLines = [
   'skip to the next track, i dare you.',
 ]
 
+/* What it says when it's drowsy (paused for a bit), when it's asleep and
+   only stirs (sleep-talk), and when the third poke wakes it up. */
+export const mascotSleepyLines = [
+  '*yawn* …oh, hi.',
+  'mm. just resting my reels.',
+  'press play and i’ll wake right up.',
+  'is it nap time? feels like nap time.',
+  'five more minutes…',
+]
+
+export const mascotAsleepLines = [
+  'zzz…',
+  '…mm… side B…',
+  '…five more minutes…',
+  '…no, the other remix…',
+  '*snore*',
+]
+
+export const mascotWakeLines = [
+  'huh?! i’m up, i’m up.',
+  'wha— was i snoring?',
+  'okay, okay. i’m awake.',
+]
+
 /* ─── Pages ─────────────────────────────────────────────────── */
 
 export const work = {
