@@ -160,11 +160,198 @@ const pricingEvents = [
 export const projects = [
   /* ─── Singles ─── */
   {
+    slug: 'this-site',
+    title: 'This Site',
+    section: 'singles',
+    tag: 'Side project',
+    role: 'Design & build',
+    year: '2026',
+    oneLiner: 'A portfolio that works like a record player.',
+    cover: { art: 'record', palette: 'sunset' },
+    // Every number here is measured on the production build or taken
+    // from the repo's history (see "By the numbers" for how).
+    // The one stat on its card; the full set is on the case study.
+    headline: { value: '28% → 0.1%', label: 'idle GPU' },
+    metrics: [
+      { label: 'Idle GPU', value: '28% → 0.1%' },
+      { label: 'Image weight', value: '−94%' },
+      { label: 'Accessibility', value: '100' },
+    ],
+    media: [],
+    caseStudy: {
+      summary: 'A portfolio that works like a record player: the intro is a turntable, pages are tracks, and the player bar actually plays.',
+      context: 'I’m graduating in 2027 and looking for design engineering and front-end roles. I didn’t want a template with my name on it. I wanted a site that felt like me and showed I can take a design all the way to something you can click.',
+      role: 'I came up with the concept and the design direction, and designed a good amount of the UI myself, including the intro screen, the player bar layout, the My Work section structure, and the drawing toy’s card and toolbar. I set up the project, the Git workflow and the deployment: GitHub, Vercel, and the custom domain with DNS. For the rest, Claude Code was my pair programmer: I wrote the briefs for each change, made the design calls (including what to cut), and reviewed and tested everything at desktop and phone size.',
+      process: [
+        {
+          title: 'Finding the concept',
+          text: 'I went through four versions in ten days: one long scroll with a blob, a softer take inspired by the game GRIS, a starry intro with real pages, and finally a record player. The first three looked nice, but they said nothing about me and buried the work. Music is a big part of my life, and a record player gave the work an obvious place, so that one stuck.',
+          media: [
+            { type: 'image', src: '/work/this-site/01.webp', alt: 'Version 1: a large serif headline next to a pink blob with eyes', caption: 'Version 1: one page, one blob', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/03.webp', alt: 'Version 3: "Austin Lo" over a dark, starry sky', caption: 'Version 3: a starry intro', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/05.webp', alt: 'Version 4: an orange-labelled vinyl record and a press play button', caption: 'Version 4: the record', ratio: '16/10' },
+          ],
+        },
+        {
+          title: 'Designing the interactions',
+          text: [
+            'Pages you click between, not one long scroll. People skim, so every page is one click away and the tracklist is always there (a menu on phones).',
+            'I designed the player bar so its controls double as navigation: the double arrows move between pages. People already know what those buttons do, so there’s nothing new to learn. Songs got single arrows, so the two never get mixed up.',
+            'Each track length is that page’s real reading time. It tells you something useful, and it keeps the record idea honest.',
+            'Pressing play drops the needle and spins up the record, then the site opens out of the record’s centre, so it feels like one motion, not a page change. I didn’t want the intro to waste anyone’s time: “skip intro” is always there, it plays once per visit, and a link straight to a page skips it.',
+            'Every sound is made in the browser, all in D major pentatonic, so clicking around never sounds off-key. They sit quieter than the music, the music only starts when you press play, and one button mutes everything. My first try at adding music put too much into one change and broke things, so I reverted it and rebuilt it in small steps.',
+          ],
+          media: [
+            { type: 'image', src: '/work/this-site/07.webp', alt: 'The player bar: a tiny vinyl record with the album art as its label, song controls, a seek bar and a volume slider', caption: 'The player bar today.', ratio: '1600/219' },
+          ],
+        },
+        {
+          title: 'Making it fast',
+          text: 'At full screen on a fast monitor, the site lagged. I measured it in Chrome instead of guessing. Any animation that never stops, even the tiny equalizer, made the browser redraw the whole page 165 times a second. Now every animation runs off one shared loop that stops when nothing is moving, and after 10 seconds without input the always-on loops hold still. Nothing visible changed.',
+          chart: {
+            title: 'GPU use with My Work left alone',
+            unit: '%',
+            bars: [
+              { label: 'Before', value: 28.2, display: '28%' },
+              { label: 'After', value: 0.1, display: '0.1%', highlight: true },
+            ],
+            note: '1920×1080, median of 3 runs each: the build from just before the fix vs today’s.',
+          },
+          media: [],
+        },
+        {
+          title: 'The mascot',
+          text: 'The cassette was my idea: the blob never fit a record player, so it became a cassette whose reels are its eyes. It follows your cursor and waves with whichever arm is closer. I cut the mouth and the “alo” on its label because they felt off. It used to dance, but the playlist is chill, so now it sits on the player bar, sways to the beat, and gets sleepy when the music stops.',
+          media: [
+            { type: 'image', src: '/work/this-site/10.webp', alt: 'The old mascot: an orange blob with eyes, in the player bar', caption: 'Before: the blob.', ratio: '840/388' },
+            { type: 'image', src: '/work/this-site/11.webp', alt: 'The new mascot: a cassette tape with arms and legs on the edge of the player bar', caption: 'After: the cassette.', ratio: '840/388' },
+          ],
+        },
+      ],
+      decisions: [
+        { decision: 'Type', why: 'A characterful grotesque for headings, a light sans for reading, and mono only for numbers, because mono digits don’t jitter as times tick.' },
+        { decision: 'Color', why: 'Indigo, paper, and one orange. Orange fails contrast as text, so it’s fill-only, with a darker orange for text and focus rings.' },
+        { decision: 'The cursor', why: 'Its colour-inverting blend roughly doubled the cost of every frame. I kept it on purpose and saved performance elsewhere.' },
+        { decision: 'Work page', why: 'Sections instead of filters, so the whole range shows at a glance, in a few easy chunks.' },
+        { decision: 'Accessibility', why: 'Reduced motion is respected, focus is always visible, and everything works with a keyboard except the two toys (drawing and scratching).' },
+      ],
+      outcome: 'It’s live at this website you’re on right now, built on React and React Router and nothing else. It started as a portfolio and turned into the project I learned the most from.',
+      differently: 'Keep every change small from the start, and test at full screen on a fast monitor early, not once it already felt slow.',
+      numbers: [
+        { value: '99 / 88', label: 'Performance: intro', context: 'Lighthouse, desktop / mobile' },
+        { value: '99 / 87', label: 'Performance: My Work', context: 'Lighthouse, desktop / mobile' },
+        { value: '3.1 s / 3.2 s', label: 'Mobile LCP', context: 'Intro / My Work, on a simulated slow phone' },
+        { value: '160 KB', label: 'JS + CSS', context: 'The whole app, gzipped' },
+        { value: '13', label: 'Synthesized sounds', context: 'Zero audio files for effects' },
+        { value: '4', label: 'Concepts', context: 'Three explored before the record' },
+      ],
+      numbersNote: 'Lighthouse: production build, median of 3 runs. GPU: Chrome at 1920×1080. Image weight: 205 MB of originals → 12 MB served.',
+    },
+  },
+  {
+    slug: 'gizmo',
+    title: 'Gizmo AI: Social Campaigns',
+    section: 'singles',
+    tag: 'Marketing',
+    role: 'Marketing Associate',
+    year: '2024',
+    oneLiner: 'Short-form videos for an AI study app.',
+    cover: { art: 'gizmo', palette: 'plum' },
+    // Every figure comes from src/data/gizmo-stats.json (node
+    // scripts/gizmo-stats.js): the Gizmo account during my time on the
+    // team, Jan 1 – Oct 31 2024 — not only my own posts.
+    // The one stat on its card; the full set is on the case study.
+    headline: { value: '63M+', label: 'views' },
+    metrics: [
+      { label: 'Views during my time', value: '63M+' },
+      { label: 'Posts', value: '602' },
+      { label: 'Top video, both platforms', value: '9.5M' },
+    ],
+    media: [],
+    caseStudy: {
+      summary: 'TikTok and Instagram videos for an AI study app, made in a small team to get students to know the app and download it. The numbers are the account’s during my time on the team.',
+      context: 'Gizmo is an AI study app that turns notes into flashcards and quizzes. Its audience is students, so most of its marketing lived on TikTok and Instagram.',
+      role: 'I was a Marketing Associate on a small remote team from January to October 2024. I made short-form videos for Gizmo’s TikTok and Instagram, aimed at students, to build awareness and drive app downloads.',
+      process: [
+        {
+          text: 'Gizmo makes AI flashcards and quizzes, so our audience was students studying for exams. Most videos started with something students already feel: cramming, forgetting everything the night before, wanting to seem effortlessly smart. The app showed up as the fix, not the opening line. We posted almost every day and shared most videos on both platforms.',
+          chart: {
+            title: 'Videos posted per month, both apps',
+            bars: [
+              { label: 'Jan', value: 58, display: '58' },
+              { label: 'Feb', value: 56, display: '56' },
+              { label: 'Mar', value: 59, display: '59' },
+              { label: 'Apr', value: 59, display: '59' },
+              { label: 'May', value: 20, display: '20' },
+              { label: 'Jun', value: 0, display: '0' },
+              { label: 'Jul', value: 6, display: '6' },
+              { label: 'Aug', value: 115, display: '115' },
+              { label: 'Sep', value: 120, display: '120' },
+              { label: 'Oct', value: 109, display: '109' },
+            ],
+            note: 'The account during my time on the team, 2024. Posting stopped in June and was light in May and July. About 9 in 10 videos were under 15 seconds.',
+          },
+          media: [],
+        },
+        {
+          title: 'Four of the account’s most-viewed videos',
+          media: [
+            { type: 'image', src: '/work/gizmo/01.webp', alt: 'Video cover: a chemistry textbook and a laptop by lamplight, captioned “how do you remember all this, you’re such a nerd!!”', caption: '4M TikTok · 5.5M Instagram', ratio: '9/16', href: 'https://www.instagram.com/p/DBZM_uxI-W0/', linkLabel: 'Watch on Instagram' },
+            { type: 'image', src: '/work/gizmo/02.webp', alt: 'Video cover: colour-coded biology notes on a desk in front of a monitor, captioned “NEVER attend an exam without doing this first”', caption: '3.6M TikTok · 1.7M Instagram', ratio: '9/16', href: 'https://www.tiktok.com/@gizmo.ai/video/7334423620623682848', linkLabel: 'Watch on TikTok' },
+            { type: 'image', src: '/work/gizmo/03.webp', alt: 'Video cover: a desk with notes, a highlighter and a monitor, captioned “I would ACE every exam if someone told me this before”', caption: '4.9M Instagram · 1.2M TikTok', ratio: '9/16', href: 'https://www.instagram.com/p/C3-rzOQIBPV/', linkLabel: 'Watch on Instagram' },
+            { type: 'image', src: '/work/gizmo/04.webp', alt: 'Video cover: a notebook of chemistry notes in front of a monitor, captioned “I give up, I can’t memorize all of this in one day!”', caption: '3.2M Instagram · 60.5k TikTok', ratio: '9/16', href: 'https://www.instagram.com/p/C4lgQEJoIto/', linkLabel: 'Watch on Instagram' },
+          ],
+        },
+      ],
+      findings: [
+        {
+          title: 'Same video, different app',
+          text: 'We usually posted each video to both apps on the same day. Of the 252 I could match, Instagram got more views on 181 (72%), with a median of 1.76× TikTok’s for the same video.',
+          chart: {
+            title: 'Median views per video posted to both apps',
+            bars: [
+              { label: 'TikTok', value: 5210, display: '5.2k' },
+              { label: 'Instagram', value: 8407, display: '8.4k', highlight: true },
+            ],
+            note: 'Engagement went the other way (TikTok 4.82%, Instagram 2.26%), but the two apps count it differently, so they can’t be compared directly.',
+          },
+        },
+        {
+          title: 'A format worth re-making',
+          text: 'In late October, the “don’t worry about how I’m studying” video was re-made 5 times on TikTok. Those versions got a median of 45,600 views, about 8× the account’s usual (5,506), and one of them reached 4M. On Instagram the same versions did about as well as usual, apart from that one. It’s 5 videos, so it’s an observation, not a rule.',
+          chart: {
+            title: 'TikTok median views',
+            bars: [
+              { label: 'Account, Jan–Oct', value: 5506, display: '5.5k' },
+              { label: 'Account, October', value: 3661, display: '3.7k' },
+              { label: 'The re-makes', value: 45600, display: '45.6k', highlight: true },
+            ],
+            note: 'One version, 4M, is off the chart.',
+          },
+        },
+      ],
+      outcome: 'During my time on the team, the account posted 600+ videos across TikTok and Instagram, reaching 63M+ views and about 2M likes. The biggest ones all opened with the viewer, not the product.',
+      differently: [
+        'I’d track results while we were posting, not after. Looking back at the data showed things I didn’t notice at the time, like Instagram getting more views on the exact same videos, and that would have shaped what we made.',
+        'I’d vary the hooks more. Looking back, a lot of our videos started to feel the same, since the whole team leaned on similar openings. I’d also write stronger hooks specifically for Reels instead of reusing the TikTok ones. And since my videos often didn’t show me or even my hands on screen, the visuals had to carry the whole thing. That made aesthetic matter way more than I gave it credit for at the time.',
+      ],
+      numbers: [
+        { value: '5.5k / 8.1k', label: 'Median views per video', context: 'TikTok / Instagram' },
+        { value: '1.97M', label: 'Likes', context: 'Both apps' },
+        { value: '207k', label: 'Saves', context: 'TikTok' },
+        { value: '16.6k', label: 'Shares', context: 'TikTok' },
+        { value: '4.2% / 2.8%', label: 'Engagement rate', context: 'TikTok (likes, comments, shares) / Instagram (likes, comments only)' },
+        { value: '91%', label: 'Videos under 15 s', context: 'Both apps' },
+      ],
+      numbersNote: 'The Gizmo account during my time on the team (Jan 1 – Oct 31, 2024), from public post data. TikTok rounds large view counts, so its totals are approximate.',
+    },
+  },
+  {
     slug: 'aspiration',
     title: 'Aspiration: Making Donating Effortless',
     section: 'singles',
     tag: 'HCI',
-    role: 'Team project, CS 188',
+    role: 'Team project',
     year: '2025',
     oneLiner: 'Round-up donations at checkout, so giving becomes a habit.',
     cover: { art: 'aspiration', palette: 'mint' },
@@ -340,193 +527,6 @@ export const projects = [
         { value: '10', label: 'Tree growth stages', context: 'From a seed to a forest' },
       ],
       numbersNote: 'From our CS 188 blog post and user research write-ups (Fall 2025). The 80% / 27% / 63% come from our poster’s summary of 30 of the 31 interviews. Purchases in testing were simulated; no real money moved.',
-    },
-  },
-  {
-    slug: 'gizmo',
-    title: 'Gizmo AI: Social Campaigns',
-    section: 'singles',
-    tag: 'Marketing',
-    role: 'Marketing Associate',
-    year: '2024',
-    oneLiner: 'Short-form videos for an AI study app.',
-    cover: { art: 'gizmo', palette: 'plum' },
-    // Every figure comes from src/data/gizmo-stats.json (node
-    // scripts/gizmo-stats.js): the Gizmo account during my time on the
-    // team, Jan 1 – Oct 31 2024 — not only my own posts.
-    // The one stat on its card; the full set is on the case study.
-    headline: { value: '63M+', label: 'views' },
-    metrics: [
-      { label: 'Views during my time', value: '63M+' },
-      { label: 'Posts', value: '602' },
-      { label: 'Top video, both platforms', value: '9.5M' },
-    ],
-    media: [],
-    caseStudy: {
-      summary: 'TikTok and Instagram videos for an AI study app, made in a small team to get students to know the app and download it. The numbers are the account’s during my time on the team.',
-      context: 'Gizmo is an AI study app that turns notes into flashcards and quizzes. Its audience is students, so most of its marketing lived on TikTok and Instagram.',
-      role: 'I was a Marketing Associate on a small remote team from January to October 2024. I made short-form videos for Gizmo’s TikTok and Instagram, aimed at students, to build awareness and drive app downloads.',
-      process: [
-        {
-          text: 'Gizmo makes AI flashcards and quizzes, so our audience was students studying for exams. Most videos started with something students already feel: cramming, forgetting everything the night before, wanting to seem effortlessly smart. The app showed up as the fix, not the opening line. We posted almost every day and shared most videos on both platforms.',
-          chart: {
-            title: 'Videos posted per month, both apps',
-            bars: [
-              { label: 'Jan', value: 58, display: '58' },
-              { label: 'Feb', value: 56, display: '56' },
-              { label: 'Mar', value: 59, display: '59' },
-              { label: 'Apr', value: 59, display: '59' },
-              { label: 'May', value: 20, display: '20' },
-              { label: 'Jun', value: 0, display: '0' },
-              { label: 'Jul', value: 6, display: '6' },
-              { label: 'Aug', value: 115, display: '115' },
-              { label: 'Sep', value: 120, display: '120' },
-              { label: 'Oct', value: 109, display: '109' },
-            ],
-            note: 'The account during my time on the team, 2024. Posting stopped in June and was light in May and July. About 9 in 10 videos were under 15 seconds.',
-          },
-          media: [],
-        },
-        {
-          title: 'Four of the account’s most-viewed videos',
-          media: [
-            { type: 'image', src: '/work/gizmo/01.webp', alt: 'Video cover: a chemistry textbook and a laptop by lamplight, captioned “how do you remember all this, you’re such a nerd!!”', caption: '4M TikTok · 5.5M Instagram', ratio: '9/16', href: 'https://www.instagram.com/p/DBZM_uxI-W0/', linkLabel: 'Watch on Instagram' },
-            { type: 'image', src: '/work/gizmo/02.webp', alt: 'Video cover: colour-coded biology notes on a desk in front of a monitor, captioned “NEVER attend an exam without doing this first”', caption: '3.6M TikTok · 1.7M Instagram', ratio: '9/16', href: 'https://www.tiktok.com/@gizmo.ai/video/7334423620623682848', linkLabel: 'Watch on TikTok' },
-            { type: 'image', src: '/work/gizmo/03.webp', alt: 'Video cover: a desk with notes, a highlighter and a monitor, captioned “I would ACE every exam if someone told me this before”', caption: '4.9M Instagram · 1.2M TikTok', ratio: '9/16', href: 'https://www.instagram.com/p/C3-rzOQIBPV/', linkLabel: 'Watch on Instagram' },
-            { type: 'image', src: '/work/gizmo/04.webp', alt: 'Video cover: a notebook of chemistry notes in front of a monitor, captioned “I give up, I can’t memorize all of this in one day!”', caption: '3.2M Instagram · 60.5k TikTok', ratio: '9/16', href: 'https://www.instagram.com/p/C4lgQEJoIto/', linkLabel: 'Watch on Instagram' },
-          ],
-        },
-      ],
-      findings: [
-        {
-          title: 'Same video, different app',
-          text: 'We usually posted each video to both apps on the same day. Of the 252 I could match, Instagram got more views on 181 (72%), with a median of 1.76× TikTok’s for the same video.',
-          chart: {
-            title: 'Median views per video posted to both apps',
-            bars: [
-              { label: 'TikTok', value: 5210, display: '5.2k' },
-              { label: 'Instagram', value: 8407, display: '8.4k', highlight: true },
-            ],
-            note: 'Engagement went the other way (TikTok 4.82%, Instagram 2.26%), but the two apps count it differently, so they can’t be compared directly.',
-          },
-        },
-        {
-          title: 'A format worth re-making',
-          text: 'In late October, the “don’t worry about how I’m studying” video was re-made 5 times on TikTok. Those versions got a median of 45,600 views, about 8× the account’s usual (5,506), and one of them reached 4M. On Instagram the same versions did about as well as usual, apart from that one. It’s 5 videos, so it’s an observation, not a rule.',
-          chart: {
-            title: 'TikTok median views',
-            bars: [
-              { label: 'Account, Jan–Oct', value: 5506, display: '5.5k' },
-              { label: 'Account, October', value: 3661, display: '3.7k' },
-              { label: 'The re-makes', value: 45600, display: '45.6k', highlight: true },
-            ],
-            note: 'One version, 4M, is off the chart.',
-          },
-        },
-      ],
-      outcome: 'During my time on the team, the account posted 600+ videos across TikTok and Instagram, reaching 63M+ views and about 2M likes. The biggest ones all opened with the viewer, not the product.',
-      differently: [
-        'I’d track results while we were posting, not after. Looking back at the data showed things I didn’t notice at the time, like Instagram getting more views on the exact same videos, and that would have shaped what we made.',
-        'I’d vary the hooks more. Looking back, a lot of our videos started to feel the same, since the whole team leaned on similar openings. I’d also write stronger hooks specifically for Reels instead of reusing the TikTok ones. And since my videos often didn’t show me or even my hands on screen, the visuals had to carry the whole thing. That made aesthetic matter way more than I gave it credit for at the time.',
-      ],
-      numbers: [
-        { value: '5.5k / 8.1k', label: 'Median views per video', context: 'TikTok / Instagram' },
-        { value: '1.97M', label: 'Likes', context: 'Both apps' },
-        { value: '207k', label: 'Saves', context: 'TikTok' },
-        { value: '16.6k', label: 'Shares', context: 'TikTok' },
-        { value: '4.2% / 2.8%', label: 'Engagement rate', context: 'TikTok (likes, comments, shares) / Instagram (likes, comments only)' },
-        { value: '91%', label: 'Videos under 15 s', context: 'Both apps' },
-      ],
-      numbersNote: 'The Gizmo account during my time on the team (Jan 1 – Oct 31, 2024), from public post data. TikTok rounds large view counts, so its totals are approximate.',
-    },
-  },
-  {
-    slug: 'this-site',
-    title: 'This Site',
-    section: 'singles',
-    tag: 'Side project',
-    role: 'Design & build',
-    year: '2026',
-    oneLiner: 'A portfolio that works like a record player.',
-    cover: { art: 'record', palette: 'sunset' },
-    // Every number here is measured on the production build or taken
-    // from the repo's history (see "By the numbers" for how).
-    // The one stat on its card; the full set is on the case study.
-    headline: { value: '28% → 0.1%', label: 'idle GPU' },
-    metrics: [
-      { label: 'Idle GPU', value: '28% → 0.1%' },
-      { label: 'Image weight', value: '−94%' },
-      { label: 'Accessibility', value: '100' },
-    ],
-    media: [],
-    caseStudy: {
-      summary: 'A portfolio that works like a record player: the intro is a turntable, pages are tracks, and the player bar actually plays.',
-      context: 'I’m graduating in 2027 and looking for design engineering and front-end roles. I didn’t want a template with my name on it. I wanted a site that felt like me and showed I can take a design all the way to something you can click.',
-      role: 'I came up with the concept and the design direction, and designed a good amount of the UI myself, including the intro screen, the player bar layout, the My Work section structure, and the drawing toy’s card and toolbar. I set up the project, the Git workflow and the deployment: GitHub, Vercel, and the custom domain with DNS. For the rest, Claude Code was my pair programmer: I wrote the briefs for each change, made the design calls (including what to cut), and reviewed and tested everything at desktop and phone size.',
-      process: [
-        {
-          title: 'Finding the concept',
-          text: 'I went through four versions in ten days: one long scroll with a blob, a softer take inspired by the game GRIS, a starry intro with real pages, and finally a record player. The first three looked nice, but they said nothing about me and buried the work. Music is a big part of my life, and a record player gave the work an obvious place, so that one stuck.',
-          media: [
-            { type: 'image', src: '/work/this-site/01.webp', alt: 'Version 1: a large serif headline next to a pink blob with eyes', caption: 'Version 1: one page, one blob', ratio: '16/10' },
-            { type: 'image', src: '/work/this-site/03.webp', alt: 'Version 3: "Austin Lo" over a dark, starry sky', caption: 'Version 3: a starry intro', ratio: '16/10' },
-            { type: 'image', src: '/work/this-site/05.webp', alt: 'Version 4: an orange-labelled vinyl record and a press play button', caption: 'Version 4: the record', ratio: '16/10' },
-          ],
-        },
-        {
-          title: 'Designing the interactions',
-          text: [
-            'Pages you click between, not one long scroll. People skim, so every page is one click away and the tracklist is always there (a menu on phones).',
-            'I designed the player bar so its controls double as navigation: the double arrows move between pages. People already know what those buttons do, so there’s nothing new to learn. Songs got single arrows, so the two never get mixed up.',
-            'Each track length is that page’s real reading time. It tells you something useful, and it keeps the record idea honest.',
-            'Pressing play drops the needle and spins up the record, then the site opens out of the record’s centre, so it feels like one motion, not a page change. I didn’t want the intro to waste anyone’s time: “skip intro” is always there, it plays once per visit, and a link straight to a page skips it.',
-            'Every sound is made in the browser, all in D major pentatonic, so clicking around never sounds off-key. They sit quieter than the music, the music only starts when you press play, and one button mutes everything. My first try at adding music put too much into one change and broke things, so I reverted it and rebuilt it in small steps.',
-          ],
-          media: [
-            { type: 'image', src: '/work/this-site/07.webp', alt: 'The player bar: a tiny vinyl record with the album art as its label, song controls, a seek bar and a volume slider', caption: 'The player bar today.', ratio: '1600/219' },
-          ],
-        },
-        {
-          title: 'Making it fast',
-          text: 'At full screen on a fast monitor, the site lagged. I measured it in Chrome instead of guessing. Any animation that never stops, even the tiny equalizer, made the browser redraw the whole page 165 times a second. Now every animation runs off one shared loop that stops when nothing is moving, and after 10 seconds without input the always-on loops hold still. Nothing visible changed.',
-          chart: {
-            title: 'GPU use with My Work left alone',
-            unit: '%',
-            bars: [
-              { label: 'Before', value: 28.2, display: '28%' },
-              { label: 'After', value: 0.1, display: '0.1%', highlight: true },
-            ],
-            note: '1920×1080, median of 3 runs each: the build from just before the fix vs today’s.',
-          },
-          media: [],
-        },
-        {
-          title: 'The mascot',
-          text: 'The cassette was my idea: the blob never fit a record player, so it became a cassette whose reels are its eyes. It follows your cursor and waves with whichever arm is closer. I cut the mouth and the “alo” on its label because they felt off. It used to dance, but the playlist is chill, so now it sits on the player bar, sways to the beat, and gets sleepy when the music stops.',
-          media: [
-            { type: 'image', src: '/work/this-site/10.webp', alt: 'The old mascot: an orange blob with eyes, in the player bar', caption: 'Before: the blob.', ratio: '840/388' },
-            { type: 'image', src: '/work/this-site/11.webp', alt: 'The new mascot: a cassette tape with arms and legs on the edge of the player bar', caption: 'After: the cassette.', ratio: '840/388' },
-          ],
-        },
-      ],
-      decisions: [
-        { decision: 'Type', why: 'A characterful grotesque for headings, a light sans for reading, and mono only for numbers, because mono digits don’t jitter as times tick.' },
-        { decision: 'Color', why: 'Indigo, paper, and one orange. Orange fails contrast as text, so it’s fill-only, with a darker orange for text and focus rings.' },
-        { decision: 'The cursor', why: 'Its colour-inverting blend roughly doubled the cost of every frame. I kept it on purpose and saved performance elsewhere.' },
-        { decision: 'Work page', why: 'Sections instead of filters, so the whole range shows at a glance, in a few easy chunks.' },
-        { decision: 'Accessibility', why: 'Reduced motion is respected, focus is always visible, and everything works with a keyboard except the two toys (drawing and scratching).' },
-      ],
-      outcome: 'It’s live at this website you’re on right now, built on React and React Router and nothing else. It started as a portfolio and turned into the project I learned the most from.',
-      differently: 'Keep every change small from the start, and test at full screen on a fast monitor early, not once it already felt slow.',
-      numbers: [
-        { value: '99 / 88', label: 'Performance: intro', context: 'Lighthouse, desktop / mobile' },
-        { value: '99 / 87', label: 'Performance: My Work', context: 'Lighthouse, desktop / mobile' },
-        { value: '3.1 s / 3.2 s', label: 'Mobile LCP', context: 'Intro / My Work, on a simulated slow phone' },
-        { value: '160 KB', label: 'JS + CSS', context: 'The whole app, gzipped' },
-        { value: '13', label: 'Synthesized sounds', context: 'Zero audio files for effects' },
-        { value: '4', label: 'Concepts', context: 'Three explored before the record' },
-      ],
-      numbersNote: 'Lighthouse: production build, median of 3 runs. GPU: Chrome at 1920×1080. Image weight: 205 MB of originals → 12 MB served.',
     },
   },
   {
