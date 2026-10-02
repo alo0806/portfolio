@@ -57,12 +57,14 @@ export const tracks = [
   { path: '/playground', title: 'Playground', cover: 'mint' },
 ]
 
-/* icon: 'email' | 'linkedin' | 'github' | 'resume' */
+/* icon: 'email' | 'linkedin' | 'github' | 'resume'
+   soon: true shows the link greyed out with a "soon" tag and no href,
+   in the same spot. To turn one on, give it its href and drop `soon`. */
 export const links = [
   { label: 'Email', href: 'mailto:austnlo@ucla.edu', icon: 'email' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/austin-l-7a7862302', icon: 'linkedin' },
-  { label: 'GitHub', href: '#', icon: 'github' }, // '#' = not set yet
-  { label: 'Resume', href: '#', icon: 'resume' },
+  { label: 'GitHub', href: null, icon: 'github', soon: true },
+  { label: 'Resume', href: null, icon: 'resume', soon: true },
 ]
 
 /* `{song}` and `{artist}` are filled in from the song playing now

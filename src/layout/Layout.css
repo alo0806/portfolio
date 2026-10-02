@@ -245,6 +245,18 @@
   color: var(--accent-ink);
 }
 
+/* A link that isn't ready yet: muted, not clickable, tagged "soon". */
+.links__link--soon,
+.links__link--soon .links__icon {
+  color: var(--muted-ink);
+  cursor: default;
+}
+
+.links__soon {
+  font-size: var(--fs-label);
+  white-space: nowrap;
+}
+
 /* ─── Back to the record ────────────────────────────────────── */
 
 .sidebar__meta {
