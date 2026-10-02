@@ -166,7 +166,7 @@ export const projects = [
     tag: 'HCI',
     role: 'Team project, CS 188',
     year: '2025',
-    oneLiner: 'A Chrome extension and web app that rounds up online purchases and donates the change, so giving becomes a habit instead of a decision.',
+    oneLiner: 'Round-up donations at checkout, so giving becomes a habit.',
     cover: { art: 'aspiration', palette: 'mint' },
     // From our CS 188 blog post, user research write-ups and poster (Fall
     // 2025), kept out of the repo in data/. Interview counts are the blog's
@@ -347,9 +347,9 @@ export const projects = [
     title: 'Gizmo AI: Social Campaigns',
     section: 'singles',
     tag: 'Marketing',
-    role: 'Marketing Associate (remote)',
+    role: 'Marketing Associate',
     year: '2024',
-    oneLiner: 'Short-form videos for an AI study app’s TikTok and Instagram, made in a small team for students studying for exams.',
+    oneLiner: 'Short-form videos for an AI study app.',
     cover: { art: 'gizmo', palette: 'plum' },
     // Every figure comes from src/data/gizmo-stats.json (node
     // scripts/gizmo-stats.js): the Gizmo account during my time on the
@@ -447,7 +447,7 @@ export const projects = [
     tag: 'Side project',
     role: 'Design & build',
     year: '2026',
-    oneLiner: 'A portfolio that works like a record player: the intro is a turntable, pages are tracks, and the player bar actually plays.',
+    oneLiner: 'A portfolio that works like a record player.',
     cover: { art: 'record', palette: 'sunset' },
     // Every number here is measured on the production build or taken
     // from the repo's history (see "By the numbers" for how).
@@ -536,7 +536,7 @@ export const projects = [
     tag: 'Analysis',
     role: 'Social chair',
     year: '2025–26',
-    oneLiner: 'I pulled ten events’ worth of presale data together to figure out how to price our tickets.',
+    oneLiner: 'Ten events of presale data, turned into a pricing strategy.',
     cover: { art: 'pricing', palette: 'citrus' },
     // Every figure comes from my analysis notes and dashboard (kept out of
     // the repo with the raw exports in data/, which hold buyers' personal
@@ -681,11 +681,12 @@ export const projects = [
     role: 'Social Chair & Publicity',
     year: '2025–26',
     oneLiner: 'Rush and event flyers for my fraternity, including two collabs.',
-    cover: { image: '/work/flyers/cover.webp', alt: 'The chapter crest: Greek letters over a dragon', palette: 'plum', layout: 'framed' },
+    cover: { image: '/work/flyers/cover.webp', alt: 'The LAMBDAS fall rush 2026 flyer', palette: 'plum', layout: 'framed' },
     metrics: [{ label: 'Flyers', value: '6' }],
     media: [
       { type: 'image', src: '/work/flyers/01.webp', alt: 'Flyer: Fall Rush 2026, with the chapter’s name in large type', caption: 'Fall rush 2026', ratio: '4/5' },
       { type: 'image', src: '/work/flyers/02.webp', alt: 'Fall rush 2026 schedule: brotherhood BBQ, basketball tourney, rush event', caption: 'Rush schedule', ratio: '4/5' },
+      { type: 'image', src: '/work/flyers/crest.webp', alt: 'The chapter crest: Greek letters over a dragon', caption: 'Chapter logo, designed by me', ratio: '1/1' },
       { type: 'image', src: '/work/flyers/03.webp', alt: 'Flyer: After Dark, Friday 9/25 at 10pm', caption: 'After Dark 9/25', ratio: '4/5' },
       { type: 'image', src: '/work/flyers/04.webp', alt: 'Flyer: After Dark, Friday 1/9 at 10pm', caption: 'After Dark 1/9', ratio: '4/5' },
       { type: 'image', src: '/work/flyers/05.webp', alt: 'Flyer: Drift, with two cars and a halftone texture', caption: 'Drift', ratio: '4/5' },
@@ -750,13 +751,12 @@ export const projects = [
     role: 'Publicity Committee',
     year: '2023–2024',
     oneLiner: 'Event and announcement graphics for the honor society.',
-    cover: { image: '/work/smc-honor-society/cover.webp', palette: 'plum', layout: 'framed' },
-    metrics: [{ label: 'Graphics', value: '4' }],
+    cover: { image: '/work/smc-honor-society/02.webp', alt: 'General meeting announcement with day and night meeting times', palette: 'plum', layout: 'framed' },
+    metrics: [{ label: 'Graphics', value: '3' }],
     media: [
-      { type: 'image', src: '/work/smc-honor-society/01.webp', alt: 'General meeting announcement in a retro computer-window style, pink with a rainbow', caption: 'General meeting', ratio: '1/1' },
       { type: 'image', src: '/work/smc-honor-society/02.webp', alt: 'General meeting announcement with day and night meeting times', caption: 'General meeting: day & night', ratio: '1/1' },
-      { type: 'image', src: '/work/smc-honor-society/03.webp', alt: 'Black-and-white general meeting announcement with stacked window frames and the society crest', caption: 'General meeting', ratio: '1/1' },
       { type: 'image', src: '/work/smc-honor-society/04.webp', alt: 'Coming soon teaser for the AGS Fall 2023 banquet, with cartoon eyes', caption: 'Fall banquet teaser', ratio: '1/1' },
+      { type: 'image', src: '/work/smc-honor-society/03.webp', alt: 'Black-and-white general meeting announcement with stacked window frames and the society crest', caption: 'General meeting', ratio: '1/1' },
     ],
   },
 
