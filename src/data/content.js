@@ -174,6 +174,102 @@ const placeholderCaseStudy = (palette) => ({
 export const projects = [
   /* ─── Singles ─── */
   {
+    slug: 'gizmo',
+    title: 'Gizmo AI: social campaigns',
+    section: 'singles',
+    tag: 'Marketing',
+    role: 'Marketing Associate (remote)',
+    year: '2024',
+    oneLiner: 'Short-form videos for an AI study app’s TikTok and Instagram, made in a small team for students studying for exams.',
+    cover: { image: '/work/gizmo/logo.png', alt: 'The Gizmo logo', palette: 'plum', layout: 'framed' },
+    // Every figure comes from src/data/gizmo-stats.json (node
+    // scripts/gizmo-stats.js): the Gizmo account during my time on the
+    // team, Jan 1 – Oct 31 2024 — not only my own posts.
+    metrics: [
+      { label: 'Account views', value: '63M' },
+      { label: 'Videos posted', value: '602' },
+      { label: 'Top video', value: '9.5M' },
+    ],
+    media: [],
+    caseStudy: {
+      summary: 'TikTok and Instagram videos for an AI study app, made in a small team to get students to know the app and download it. The numbers are the account’s during my time on the team.',
+      context: 'Gizmo is an AI study app that turns your notes into flashcards and quizzes. The team needed a steady stream of short videos on TikTok and Instagram to get students to know the app and download it.',
+      role: 'I was a Marketing Associate on a small remote team from January to October 2024. I made short-form videos for Gizmo’s TikTok and Instagram, aimed at students, to build awareness and drive app downloads.',
+      process: [
+        {
+          text: 'Gizmo makes AI flashcards and quizzes, so our audience was students studying for exams. Most videos started with something students already feel: cramming, forgetting everything the night before, wanting to seem effortlessly smart. The app showed up as the fix, not the opening line. We posted almost every day and shared most videos on both platforms.',
+          chart: {
+            title: 'Videos posted per month, both apps',
+            bars: [
+              { label: 'Jan', value: 58, display: '58' },
+              { label: 'Feb', value: 56, display: '56' },
+              { label: 'Mar', value: 59, display: '59' },
+              { label: 'Apr', value: 59, display: '59' },
+              { label: 'May', value: 20, display: '20' },
+              { label: 'Jun', value: 0, display: '0' },
+              { label: 'Jul', value: 6, display: '6' },
+              { label: 'Aug', value: 115, display: '115' },
+              { label: 'Sep', value: 120, display: '120' },
+              { label: 'Oct', value: 109, display: '109' },
+            ],
+            note: 'The account during my time on the team, 2024. Posting stopped in June and was light in May and July. About 9 in 10 videos were under 15 seconds.',
+          },
+          media: [],
+        },
+        {
+          title: 'Four of the account’s most-viewed videos',
+          media: [
+            { type: 'image', src: '/work/gizmo/01.webp', alt: 'Video cover: a chemistry textbook and a laptop by lamplight, captioned “how do you remember all this, you’re such a nerd!!”', caption: '4M TikTok · 5.5M Instagram', ratio: '9/16', href: 'https://www.instagram.com/p/DBZM_uxI-W0/', linkLabel: 'Watch on Instagram' },
+            { type: 'image', src: '/work/gizmo/02.webp', alt: 'Video cover: colour-coded biology notes on a desk in front of a monitor, captioned “NEVER attend an exam without doing this first”', caption: '3.6M TikTok · 1.7M Instagram', ratio: '9/16', href: 'https://www.tiktok.com/@gizmo.ai/video/7334423620623682848', linkLabel: 'Watch on TikTok' },
+            { type: 'image', src: '/work/gizmo/03.webp', alt: 'Video cover: a desk with notes, a highlighter and a monitor, captioned “I would ACE every exam if someone told me this before”', caption: '4.9M Instagram · 1.2M TikTok', ratio: '9/16', href: 'https://www.instagram.com/p/C3-rzOQIBPV/', linkLabel: 'Watch on Instagram' },
+            { type: 'image', src: '/work/gizmo/04.webp', alt: 'Video cover: a notebook of chemistry notes in front of a monitor, captioned “I give up, I can’t memorize all of this in one day!”', caption: '3.2M Instagram · 60.5k TikTok', ratio: '9/16', href: 'https://www.instagram.com/p/C4lgQEJoIto/', linkLabel: 'Watch on Instagram' },
+          ],
+        },
+      ],
+      findings: [
+        {
+          title: 'Same video, different app',
+          text: 'We usually posted each video to both apps on the same day. Of the 252 I could match, Instagram got more views on 181 (72%), with a median of 1.76× TikTok’s for the same video.',
+          chart: {
+            title: 'Median views per video posted to both apps',
+            bars: [
+              { label: 'TikTok', value: 5210, display: '5.2k' },
+              { label: 'Instagram', value: 8407, display: '8.4k', highlight: true },
+            ],
+            note: 'Engagement went the other way (TikTok 4.82%, Instagram 2.26%), but the two apps count it differently, so they can’t be compared directly.',
+          },
+        },
+        {
+          title: 'A format worth re-making',
+          text: 'In late October, the “don’t worry about how I’m studying” video was re-made 5 times on TikTok. Those versions got a median of 45,600 views, about 8× the account’s usual (5,506), and one of them reached 4M. On Instagram the same versions did about as well as usual, apart from that one. It’s 5 videos, so it’s an observation, not a rule.',
+          chart: {
+            title: 'TikTok median views',
+            bars: [
+              { label: 'Account, Jan–Oct', value: 5506, display: '5.5k' },
+              { label: 'Account, October', value: 3661, display: '3.7k' },
+              { label: 'The re-makes', value: 45600, display: '45.6k', highlight: true },
+            ],
+            note: 'One version, 4M, is off the chart.',
+          },
+        },
+      ],
+      outcome: 'During my time on the team, the account posted 600+ videos across TikTok and Instagram, reaching 63M+ views and about 2M likes. The biggest ones all opened with the viewer, not the product.',
+      differently: [
+        'I’d track results while we were posting, not after. Looking back at the data showed things I didn’t notice at the time, like Instagram getting more views on the exact same videos, and that would have shaped what we made.',
+        'I’d vary the hooks more. Looking back, a lot of our videos started to feel the same, since the whole team leaned on similar openings. I’d also write stronger hooks specifically for Reels instead of reusing the TikTok ones. And since my videos often didn’t show me or even my hands on screen, the visuals had to carry the whole thing. That made aesthetic matter way more than I gave it credit for at the time.',
+      ],
+      numbers: [
+        { value: '5.5k / 8.1k', label: 'Median views per video', context: 'TikTok / Instagram' },
+        { value: '1.97M', label: 'Likes', context: 'Both apps' },
+        { value: '207k', label: 'Saves', context: 'TikTok' },
+        { value: '16.6k', label: 'Shares', context: 'TikTok' },
+        { value: '4.2% / 2.8%', label: 'Engagement rate', context: 'TikTok (likes, comments, shares) / Instagram (likes, comments only)' },
+        { value: '91%', label: 'Videos under 15 s', context: 'Both apps' },
+      ],
+      numbersNote: 'The Gizmo account during my time on the team (Jan 1 – Oct 31, 2024), from public post data. TikTok rounds large view counts, so its totals are approximate.',
+    },
+  },
+  {
     slug: 'this-site',
     title: 'This site',
     section: 'singles',
