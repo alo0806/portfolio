@@ -172,9 +172,9 @@ export const projects = [
     // 2025), kept out of the repo in data/. Interview counts are the blog's
     // (18 + 13); the 80% / 27% / 63% are the poster's summary of 30 of them.
     metrics: [
-      { label: 'Interviews, two rounds', value: '31' },
-      { label: 'Have donated → donate consistently', value: '80% → 27%' },
-      { label: 'Cite money as the barrier', value: '63%' },
+      { label: 'Interviews', value: '31' },
+      { label: 'Donated → donate regularly', value: '80% → 27%' },
+      { label: 'Cite money', value: '63%' },
     ],
     media: [],
     caseStudy: {
@@ -352,9 +352,9 @@ export const projects = [
     // scripts/gizmo-stats.js): the Gizmo account during my time on the
     // team, Jan 1 – Oct 31 2024 — not only my own posts.
     metrics: [
-      { label: 'Account views', value: '63M' },
-      { label: 'Videos posted', value: '602' },
-      { label: 'Top video', value: '9.5M' },
+      { label: 'Views during my time', value: '63M+' },
+      { label: 'Posts', value: '602' },
+      { label: 'Top video, both platforms', value: '9.5M' },
     ],
     media: [],
     caseStudy: {
@@ -536,9 +536,9 @@ export const projects = [
     // details). Only aggregated numbers live here, and no money totals:
     // the chapter's finances stay private.
     metrics: [
-      { label: 'Per head, ladder vs flat $10', value: '+40%' },
-      { label: 'Presales in the final 48 h', value: '67%' },
-      { label: 'Backyard event, frat-size crowd', value: '157' },
+      { label: 'Ladder vs flat $10', value: '+40%' },
+      { label: 'Sold in final 48 h', value: '67%' },
+      { label: 'Backyard presales', value: '157' },
     ],
     media: [],
     caseStudy: {
