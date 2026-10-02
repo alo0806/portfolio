@@ -164,6 +164,31 @@
   }
 }
 
+/* A long sequence (e.g. growth stages): one row, each piece at least
+   88px wide (ten fit the desktop column), scrolling sideways when the
+   row doesn't fit. */
+.case__media[data-layout='scroll'] {
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(88px, 1fr);
+  gap: var(--sp-1);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  padding-bottom: var(--sp-1);
+}
+
+.case__media[data-layout='scroll'] > * {
+  scroll-snap-align: start;
+}
+
+.case__media[data-layout='scroll'] figcaption {
+  font-size: var(--fs-label);
+}
+
+.case__media[data-layout='scroll']:focus-visible {
+  outline-offset: 4px;
+}
+
 /* A cover that links to the original post. */
 .case__post {
   position: relative;
@@ -265,6 +290,10 @@
   --tone: var(--chart-frat);
 }
 [data-tone='roof'] {
+  --tone: var(--chart-roof);
+}
+/* The same teal without the venue's shape, for charts about anything else. */
+[data-tone='teal'] {
   --tone: var(--chart-roof);
 }
 [data-tone='yard'] {

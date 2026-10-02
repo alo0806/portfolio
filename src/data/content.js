@@ -160,6 +160,186 @@ const pricingEvents = [
 export const projects = [
   /* ─── Singles ─── */
   {
+    slug: 'aspiration',
+    title: 'Aspiration: Making Donating Effortless',
+    section: 'singles',
+    tag: 'HCI',
+    role: 'Team project, CS 188',
+    year: '2025',
+    oneLiner: 'A Chrome extension and web app that rounds up online purchases and donates the change, so giving becomes a habit instead of a decision.',
+    cover: { image: '/work/aspiration/cover.webp', alt: 'The Aspiration logo: a white sprout on a green circle', palette: 'mint', layout: 'framed' },
+    // From our CS 188 blog post, user research write-ups and poster (Fall
+    // 2025), kept out of the repo in data/. Interview counts are the blog's
+    // (18 + 13); the 80% / 27% / 63% are the poster's summary of 30 of them.
+    metrics: [
+      { label: 'Interviews, two rounds', value: '31' },
+      { label: 'Have donated → donate consistently', value: '80% → 27%' },
+      { label: 'Cite money as the barrier', value: '63%' },
+    ],
+    media: [],
+    caseStudy: {
+      summary: 'A Chrome extension and web app that rounds up online purchases and donates the change, so giving becomes a habit instead of a decision.',
+      context: [
+        'Aspiration was our team project for CS 188, Human-Computer Interaction, at UCLA in Fall 2025, with Matthew Day, Rakil Kim and Alan Lin. The quarter’s theme was sustainable environments, and we read it as social sustainability: how do you get people to keep doing something they already think they should?',
+        'We landed on giving. Matthew, who’s involved in UCLA’s Effective Altruism club, pointed out the gap: most people think they should donate, but almost no one does it consistently. And most platforms make you choose between a big one-time gift and a monthly subscription, which doesn’t work for students and young people on tight budgets.',
+        'Aspiration has two parts: a web app, prototyped with Lovable (React, TypeScript, Tailwind and Supabase), and a Chrome extension, built separately. Purchases were simulated, since we didn’t want to collect anyone’s real bank details.',
+      ],
+      role: 'Placeholder (notes: storyboarding). What I worked on, who I worked with, and the tools I used.',
+      process: [
+        {
+          title: 'Research, round 1',
+          text: [
+            'We started with 18 semi-structured interviews, two of us at each one: one talking, one taking notes. Money is a sensitive thing to bring up with strangers, so we reached out to people we knew first, mostly students.',
+            'Nearly everyone had donated at least once, mostly to charities, and some to churches or other nonprofits. But they gave inconsistently. The open format gave us a broad picture, but it wasn’t deep enough to build a strong problem statement on.',
+          ],
+          media: [
+            { type: 'image', src: '/work/aspiration/research-pie-sketch.webp', alt: 'Hand-drawn pie chart of where people had given: charity, church, nonprofit, other, and nonmonetary', caption: 'Where people had given [placeholder: by name]', ratio: '800/822', width: 400 },
+          ],
+        },
+        {
+          title: 'Changing the method',
+          text: [
+            'In a Design Studio session, the course staff helped us narrow down what we actually needed to learn. So for round 2 we switched to structured interviews: the same questions for everyone, focused on why people do or don’t donate, and how they do it. Asking everyone the same questions also meant we could compare notes across interviewers.',
+            'Looking back, we wished we’d started there: from what people actually experience, instead of starting with an idea and fitting the research around it.',
+          ],
+        },
+        {
+          title: 'Research, round 2',
+          text: [
+            'We ran 13 structured interviews with new people. Three things kept coming up. Trust: people weren’t sure their money would go where it was supposed to, and some brought up recent scams and misused funds. Money: most were students already paying for food, rent and tuition, so giving felt like a luxury they couldn’t justify yet. And inconvenience: donating was its own task and its own decision.',
+          ],
+          chart: {
+            title: 'Most people have given. Few give consistently.',
+            bars: [
+              { label: 'Have donated at least once', value: 80, display: '80%', tone: 'teal' },
+              { label: 'Donate frequently or consistently', value: 27, display: '27%', tone: 'hi' },
+              { label: 'Cite money as a barrier to giving more', value: 63, display: '63%' },
+            ],
+            note: 'From our poster’s summary of 30 of the interviews.',
+          },
+        },
+        {
+          title: 'The reframe',
+          text: [
+            'Our first scope was too broad: we wanted to tackle people’s trust in charities in general. The course staff pushed us to stop trying to fix charities’ reputations and fix the act of donating instead. Pushing people to trust a charity could feel manipulative, but a donating experience that’s clear and easy could earn some trust on its own. That left three goals:',
+            'Convenience. Round purchases up and donate the difference, so giving rides along with shopping instead of being a separate task or a big decision.',
+            'Trust through transparency. Show clearly where the money goes, with third-party charity verification and impact reports from GiveWell.',
+            'Financial control. Users choose their charity when they set up, and can change it at any time.',
+          ],
+        },
+        {
+          title: 'From storyboards…',
+          text: 'We storyboarded the problem and the idea on paper, with personas and a scenario: a student asked to donate at a booth on campus, unsure where the money would even go.',
+          media: [
+            { type: 'image', src: '/work/aspiration/storyboard-comic.webp', alt: 'Storyboard comic: a student passes an animal welfare booth, wonders where the money would even go, gives reluctantly, then finds Aspiration on their phone', caption: 'Storyboard, by me', ratio: '1000/1333' },
+            { type: 'image', src: '/work/aspiration/storyboard-paper.webp', alt: 'Paper storyboard panels drawn in pen, taped to green paper', caption: 'Paper storyboard [placeholder: by name]', ratio: '1400/1115' },
+            { type: 'image', src: '/work/aspiration/storyboard-board.webp', alt: 'Storyboards, two persona cards and a scenario laid out on a wooden floor', caption: 'Storyboards, personas, scenario [placeholder: by name]', ratio: '1400/1230' },
+          ],
+        },
+        {
+          title: '…to a prototype',
+          text: 'The final flow: pick a charity when you set up, get a popup at checkout offering to round up, then check the dashboard to see where it all went.',
+          media: [
+            { type: 'image', src: '/work/aspiration/screen-select-charity.webp', alt: 'Aspiration web app: Select your charity, with four charity cards over a forest background', caption: '1. Pick a charity', ratio: '1600/817' },
+            { type: 'image', src: '/work/aspiration/screen-checkout-popup.webp', alt: 'Extension popup over an Amazon checkout: Make an impact?, with the purchase price, rounded total and donation', caption: '2. Round up at checkout', ratio: '1200/1135' },
+            { type: 'image', src: '/work/aspiration/screen-dashboard.webp', alt: 'Dashboard: this month and all-time totals, lives impacted, round-ups, and a donation history', caption: '3. See where it went', ratio: '1200/1098' },
+            { type: 'image', src: '/work/aspiration/screen-impact-tree.webp', alt: 'Your Impact Tree: a small sprout, with a progress bar to the next stage', caption: 'The impact tree', ratio: '1000/1051' },
+          ],
+        },
+        {
+          title: 'The impact tree',
+          text: 'The web app also shows a tree that grows with your total donations, from a seed to a forest in 10 stages. We added it to make giving a bit more fun, and it plays into what testers liked most: watching small round-ups add up.',
+          mediaLayout: 'scroll',
+          mediaLabel: 'The impact tree’s 10 growth stages',
+          media: [
+            { type: 'image', src: '/work/aspiration/tree/stage-01.webp', alt: 'Impact tree, stage 1 of 10: a seed', caption: 'Stage 1', ratio: '1/1' },
+            { type: 'image', src: '/work/aspiration/tree/stage-02.webp', alt: 'Impact tree, stage 2 of 10: a seed starting to sprout', caption: 'Stage 2', ratio: '1/1' },
+            { type: 'image', src: '/work/aspiration/tree/stage-03.webp', alt: 'Impact tree, stage 3 of 10: a small sprout', caption: 'Stage 3', ratio: '1/1' },
+            { type: 'image', src: '/work/aspiration/tree/stage-04.webp', alt: 'Impact tree, stage 4 of 10: a sapling', caption: 'Stage 4', ratio: '1/1' },
+            { type: 'image', src: '/work/aspiration/tree/stage-05.webp', alt: 'Impact tree, stage 5 of 10: a young tree', caption: 'Stage 5', ratio: '1/1' },
+            { type: 'image', src: '/work/aspiration/tree/stage-06.webp', alt: 'Impact tree, stage 6 of 10: a full tree', caption: 'Stage 6', ratio: '1/1' },
+            { type: 'image', src: '/work/aspiration/tree/stage-07.webp', alt: 'Impact tree, stage 7 of 10: a small grove', caption: 'Stage 7', ratio: '1/1' },
+            { type: 'image', src: '/work/aspiration/tree/stage-08.webp', alt: 'Impact tree, stage 8 of 10: a bigger grove', caption: 'Stage 8', ratio: '1/1' },
+            { type: 'image', src: '/work/aspiration/tree/stage-09.webp', alt: 'Impact tree, stage 9 of 10: a forest', caption: 'Stage 9', ratio: '1/1' },
+            { type: 'image', src: '/work/aspiration/tree/stage-10.webp', alt: 'Impact tree, stage 10 of 10: a wide forest', caption: 'Stage 10', ratio: '1/1' },
+          ],
+        },
+        {
+          title: 'Usability testing',
+          text: [
+            'We tested with 4 UCLA students who matched our audience: 1 pilot session to fix our script, then 3 full sessions of 20–30 minutes, in person on a laptop. Each person did two scenarios: set up Aspiration and pick a charity, then simulate an online purchase, round up at checkout, and check the dashboard. They thought aloud the whole time.',
+            'Afterwards they rated, on a 7-point scale, how easy the round-up was to understand, how comfortable they’d be using it with their own money, and how well they understood where their donations went, followed by a short interview.',
+            'With so few people, we treated the ratings as descriptive, not as statistics. We noted where people got stuck, paused or backtracked, grouped their comments into convenience, transparency and control, and mapped them back to our design goals.',
+          ],
+        },
+      ],
+      findingsTitle: 'What worked, and what didn’t',
+      findings: [
+        {
+          title: 'Worked: the popup felt like checkout',
+          text: 'Testers consistently completed a round-up through the extension without major help, and several called it intuitive, like other browser add-ons. A popup at checkout asking you to confirm a small extra charge fit how people already pay online.',
+        },
+        {
+          title: 'Worked: watching it add up',
+          text: 'On the dashboard, people liked seeing their donation history and total, and several said watching small round-ups add up made the idea feel more concrete and meaningful.',
+        },
+        {
+          title: 'Didn’t: picking a charity',
+          text: 'Most of the friction came at setup. People hesitated at choosing a charity, unsure if it was a permanent commitment, and wanted more context first. One tried to skip it, expecting to choose for each purchase. You could change it later, but nothing said so.',
+        },
+        {
+          title: 'Didn’t: the breakdown got missed',
+          text: 'In the popup, people went straight for the button and often missed the breakdown of purchase price, round-up and total.',
+        },
+        {
+          title: 'Didn’t: no way to set limits',
+          text: 'Almost every tester asked for more control: a monthly cap, a pause for tight months, or a way to leave out certain stores. And that was with simulated money.',
+        },
+      ],
+      next: {
+        text: 'Placeholder. My own redesign of charity selection, and a monthly cap / pause control.',
+        media: [
+          { type: 'image', src: null, palette: 'mint', alt: '', caption: 'Placeholder', ratio: '4/3' },
+          { type: 'image', src: null, palette: 'mint', alt: '', caption: 'Placeholder', ratio: '4/3' },
+          { type: 'image', src: null, palette: 'mint', alt: '', caption: 'Placeholder', ratio: '4/3' },
+        ],
+      },
+      decisions: [
+        {
+          decision: 'Round-ups instead of one-off gifts or subscriptions',
+          why: 'Most platforms make you choose between giving a lot at once or signing up monthly. Small round-ups fit a student budget.',
+        },
+        {
+          decision: 'Fix the interaction, not the reputation',
+          why: 'We can’t control what people think of a charity, and pushing them to trust one could feel manipulative. We could make the donating itself clear and easy.',
+        },
+        {
+          decision: 'Simulated purchases, not real bank data',
+          why: 'We didn’t want to collect anyone’s bank details. The tradeoff: testers worked with fake money, so real stakes would probably make them more cautious.',
+        },
+        {
+          decision: 'Chrome first',
+          why: 'It’s the most widely used browser, so it was the one to demo on.',
+        },
+        {
+          decision: 'Test usability, not long-term behaviour',
+          why: 'We first wanted to measure whether Aspiration changed how often people give, but that wasn’t realistic in a quarter. So we asked two questions we could answer in a session: does it make donating feel simple, and do people feel informed and in control?',
+        },
+      ],
+      outcome: 'We presented Aspiration at the CS 188 final showcase. Placeholder: more to come.',
+      differently: 'Placeholder.',
+      numbers: [
+        { value: '18 → 13', label: 'Interviews per round', context: 'Semi-structured, then structured' },
+        { value: '4', label: 'Usability sessions', context: '1 pilot + 3 full, with UCLA students' },
+        { value: '20–30 min', label: 'Per session', context: 'In person, on a laptop' },
+        { value: '2', label: 'End-to-end scenarios', context: 'Set up, then a simulated checkout' },
+        { value: '3', label: 'Post-task ratings', context: 'Each on a 7-point scale' },
+        { value: '10', label: 'Tree growth stages', context: 'From a seed to a forest' },
+      ],
+      numbersNote: 'From our CS 188 blog post and user research write-ups (Fall 2025). The 80% / 27% / 63% come from our poster’s summary of 30 of the 31 interviews. Purchases in testing were simulated; no real money moved.',
+    },
+  },
+  {
     slug: 'gizmo',
     title: 'Gizmo AI: Social Campaigns',
     section: 'singles',

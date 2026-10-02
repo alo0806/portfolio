@@ -35,10 +35,11 @@ const paragraphs = (text) =>
 
 /* One piece of media with its caption. With `href` (a video's cover that
    links to the original post), the picture is the link, with a play
-   badge, and opens in a new tab. */
+   badge, and opens in a new tab. `width` (px) caps a small or simple
+   image so it isn't blown up to the full column. */
 function Figure({ item }) {
   return (
-    <figure className="media-figure">
+    <figure className="media-figure" style={item.width ? { maxWidth: item.width } : undefined}>
       {item.href ? (
         <a className="case__post" href={item.href} target="_blank" rel="noreferrer">
           <Media item={item} />
@@ -52,6 +53,26 @@ function Figure({ item }) {
       )}
       {item.caption ? <figcaption>{item.caption}</figcaption> : null}
     </figure>
+  )
+}
+
+/* A step's images and videos: side by side (up to four across), or with
+   layout 'scroll', one long strip that scrolls sideways when it doesn't
+   fit (a keyboard can scroll it too, so it's focusable and labelled). */
+function MediaGroup({ media, layout, label }) {
+  if (!media?.length) return null
+  const scroll = layout === 'scroll'
+  return (
+    <div
+      className="case__media"
+      data-count={scroll ? undefined : Math.min(media.length, 4)}
+      data-layout={layout}
+      {...(scroll ? { role: 'region', 'aria-label': label, tabIndex: 0 } : {})}
+    >
+      {media.map((item, j) => (
+        <Figure key={j} item={item} />
+      ))}
+    </div>
   )
 }
 
@@ -124,13 +145,7 @@ export default function CaseStudyPage() {
               {block.title ? <h3 className="case__subheading">{block.title}</h3> : null}
               {paragraphs(block.text)}
               {block.chart ? <Chart chart={block.chart} /> : null}
-              {block.media?.length ? (
-                <div className="case__media" data-count={Math.min(block.media.length, 4)}>
-                  {block.media.map((item, j) => (
-                    <Figure key={j} item={item} />
-                  ))}
-                </div>
-              ) : null}
+              <MediaGroup media={block.media} layout={block.mediaLayout} label={block.mediaLabel} />
             </Reveal>
             {block.findings?.map((finding, k) => (
               <Reveal key={k} className="case__block case__finding">
@@ -147,7 +162,7 @@ export default function CaseStudyPage() {
         <section className="case__part" aria-labelledby="case-findings">
           <Reveal>
             <h2 className="case__heading" id="case-findings">
-              What worked
+              {caseStudy.findingsTitle ?? 'What worked'}
             </h2>
           </Reveal>
           {caseStudy.findings.map((finding, i) => (
@@ -158,6 +173,16 @@ export default function CaseStudyPage() {
             </Reveal>
           ))}
         </section>
+      ) : null}
+
+      {caseStudy.next ? (
+        <Reveal as="section" className="case__part" aria-labelledby="case-next">
+          <h2 className="case__heading" id="case-next">
+            {caseStudy.next.title ?? 'If I kept going'}
+          </h2>
+          {paragraphs(caseStudy.next.text)}
+          <MediaGroup media={caseStudy.next.media} />
+        </Reveal>
       ) : null}
 
       {caseStudy.decisions?.length ? (
