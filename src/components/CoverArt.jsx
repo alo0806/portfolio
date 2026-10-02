@@ -14,70 +14,57 @@ import './CoverArt.css'
 function Aspiration() {
   return (
     <>
-      {/* The jar, and the change already inside it */}
-      <clipPath id="ca-jar-inside">
-        <rect x="31.5" y="55.5" width="37" height="29" rx="6" />
-      </clipPath>
-      <g clipPath="url(#ca-jar-inside)">
-        <rect className="ca-anim ca-asp-level" x="30" y="58" width="40" height="28" />
-      </g>
-      <rect x="30" y="54" width="40" height="32" rx="7" className="ca-line ca-glass" />
-      <rect x="36" y="48" width="28" height="7" rx="2" className="ca-line ca-glass" />
-      {/* The sprout growing out of it: an old leaf, and a new one */}
-      <path d="M42 48 C42 42 42 36 42 30" className="ca-line" />
-      <path d="M42 38 C35 38 30 33 29 27 C36 27 41 31 42 38 Z" className="ca-fill" />
-      <path className="ca-anim ca-asp-leaf ca-fill" d="M42 31 C49 31 54 26 55 20 C48 20 43 24 42 31 Z" />
-      {/* The round-up, dropping in */}
+      {/* Aspiration's logo: an outlined sprout on a green disc */}
+      <circle cx="50" cy="53" r="35" className="ca-asp-disc" />
+      {/* The round-up, dropping in behind the sprout to the ground line */}
       <g className="ca-anim ca-asp-coin">
-        <circle cx="59" cy="14" r="5.5" className="ca-coin" />
-        <text x="59" y="16.6" className="ca-coin-text">¢</text>
+        <circle cx="60" cy="12" r="5.5" className="ca-coin" />
+        <text x="60" y="14.6" className="ca-coin-text">¢</text>
+      </g>
+      <g className="ca-anim ca-asp-sprout">
+        <path d="M38 73.5 H63" className="ca-asp-stroke" />
+        <path d="M51.5 73 C51.5 66 49 61 51.5 54 C52.5 51.5 53 51 53 50" className="ca-asp-stroke" />
+        <path d="M51.5 54 C45 45 37 42 31 43.5 C33.5 50.5 41 56 51.5 54 Z" className="ca-asp-stroke" />
+        <path className="ca-anim ca-asp-leaf ca-asp-stroke" d="M53 50 C54 41 60 35.5 69 33.5 C68.5 42.5 62 48.5 53 50 Z" />
       </g>
     </>
   )
 }
 
 function Gizmo() {
-  const reel = (x, cls) => (
-    <g className={`ca-anim ${cls}`}>
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit, i) => (
-        <text key={i} x={x} y={87.2 + i * 10} className="ca-digit">
-          {digit}
-        </text>
-      ))}
-    </g>
-  )
+  const gills = [
+    { d: 'M22 40 C14 35 9 30 8 24', side: 'l' },
+    { d: 'M20 48 C11 47 6 44 3 39', side: 'l' },
+    { d: 'M21 56 C13 58 8 57 4 54', side: 'l' },
+    { d: 'M78 40 C86 35 91 30 92 24', side: 'r' },
+    { d: 'M80 48 C89 47 94 44 97 39', side: 'r' },
+    { d: 'M79 56 C87 58 92 57 96 54', side: 'r' },
+  ]
   return (
-    <>
-      {/* A second card behind, for a deck */}
-      <rect x="27" y="31" width="48" height="34" rx="4" transform="rotate(-7 51 48)" className="ca-card-back" />
-      {/* The flashcard: question, then answer */}
-      <g className="ca-anim ca-giz-front">
-        <rect x="26" y="30" width="48" height="34" rx="4" className="ca-card" />
-        <text x="50" y="53" className="ca-card-text">Q</text>
+    <g className="ca-anim ca-giz-float">
+      {/* A minimal axolotl: gills, a round head, a body below */}
+      <g className="ca-anim ca-giz-gills-l">
+        {gills.filter((g) => g.side === 'l').map((g) => (
+          <path key={g.d} d={g.d} className="ca-giz-gill" />
+        ))}
       </g>
-      <g className="ca-anim ca-giz-back">
-        <rect x="26" y="30" width="48" height="34" rx="4" className="ca-card" />
-        <text x="50" y="53" className="ca-card-text">A</text>
+      <g className="ca-anim ca-giz-gills-r">
+        {gills.filter((g) => g.side === 'r').map((g) => (
+          <path key={g.d} d={g.d} className="ca-giz-gill" />
+        ))}
       </g>
-      {/* A view counter, ticking up */}
-      <rect x="9" y="78" width="36" height="13" rx="6.5" className="ca-pill" />
-      <path d="M14.5 81.6 L19.5 84.5 L14.5 87.4 Z" className="ca-fill" />
-      <clipPath id="ca-reels">
-        <rect x="21" y="79" width="20" height="11" />
-      </clipPath>
-      <g clipPath="url(#ca-reels)">
-        <text x="24.5" y="87.2" className="ca-digit">
-          4
-        </text>
-        {reel(29.5, 'ca-giz-tens')}
-        {reel(34.5, 'ca-giz-ones')}
+      <rect x="31" y="66" width="38" height="40" rx="16" className="ca-giz-body" />
+      <ellipse cx="50" cy="48" rx="31" ry="25" className="ca-giz-head" />
+      <ellipse cx="33" cy="58" rx="4.5" ry="2.6" className="ca-giz-cheek" />
+      <ellipse cx="67" cy="58" rx="4.5" ry="2.6" className="ca-giz-cheek" />
+      <g className="ca-anim ca-giz-eyes">
+        <circle cx="38" cy="49" r="4.6" className="ca-giz-eye" />
+        <circle cx="62" cy="49" r="4.6" className="ca-giz-eye" />
+        <circle cx="39.6" cy="47.4" r="1.5" className="ca-giz-shine" />
+        <circle cx="63.6" cy="47.4" r="1.5" className="ca-giz-shine" />
       </g>
-      <text x="39" y="87.2" className="ca-digit">
-        K
-      </text>
-      {/* Gizmo's own logo, as a small badge, unaltered */}
-      <image href="/work/gizmo/logo-badge.webp" x="77" y="8" width="15" height="15" />
-    </>
+      <path d="M42 59.5 C44.5 62 47 62 50 59.5 C53 62 55.5 62 58 59.5" className="ca-giz-smile" />
+    </g>
   )
 }
 
@@ -91,8 +78,8 @@ function Record() {
           <circle key={r} cx="50" cy="50" r={r} className="ca-groove" />
         ))}
         <circle cx="50" cy="50" r="12" className="ca-label" />
-        <text x="50" y="52.6" className="ca-label-text">
-          AL
+        <text x="50" y="52.4" className="ca-label-text">
+          alo
         </text>
       </g>
       <circle cx="50" cy="50" r="1.6" className="ca-hole" />
@@ -104,10 +91,11 @@ function Record() {
 
 function Pricing() {
   const people = [22, 33.2, 44.4, 55.6, 66.8, 78]
+  // Heights in proportion to price, the tallest kept clear of the crowd line.
   const bars = [
-    { x: 21, top: 58.4, price: '$12' },
-    { x: 42, top: 51.5, price: '$15' },
-    { x: 63, top: 40, price: '$20' },
+    { x: 21, top: 62, price: '$12' },
+    { x: 42, top: 56, price: '$15' },
+    { x: 63, top: 46, price: '$20' },
   ]
   return (
     <>

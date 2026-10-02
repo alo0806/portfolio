@@ -59,23 +59,27 @@
   fill: currentColor;
 }
 
-/* ─── Aspiration: a coin drops into the jar, a new leaf unfolds ─── */
-.ca-glass {
-  fill: color-mix(in srgb, var(--pal-b) 35%, transparent);
+/* ─── Aspiration: a coin drops onto the logo's sprout, which grows ─── */
+.ca-asp-disc {
+  fill: var(--pal-a);
 }
 
-.ca-asp-level {
-  fill: currentColor;
-  opacity: 0.22;
+.ca-asp-stroke {
+  fill: none;
+  stroke: var(--pal-b);
+  stroke-width: 3.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ca-asp-sprout {
   transform-origin: 50% 100%;
-  transform: scaleY(0.5);
-  animation: ca-asp-level 7s var(--ease-in-out) infinite;
+  animation: ca-asp-sprout 7s var(--ease-out) infinite;
 }
 
 .ca-asp-leaf {
   transform-origin: 0% 100%;
-  transform: scale(0.55);
-  animation: ca-asp-leaf 7s var(--ease-out) infinite;
+  animation: ca-asp-leaf 7s var(--ease-overshoot) infinite;
 }
 
 .ca-asp-coin {
@@ -95,6 +99,7 @@
   text-anchor: middle;
 }
 
+/* Falls to the ground line, sinks in; reappears at the top later. */
 @keyframes ca-asp-coin {
   0% {
     transform: translateY(0);
@@ -102,12 +107,12 @@
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
   }
   26% {
-    transform: translateY(34px);
+    transform: translateY(56px);
     opacity: 1;
   }
-  31%,
+  32%,
   80% {
-    transform: translateY(38px);
+    transform: translateY(60px);
     opacity: 0;
   }
   81% {
@@ -121,127 +126,129 @@
   }
 }
 
-@keyframes ca-asp-leaf {
-  0%,
-  28% {
-    transform: scale(0.55);
-  }
-  44%,
-  82% {
-    transform: scale(1);
-  }
-  96%,
-  100% {
-    transform: scale(0.55);
-  }
-}
-
-@keyframes ca-asp-level {
+/* As it lands, the sprout grows a little and its new leaf opens out. */
+@keyframes ca-asp-sprout {
   0%,
   27% {
-    transform: scaleY(0.5);
+    transform: scale(1);
   }
-  40%,
+  42%,
   82% {
-    transform: scaleY(0.68);
+    transform: scale(1.08);
   }
   96%,
   100% {
-    transform: scaleY(0.5);
+    transform: scale(1);
   }
 }
 
-/* ─── Gizmo: a flashcard flips, a view counter ticks up ─── */
-.ca-card {
-  fill: var(--pal-ink);
+@keyframes ca-asp-leaf {
+  0%,
+  27% {
+    transform: scale(1);
+  }
+  36% {
+    transform: scale(1.18);
+  }
+  44%,
+  100% {
+    transform: scale(1);
+  }
 }
 
-.ca-card-back {
-  fill: var(--pal-ink);
-  opacity: 0.3;
+/* ─── Gizmo: a minimal axolotl, floating, gills swaying, blinking ─── */
+.ca-giz-head,
+.ca-giz-body {
+  fill: var(--cover-plum-body);
 }
 
-.ca-card-text {
+.ca-giz-gill {
+  fill: none;
+  stroke: var(--cover-plum-gill);
+  stroke-width: 5.5;
+  stroke-linecap: round;
+}
+
+.ca-giz-cheek {
+  fill: var(--cover-plum-gill);
+  opacity: 0.45;
+}
+
+.ca-giz-eye {
   fill: var(--cover-plum-a);
-  font-size: 17px;
-  font-weight: 800;
-  text-anchor: middle;
 }
 
-.ca-giz-front,
-.ca-giz-back {
-  transform-origin: 50% 50%;
-}
-
-.ca-giz-front {
-  animation: ca-giz-front 8s var(--ease-in-out) infinite;
-}
-
-.ca-giz-back {
-  transform: scaleX(0);
-  animation: ca-giz-back 8s var(--ease-in-out) infinite;
-}
-
-/* Front folds to an edge, the back opens out of it; then back again. */
-@keyframes ca-giz-front {
-  0%,
-  30% {
-    transform: scaleX(1);
-  }
-  38%,
-  84% {
-    transform: scaleX(0);
-  }
-  92%,
-  100% {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes ca-giz-back {
-  0%,
-  38% {
-    transform: scaleX(0);
-  }
-  46%,
-  76% {
-    transform: scaleX(1);
-  }
-  84%,
-  100% {
-    transform: scaleX(0);
-  }
-}
-
-.ca-pill {
+.ca-giz-shine {
   fill: var(--pal-ink);
-  opacity: 0.2;
 }
 
-.ca-digit {
-  fill: currentColor;
-  font-size: 8px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  text-anchor: middle;
+.ca-giz-smile {
+  fill: none;
+  stroke: var(--cover-plum-a);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* Each reel rolls up one digit at a time: the ones every 0.8s, the tens
-   every 8s, so the count only ever goes up (and wraps, out of sight). */
-.ca-giz-ones {
-  animation: ca-giz-reel 8s steps(10, end) infinite;
+.ca-giz-float {
+  animation: ca-giz-float 6s var(--ease-in-out) infinite;
 }
 
-.ca-giz-tens {
-  animation: ca-giz-reel 80s steps(10, end) infinite;
+.ca-giz-gills-l {
+  transform-origin: 100% 60%;
+  animation: ca-giz-gills-l 3s var(--ease-in-out) infinite;
 }
 
-@keyframes ca-giz-reel {
-  from {
+.ca-giz-gills-r {
+  transform-origin: 0% 60%;
+  animation: ca-giz-gills-r 3s var(--ease-in-out) infinite;
+}
+
+.ca-giz-eyes {
+  transform-origin: 50% 50%;
+  animation: ca-giz-blink 6s infinite;
+}
+
+@keyframes ca-giz-float {
+  0%,
+  100% {
     transform: translateY(0);
   }
-  to {
-    transform: translateY(-100px);
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+
+@keyframes ca-giz-gills-l {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+}
+
+@keyframes ca-giz-gills-r {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-6deg);
+  }
+}
+
+/* One quick blink per loop. */
+@keyframes ca-giz-blink {
+  0%,
+  46%,
+  52%,
+  100% {
+    transform: scaleY(1);
+  }
+  49% {
+    transform: scaleY(0.12);
   }
 }
 
