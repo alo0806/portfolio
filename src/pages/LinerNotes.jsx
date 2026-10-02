@@ -18,16 +18,18 @@ function alreadyTyped() {
   }
 }
 
-/* The text is laid out in full from the start; each character just fades
-   in on its turn. Nothing reflows while it "types", and screen readers
-   get the whole sentence at once from the hidden copy. */
+/* The real text is there, readable, from the very first frame (so the
+   browser counts it as painted straight away, and screen readers read it
+   normally). The "typing" is a reveal on top of it: an identical copy laid
+   over it in which every character is covered by a patch of the card's
+   own colour, and the patches fade away one by one. Nothing reflows. */
 function TypedText({ text }) {
   let index = 0
   const words = text.split(' ')
   return (
     <>
-      <span className="sr-only">{text}</span>
-      <span aria-hidden="true">
+      <span className="typed__text">{text}</span>
+      <span className="typed__cover" aria-hidden="true">
         {words.map((word, w) => (
           <Fragment key={`${word}-${w}`}>
             <span className="typed-word">

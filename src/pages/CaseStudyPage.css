@@ -61,6 +61,12 @@
   line-height: 1.05;
 }
 
+.case__summary {
+  max-width: 52ch;
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
 .case__role {
   color: var(--muted-ink);
   font-weight: 500;
@@ -85,8 +91,9 @@
   margin: 2px 0 0;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: clamp(1.0625rem, 4.6cqi, 1.5rem); /* smaller on phones, so "28% → 0.1%" stays on one line */
   line-height: 1.1;
+  white-space: nowrap;
 }
 
 /* The four parts. */
@@ -132,6 +139,161 @@
   .case__media[data-count='2'] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+/* Three pieces: a compact strip, side by side even on phones. */
+.case__media[data-count='3'] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-1);
+}
+
+.case__media[data-count='3'] figcaption {
+  font-size: var(--fs-label);
+}
+
+/* ─── A before/after bar chart ─── */
+
+.bar-chart {
+  margin: 0;
+  display: grid;
+  gap: var(--sp-2);
+  max-width: 560px;
+  padding: var(--sp-3);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+
+.bar-chart__title {
+  font-weight: 600;
+}
+
+.bar-chart__rows {
+  display: grid;
+  gap: var(--sp-1);
+  margin: 0;
+}
+
+.bar-chart__row {
+  display: grid;
+  grid-template-columns: 8ch 1fr;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.bar-chart__row dt {
+  color: var(--muted-ink);
+  font-size: var(--fs-small);
+}
+
+.bar-chart__row dd {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  margin: 0;
+}
+
+/* Bars are scaled against the largest value; a tiny one still shows. */
+.bar-chart__bar {
+  display: block;
+  width: max(4px, calc(var(--v) * (100% - 7ch)));
+  height: 20px;
+  border-radius: 4px;
+  background: var(--line-strong);
+}
+
+.bar-chart__row[data-highlight='true'] .bar-chart__bar {
+  background: var(--accent);
+}
+
+.bar-chart__value {
+  font-size: var(--fs-small);
+}
+
+.bar-chart__note {
+  color: var(--muted-ink);
+  font-size: var(--fs-label);
+}
+
+/* ─── Decisions & tradeoffs ─── */
+
+.case__decisions {
+  display: grid;
+  gap: var(--sp-2);
+  max-width: 68ch;
+  margin: 0;
+}
+
+.case__decision {
+  display: grid;
+  gap: 2px;
+  padding-left: var(--sp-2);
+  border-left: 2px solid var(--line-strong);
+}
+
+.case__decision dt {
+  font-weight: 600;
+}
+
+.case__decision dd {
+  margin: 0;
+  color: var(--muted-ink);
+}
+
+.case__lead {
+  font-weight: 600;
+}
+
+/* ─── By the numbers ─── */
+
+.case__numbers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+  margin: 0;
+}
+
+@container (min-width: 620px) {
+  .case__numbers {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.case__number {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  padding: var(--sp-2);
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+
+.case__number dt {
+  order: 2;
+  font-weight: 600;
+  font-size: var(--fs-small);
+}
+
+.case__number-value {
+  order: 1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+.case__number-context {
+  order: 3;
+  margin: 0;
+  color: var(--muted-ink);
+  font-size: var(--fs-label);
+}
+
+.case__note {
+  color: var(--muted-ink);
+  font-size: var(--fs-label);
 }
 
 .case__metrics--outcome {

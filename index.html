@@ -10,10 +10,21 @@
     <meta name="theme-color" content="#15132B" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fonts load without holding up the first paint: the stylesheet is
+         fetched as a preload and applied when it arrives (text shows in the
+         fallback font until then, then swaps). -->
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500&family=Jost:wght@300;400;500&display=swap"
-      rel="stylesheet"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500&family=Jost:wght@300;400;500&display=swap"
+      />
+    </noscript>
     <script>
       /* Apply the saved theme before first paint (so a returning dark-mode
          visitor never sees a flash of light). Light unless chosen otherwise. */
