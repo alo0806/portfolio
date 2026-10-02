@@ -18,9 +18,22 @@ export default function Links({ onNavigate }) {
         Links
       </h2>
       <ul className="links__list">
-        {links.map(({ label, href, icon }) => {
-          const external = href.startsWith('http')
+        {links.map(({ label, href, icon, soon }) => {
           const Icon = ICONS[icon]
+          // Not ready yet: same place and shape, but greyed out, with no
+          // href (so it isn't a link or a tab stop) and a "soon" tag.
+          if (soon) {
+            return (
+              <li key={label}>
+                <a className="links__link links__link--soon" aria-disabled="true">
+                  {Icon ? <Icon className="links__icon" width={16} height={16} /> : null}
+                  <span>{label}</span>
+                  <span className="links__soon">· soon</span>
+                </a>
+              </li>
+            )
+          }
+          const external = href.startsWith('http')
           return (
             <li key={label}>
               <a
@@ -28,10 +41,7 @@ export default function Links({ onNavigate }) {
                 href={href}
                 target={external ? '_blank' : undefined}
                 rel={external ? 'noreferrer' : undefined}
-                onClick={(event) => {
-                  if (href === '#') event.preventDefault()
-                  else onNavigate?.()
-                }}
+                onClick={() => onNavigate?.()}
               >
                 {Icon ? <Icon className="links__icon" width={16} height={16} /> : null}
                 <span>{label}</span>
