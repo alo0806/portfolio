@@ -25,8 +25,8 @@ const BASES = [
 const ACTIONS = [
   { name: 'look', label: 'Look', detail: 'looks around (or move your cursor)' },
   { name: 'songChange', label: 'Song change', detail: 'tape flip; the arrow turns around' },
-  { name: 'waveLeft', label: 'Wave (left arm)', detail: 'or hover its left side' },
-  { name: 'waveRight', label: 'Wave (right arm)', detail: 'or hover its right side' },
+  { name: 'waveLeft', label: 'Wave (left arm)', detail: 'or hover its left side (drowsy: scratches its head; asleep: nothing)' },
+  { name: 'waveRight', label: 'Wave (right arm)', detail: 'or hover its right side (drowsy: scratches its head; asleep: nothing)' },
   { name: 'click', label: 'Click', detail: 'startled jump, then talks' },
   { name: 'talking', label: 'Talking', detail: 'holds up the bubble' },
   { name: 'yawn', label: 'Yawn', detail: 'a click while drowsy' },

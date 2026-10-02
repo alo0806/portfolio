@@ -303,12 +303,11 @@ export function seatedVibePose(t, b, e) {
 /* ─── Actions: layered over whatever the base state is doing ───── */
 
 // hover: an arm waves — the one on the cursor's side (side -1 is its
-// left arm, 1 its right). `lazy` (0–1, drowsy): a slow, low half-wave.
-export function waveAction(p, t, side = -1, lazy = 0) {
+// left arm, 1 its right).
+export function waveAction(p, t, side = -1) {
   const q = { ...p }
-  const speed = 2.2 - 1.4 * lazy
-  const x = side * (31 + (3.2 - 1.4 * lazy) * Math.sin(t * TAU * speed))
-  const y = -19 + 13 * lazy + (1.2 - 0.8 * lazy) * Math.cos(t * TAU * speed * 2)
+  const x = side * (31 + 3.2 * Math.sin(t * TAU * 2.2))
+  const y = -19 + 1.2 * Math.cos(t * TAU * 4.4)
   if (side < 0) {
     q.hlx = x
     q.hly = y
@@ -316,6 +315,26 @@ export function waveAction(p, t, side = -1, lazy = 0) {
     q.hrx = x
     q.hry = y
   }
+  return q
+}
+
+// hover while drowsy: no wave — the hand on the cursor's side comes up
+// and slowly scratches the top of its head, the body tips toward it and
+// the reels droop further, as if half woken. (The hands are drawn behind
+// the cassette, so the top edge is where a hand can still be seen.)
+export function scratchAction(p, t, side = -1) {
+  const q = { ...p }
+  const x = side * (13 + 1.4 * Math.sin(t * TAU * 1.3))
+  const y = -21 + 0.7 * Math.cos(t * TAU * 2.6)
+  if (side < 0) {
+    q.hlx = x
+    q.hly = y
+  } else {
+    q.hrx = x
+    q.hry = y
+  }
+  q.rot = p.rot + side * 1.6
+  q.lid = Math.max(p.lid, 0.72)
   return q
 }
 
