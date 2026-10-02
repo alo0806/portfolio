@@ -89,7 +89,8 @@ export default function MobileBar() {
         <div className="topbar__foot">
           <ThemeToggle />
           <div className="topbar__mascot">
-            <CassetteMascot size={72} />
+            {/* At the right edge of the menu: its bubble opens leftward. */}
+            <CassetteMascot size={72} align="end" />
           </div>
         </div>
       </div>

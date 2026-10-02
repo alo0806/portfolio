@@ -219,6 +219,18 @@
     transform var(--dur-base) var(--ease-out);
 }
 
+/* Sitting on the ledge, the cassette fills only the bottom half of its
+   box, so the bubble comes down to it: its tail lands at the hand that
+   holds it up, instead of floating over the empty top half. */
+.mascot[data-seated='true'] .mascot__bubble {
+  bottom: calc(100% - var(--mascot) * 0.24 + 10px);
+}
+
+/* Talking in its sleep. */
+.mascot__bubble[data-mood='asleep'] {
+  font-style: italic;
+}
+
 .mascot__bubble::after {
   content: '';
   position: absolute;
