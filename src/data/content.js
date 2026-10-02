@@ -180,100 +180,84 @@ export const projects = [
     tag: 'Side project',
     role: 'Design & build',
     year: '2026',
-    oneLiner: 'My portfolio, pressed like a record: pages are tracks, the player bar actually plays, and a cassette naps when the music stops.',
+    oneLiner: 'A portfolio that works like a record player: the intro is a turntable, pages are tracks, and the player bar actually plays.',
     cover: { image: '/work/this-site/cover.webp', palette: 'sunset', layout: 'stacked' },
+    // Every number here is measured on the production build or taken
+    // from the repo's history (see "By the numbers" for how).
     metrics: [
-      { label: 'Built in', value: '2 weeks' },
-      { label: 'Pull requests', value: '27' },
-      { label: 'Dependencies', value: '3' },
+      { label: 'Idle GPU', value: '28% → 0.1%' },
+      { label: 'Image weight', value: '−94%' },
+      { label: 'Accessibility', value: '100' },
     ],
     media: [],
     caseStudy: {
-      context: [
-        'I’m graduating in 2027 and looking for design engineering and front-end roles, so I needed a portfolio. I didn’t want a template with my name on it. I wanted something that felt like me, and that showed I can take a design all the way to something you can actually click.',
-        'Music is a big part of who I am, so the site ended up as a record: the intro is a turntable, the pages are tracks, and the player bar at the bottom really plays.',
-      ],
-      role: 'Everything: the concept, visual design, motion, sound and writing. I built it with Claude Code as my pair programmer. I wrote the brief for every change, made the design calls, and checked each one in the browser at full desktop and phone size before it shipped.',
+      summary: 'A portfolio that works like a record player: the intro is a turntable, pages are tracks, and the player bar actually plays.',
+      context: 'I’m graduating in 2027 and looking for design engineering and front-end roles. I didn’t want a template with my name on it. I wanted a site that felt like me and showed I can take a design all the way to something you can click.',
+      role: 'I came up with the concept and the design direction, and designed a good amount of the UI myself, including the intro screen, the player bar layout, the My Work section structure, and the drawing toy’s card and toolbar. I set up the project, the Git workflow and the deployment: GitHub, Vercel, and the custom domain with DNS. For the rest, Claude Code was my pair programmer: I wrote the briefs for each change, made the design calls (including what to cut), and reviewed and tested everything at desktop and phone size.',
       process: [
         {
-          title: 'One long scroll',
-          text: [
-            'It started as a single scrolling page with a blob character that followed you down it, and every section washed the page in its own colour. Next came a softer redesign inspired by the game GRIS, where the colour is something you earn as you scroll.',
-            'Both looked nice, but they were all mood and no structure. The work was buried somewhere in a long scroll, and nothing about it said much about me.',
-          ],
+          title: 'Finding the concept',
+          text: 'I went through four versions in ten days: one long scroll with a blob, a softer take inspired by the game GRIS, a starry intro with real pages, and finally a record player. The first three looked nice, but they said nothing about me and buried the work. Music is a big part of my life, and a record player gave the work an obvious place, so that one stuck.',
           media: [
-            { type: 'image', src: '/work/this-site/01.webp', alt: 'The first version: a large serif headline, "I design and build things on the web", next to a pink blob with eyes', caption: 'Day 2: one page, one blob.', ratio: '16/10' },
-            { type: 'image', src: '/work/this-site/02.webp', alt: 'The GRIS-inspired redesign: pale watercolour washes, thin type and a small goo blob', caption: 'The GRIS-inspired redesign.', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/01.webp', alt: 'Version 1: a large serif headline next to a pink blob with eyes', caption: 'Version 1: one page, one blob', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/03.webp', alt: 'Version 3: "Austin Lo" over a dark, starry sky', caption: 'Version 3: a starry intro', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/05.webp', alt: 'Version 4: an orange-labelled vinyl record and a press play button', caption: 'Version 4: the record', ratio: '16/10' },
           ],
         },
         {
-          title: 'Real pages, then a record',
+          title: 'Designing the interactions',
           text: [
-            'So I rebuilt it with real pages: a starry intro, an iris that opens into the site, and a sidebar you can always navigate from. The structure worked, but space was a borrowed theme.',
-            'The same day I re-themed the whole thing as a music player. The intro became a vinyl record you press play on, the sidebar became a tracklist, and each page’s “track length” is its real reading time, worked out from the text on it, so the tracklist stays honest as the content changes.',
+            'Pages you click between, not one long scroll. People skim, so every page is one click away and the tracklist is always there (a menu on phones).',
+            'I designed the player bar so its controls double as navigation: the double arrows move between pages. People already know what those buttons do, so there’s nothing new to learn. Songs got single arrows, so the two never get mixed up.',
+            'Each track length is that page’s real reading time. It tells you something useful, and it keeps the record idea honest.',
+            'Pressing play drops the needle and spins up the record, then the site opens out of the record’s centre, so it feels like one motion, not a page change. I didn’t want the intro to waste anyone’s time: “skip intro” is always there, it plays once per visit, and a link straight to a page skips it.',
+            'Every sound is made in the browser, all in D major pentatonic, so clicking around never sounds off-key. They sit quieter than the music, the music only starts when you press play, and one button mutes everything. My first try at adding music put too much into one change and broke things, so I reverted it and rebuilt it in small steps.',
           ],
           media: [
-            { type: 'image', src: '/work/this-site/03.webp', alt: 'The starry intro: "Austin Lo" over a dark sky with a "step inside" button', caption: 'The starry intro…', ratio: '16/10' },
-            { type: 'image', src: '/work/this-site/04.webp', alt: 'The rebuilt layout: a sidebar with numbered links and a project grid', caption: '…and the rebuilt layout.', ratio: '16/10' },
-            { type: 'image', src: '/work/this-site/05.webp', alt: 'The record-player intro: an orange-labelled vinyl, "Hi, I’m Austin Lo" and a press play button', caption: 'Re-themed as a record.', ratio: '16/10' },
-            { type: 'image', src: '/work/this-site/06.webp', alt: 'My Work as a tracklist: the sidebar lists pages with reading times, and a player bar runs along the bottom', caption: 'Pages became tracks.', ratio: '16/10' },
-          ],
-        },
-        {
-          title: 'Sound, then music (twice)',
-          text: [
-            'Every sound effect is synthesized in the browser, with no audio files: a needle drop when you press play, a soft click on the buttons, a note for each track. They’re all in one key (D major pentatonic), so clicking around plays something that sounds like a tune.',
-            'My first try at adding background music shipped too much at once: the music, audio-reactive visuals and a locked resume, all in one change. Things broke in ways that were hard to untangle, so I reverted the whole thing and rebuilt the music in small steps: the player, a seek bar, the queue, album art, a tiny spinning record, and a short delay so the music doesn’t talk over the press-play sounds.',
-          ],
-          media: [
-            { type: 'image', src: '/work/this-site/07.webp', alt: 'The player bar: a tiny vinyl record with the album art as its label, song controls, a seek bar and a volume slider', caption: 'The player bar now: a mini record, song and page controls, the seek bar and volume.', ratio: '1600/219' },
-          ],
-        },
-        {
-          title: 'Things to play with',
-          text: 'I wanted people to poke at it. You can grab the intro record and scratch it: it plays a slice of the first song forwards and backwards at your speed. Clicking the background plays notes, the letters of my name lift toward your cursor, and the Playground has a kaleidoscope drawing toy that grows out of its card.',
-          media: [
-            { type: 'image', src: '/work/this-site/08.webp', alt: 'The intro today: the record with a tonearm and a small "give it a spin" note beside it', caption: 'The intro today: give it a spin.', ratio: '16/10' },
-            { type: 'image', src: '/work/this-site/09.webp', alt: 'The drawing toy open full screen, with an orange kaleidoscope pattern', caption: 'The symmetry drawing toy.', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/07.webp', alt: 'The player bar: a tiny vinyl record with the album art as its label, song controls, a seek bar and a volume slider', caption: 'The player bar today.', ratio: '1600/219' },
           ],
         },
         {
           title: 'Making it fast',
-          text: [
-            'At full screen on a fast monitor, the site lagged. I measured it in Chrome rather than guessing. The cause wasn’t the code I expected: any animation that runs all the time, even a tiny equalizer, made the browser redraw the whole page 165 times a second, which kept the graphics card about 30% busy while nobody was doing anything.',
-            'The fix: every animation now runs off one shared loop that stops when nothing is moving, things off screen or paused rest, and after 10 seconds without input the always-on loops hold still. The idle page now uses about 1% instead of 30%, and nothing visible changed.',
-          ],
+          text: 'At full screen on a fast monitor, the site lagged. I measured it in Chrome instead of guessing. Any animation that never stops, even the tiny equalizer, made the browser redraw the whole page 165 times a second. Now every animation runs off one shared loop that stops when nothing is moving, and after 10 seconds without input the always-on loops hold still. Nothing visible changed.',
+          chart: {
+            title: 'GPU use with My Work left alone',
+            unit: '%',
+            bars: [
+              { label: 'Before', value: 28.2, display: '28%' },
+              { label: 'After', value: 0.1, display: '0.1%', highlight: true },
+            ],
+            note: '1920×1080, median of 3 runs each: the build from just before the fix vs today’s.',
+          },
           media: [],
         },
         {
-          title: 'From blob to cassette',
-          text: [
-            'The blob had been there since day one, but it never fit a record player. I replaced it with a cassette whose reels are its eyes. It follows your cursor, waves with whichever arm is nearer, and flips over like a tape when the song changes.',
-            'I cut a few things along the way. The mouth went because it didn’t feel right, and the “alo” on its label read as corny, so it’s plain label detail now. It used to dance, but the playlist is too chill for that, so it sits on the edge of the player bar, sways to the beat, and gets sleepy when the music stops.',
-          ],
+          title: 'The mascot',
+          text: 'The cassette was my idea: the blob never fit a record player, so it became a cassette whose reels are its eyes. It follows your cursor and waves with whichever arm is closer. I cut the mouth and the “alo” on its label because they felt off. It used to dance, but the playlist is chill, so now it sits on the player bar, sways to the beat, and gets sleepy when the music stops.',
           media: [
-            { type: 'image', src: '/work/this-site/10.webp', alt: 'The old mascot: an orange blob with eyes, sitting in the player bar', caption: 'Before: the blob.', ratio: '840/388' },
-            { type: 'image', src: '/work/this-site/11.webp', alt: 'The new mascot: a cassette tape with arms and legs, standing on the edge of the player bar', caption: 'After: the cassette.', ratio: '840/388' },
-          ],
-        },
-        {
-          title: 'Room for the work',
-          text: 'Last, I built the structure for the projects themselves: featured case studies like this one, a gallery for club and smaller work that grows out of its card, and buttons to jump between sections. My original project files were about 250 MB; converted to WebP they’re about 12 MB, and they load as you scroll.',
-          media: [
-            { type: 'image', src: '/work/this-site/12.webp', alt: 'My Work today: liner notes, section buttons and the featured project cards', caption: 'My Work today.', ratio: '16/10' },
-            { type: 'image', src: '/work/this-site/13.webp', alt: 'The gallery open over the page, showing an illustrated TSA event poster', caption: 'The gallery.', ratio: '16/10' },
+            { type: 'image', src: '/work/this-site/10.webp', alt: 'The old mascot: an orange blob with eyes, in the player bar', caption: 'Before: the blob.', ratio: '840/388' },
+            { type: 'image', src: '/work/this-site/11.webp', alt: 'The new mascot: a cassette tape with arms and legs on the edge of the player bar', caption: 'After: the cassette.', ratio: '840/388' },
           ],
         },
       ],
-      outcome: [
-        'It’s live at astnlo.com, built on just React and React Router, with no other libraries. Every sound is generated in the browser, and it keeps working with reduced motion turned on, on phones, and with a keyboard.',
-        'What I’d do differently: keep every change small from the start (the music revert taught me that), and test at full screen on a fast monitor early, not after it already felt slow.',
+      decisions: [
+        { decision: 'Type', why: 'A characterful grotesque for headings, a light sans for reading, and mono only for numbers, because mono digits don’t jitter as times tick.' },
+        { decision: 'Color', why: 'Indigo, paper, and one orange. Orange fails contrast as text, so it’s fill-only, with a darker orange for text and focus rings.' },
+        { decision: 'The cursor', why: 'Its colour-inverting blend roughly doubled the cost of every frame. I kept it on purpose and saved performance elsewhere.' },
+        { decision: 'Work page', why: 'Sections instead of filters, so the whole range shows at a glance, in a few easy chunks.' },
+        { decision: 'Accessibility', why: 'Reduced motion is respected, focus is always visible, and everything works with a keyboard except the two toys (drawing and scratching).' },
       ],
-      outcomeMetrics: [
-        { label: 'Idle GPU', value: '30% → 1%' },
-        { label: 'Synthesized sounds', value: '13' },
-        { label: 'Image weight', value: '−95%' },
+      outcome: 'It’s live at this website you’re on right now, built on React and React Router and nothing else. It started as a portfolio and turned into the project I learned the most from.',
+      differently: 'Keep every change small from the start, and test at full screen on a fast monitor early, not once it already felt slow.',
+      numbers: [
+        { value: '99 / 88', label: 'Performance: intro', context: 'Lighthouse, desktop / mobile' },
+        { value: '99 / 87', label: 'Performance: My Work', context: 'Lighthouse, desktop / mobile' },
+        { value: '3.1 s / 3.2 s', label: 'Mobile LCP', context: 'Intro / My Work, on a simulated slow phone' },
+        { value: '160 KB', label: 'JS + CSS', context: 'The whole app, gzipped' },
+        { value: '13', label: 'Synthesized sounds', context: 'Zero audio files for effects' },
+        { value: '4', label: 'Concepts', context: 'Three explored before the record' },
       ],
+      numbersNote: 'Lighthouse: production build, median of 3 runs. GPU: Chrome at 1920×1080. Image weight: 205 MB of originals → 12 MB served.',
     },
   },
   {

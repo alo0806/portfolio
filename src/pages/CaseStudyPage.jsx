@@ -24,6 +24,37 @@ function Metrics({ items, className }) {
   )
 }
 
+const paragraphs = (text) =>
+  [text].flat().filter(Boolean).map((paragraph, k) => (
+    <p key={k} className="case__text">
+      {paragraph}
+    </p>
+  ))
+
+/* A small before/after bar chart in plain CSS: each bar's length is its
+   value against the largest one (a tiny value still shows as a sliver).
+   Screen readers get the numbers from the list itself. */
+function BarChart({ chart }) {
+  const max = Math.max(...chart.bars.map((bar) => bar.value))
+  return (
+    <figure className="bar-chart">
+      <figcaption className="bar-chart__title">{chart.title}</figcaption>
+      <dl className="bar-chart__rows">
+        {chart.bars.map((bar) => (
+          <div key={bar.label} className="bar-chart__row" data-highlight={bar.highlight ? 'true' : undefined}>
+            <dt>{bar.label}</dt>
+            <dd>
+              <span className="bar-chart__bar" style={{ '--v': bar.value / max }} aria-hidden="true" />
+              <span className="bar-chart__value num">{bar.display ?? `${bar.value}${chart.unit ?? ''}`}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+      {chart.note ? <p className="bar-chart__note">{chart.note}</p> : null}
+    </figure>
+  )
+}
+
 function Figure({ item }) {
   return (
     <figure className="media-figure">
@@ -66,6 +97,7 @@ export default function CaseStudyPage() {
         <div className="case__intro">
           <p className="case__tag">{tag}</p>
           <h1 className="case__title">{title}</h1>
+          {caseStudy.summary ? <p className="case__summary">{caseStudy.summary}</p> : null}
           <p className="case__role">
             {role}
             {year && year !== '—' ? ` · ${year}` : ''}
@@ -78,22 +110,14 @@ export default function CaseStudyPage() {
         <h2 className="case__heading" id="case-context">
           Context
         </h2>
-        {[caseStudy.context].flat().map((paragraph, k) => (
-          <p key={k} className="case__text">
-            {paragraph}
-          </p>
-        ))}
+        {paragraphs(caseStudy.context)}
       </Reveal>
 
       <Reveal as="section" className="case__part" aria-labelledby="case-role">
         <h2 className="case__heading" id="case-role">
           My role
         </h2>
-        {[caseStudy.role].flat().map((paragraph, k) => (
-          <p key={k} className="case__text">
-            {paragraph}
-          </p>
-        ))}
+        {paragraphs(caseStudy.role)}
       </Reveal>
 
       <section className="case__part" aria-labelledby="case-process">
@@ -105,13 +129,10 @@ export default function CaseStudyPage() {
         {caseStudy.process.map((block, i) => (
           <Reveal key={i} className="case__block">
             {block.title ? <h3 className="case__subheading">{block.title}</h3> : null}
-            {[block.text].flat().map((paragraph, k) => (
-              <p key={k} className="case__text">
-                {paragraph}
-              </p>
-            ))}
+            {paragraphs(block.text)}
+            {block.chart ? <BarChart chart={block.chart} /> : null}
             {block.media?.length ? (
-              <div className="case__media" data-count={Math.min(block.media.length, 2)}>
+              <div className="case__media" data-count={Math.min(block.media.length, 3)}>
                 {block.media.map((item, j) => (
                   <Figure key={j} item={item} />
                 ))}
@@ -121,17 +142,52 @@ export default function CaseStudyPage() {
         ))}
       </section>
 
+      {caseStudy.decisions?.length ? (
+        <Reveal as="section" className="case__part" aria-labelledby="case-decisions">
+          <h2 className="case__heading" id="case-decisions">
+            Decisions &amp; tradeoffs
+          </h2>
+          <dl className="case__decisions">
+            {caseStudy.decisions.map(({ decision, why }) => (
+              <div key={decision} className="case__decision">
+                <dt>{decision}</dt>
+                <dd>{why}</dd>
+              </div>
+            ))}
+          </dl>
+        </Reveal>
+      ) : null}
+
       <Reveal as="section" className="case__part" aria-labelledby="case-outcome">
         <h2 className="case__heading" id="case-outcome">
           Outcome
         </h2>
-        {[caseStudy.outcome].flat().map((paragraph, k) => (
-          <p key={k} className="case__text">
-            {paragraph}
+        {paragraphs(caseStudy.outcome)}
+        {caseStudy.differently ? (
+          <p className="case__text">
+            <strong className="case__lead">What I’d do differently:</strong> {caseStudy.differently}
           </p>
-        ))}
+        ) : null}
         <Metrics items={caseStudy.outcomeMetrics} className="case__metrics--outcome" />
       </Reveal>
+
+      {caseStudy.numbers?.length ? (
+        <Reveal as="section" className="case__part" aria-labelledby="case-numbers">
+          <h2 className="case__heading" id="case-numbers">
+            By the numbers
+          </h2>
+          <dl className="case__numbers">
+            {caseStudy.numbers.map(({ value, label, context }) => (
+              <div key={label} className="case__number">
+                <dt>{label}</dt>
+                <dd className="case__number-value">{value}</dd>
+                <dd className="case__number-context">{context}</dd>
+              </div>
+            ))}
+          </dl>
+          {caseStudy.numbersNote ? <p className="case__note">{caseStudy.numbersNote}</p> : null}
+        </Reveal>
+      ) : null}
 
       {many ? (
         <nav className="case__nav" aria-label="More case studies">
