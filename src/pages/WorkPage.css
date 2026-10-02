@@ -202,15 +202,18 @@
 
 /* ─── Album grid ────────────────────────────────────────────── */
 
+/* A discography row: four across on desktop, two on tablets and
+   phones. */
 .albums {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--sp-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
 }
 
-@container (min-width: 620px) {
+@container (min-width: 820px) {
   .albums {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--sp-3);
   }
 }
 
@@ -339,32 +342,21 @@
   transition-duration: var(--dur-fast);
 }
 
+/* Its own size container, so the type scales with the card. */
 .album__body {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: var(--sp-1);
-  padding: var(--sp-3);
-}
-
-/* Plain, readable tag — no tiny tracked-out caps. */
-.album__tag {
-  justify-self: start;
-  align-self: flex-start;
-  padding: 3px 10px;
-  border-radius: var(--r-pill);
-  background: var(--accent-tint);
-  color: var(--accent-ink);
-  font-size: var(--fs-label);
-  font-weight: 500;
+  gap: 6px;
+  padding: var(--sp-2);
 }
 
 .album__title {
-  margin-top: 4px;
-  font-size: var(--fs-h3);
+  font-size: clamp(0.9375rem, 8.5cqi, 1.1875rem);
   font-weight: 700;
   line-height: var(--lh-snug);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
 }
 
 .album__status {
@@ -374,49 +366,58 @@
 
 .album__role {
   color: var(--muted-ink);
-  font-size: var(--fs-small);
+  font-size: var(--fs-label);
   font-weight: 500;
+  line-height: 1.6;
 }
 
+/* Plain, readable tag — no tiny tracked-out caps. */
+.album__tag {
+  display: inline-block;
+  margin-right: 4px;
+  padding: 1px 8px;
+  border-radius: var(--r-pill);
+  background: var(--accent-tint);
+  color: var(--accent-ink);
+}
+
+/* The one-liner, two lines at most. */
 .album__desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
   color: var(--muted-ink);
-  font-size: var(--fs-small);
+  font-size: var(--fs-label);
+  line-height: 1.45;
 }
 
-.album__metrics {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--sp-1);
-  margin: auto 0 0;
-  padding-top: var(--sp-2);
+/* One headline stat, pinned to the bottom so the stats line up across
+   the row. */
+.album__stat {
+  margin-top: auto;
+  padding-top: var(--sp-1);
   border-top: 1px solid var(--line);
-}
-
-/* Number on top, label underneath (markup stays label-then-number), so
-   the three numbers share one line however their labels wrap. */
-.album__metric {
-  display: grid;
-  align-content: start;
-  justify-items: start;
-  gap: 4px;
-  min-width: 0;
-}
-
-.album__metric dt {
-  order: 2;
+  color: var(--muted-ink);
   font-size: var(--fs-label);
   line-height: 1.35;
-  color: var(--muted-ink);
 }
 
-.album__metric dd {
-  order: 1;
-  margin: 0;
+/* Room for two lines, so the numbers line up even when one label wraps. */
+.album__stat-label {
+  display: block;
+  min-height: 2.7em;
+}
+
+.album__stat-value {
+  display: block;
+  color: var(--ink);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1.0625rem, 5cqi, 1.375rem);
+  font-size: clamp(1rem, 11cqi, 1.375rem);
   font-variant-numeric: tabular-nums;
-  line-height: 1.1;
+  line-height: 1.15;
   white-space: nowrap;
 }
 

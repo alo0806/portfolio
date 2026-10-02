@@ -171,6 +171,8 @@ export const projects = [
     // From our CS 188 blog post, user research write-ups and poster (Fall
     // 2025), kept out of the repo in data/. Interview counts are the blog's
     // (18 + 13); the 80% / 27% / 63% are the poster's summary of 30 of them.
+    // The one stat on its card; the full set is on the case study.
+    headline: { value: '80% → 27%', label: 'donated → donate regularly' },
     metrics: [
       { label: 'Interviews', value: '31' },
       { label: 'Donated → donate regularly', value: '80% → 27%' },
@@ -352,6 +354,8 @@ export const projects = [
     // Every figure comes from src/data/gizmo-stats.json (node
     // scripts/gizmo-stats.js): the Gizmo account during my time on the
     // team, Jan 1 – Oct 31 2024 — not only my own posts.
+    // The one stat on its card; the full set is on the case study.
+    headline: { value: '63M+', label: 'views' },
     metrics: [
       { label: 'Views during my time', value: '63M+' },
       { label: 'Posts', value: '602' },
@@ -447,6 +451,8 @@ export const projects = [
     cover: { art: 'record', palette: 'sunset' },
     // Every number here is measured on the production build or taken
     // from the repo's history (see "By the numbers" for how).
+    // The one stat on its card; the full set is on the case study.
+    headline: { value: '28% → 0.1%', label: 'idle GPU' },
     metrics: [
       { label: 'Idle GPU', value: '28% → 0.1%' },
       { label: 'Image weight', value: '−94%' },
@@ -536,6 +542,8 @@ export const projects = [
     // the repo with the raw exports in data/, which hold buyers' personal
     // details). Only aggregated numbers live here, and no money totals:
     // the chapter's finances stay private.
+    // The one stat on its card; the full set is on the case study.
+    headline: { value: '+40%', label: 'per head' },
     metrics: [
       { label: 'Ladder vs flat $10', value: '+40%' },
       { label: 'Sold in final 48 h', value: '67%' },
