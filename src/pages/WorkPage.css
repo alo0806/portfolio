@@ -55,15 +55,30 @@
   white-space: nowrap;
 }
 
+/* The typing reveal: the copy sits exactly over the real text (same
+   grid cell, same width, so it wraps the same way), and each of its
+   characters is a patch of the card's colour that disappears on its turn,
+   uncovering the real character underneath. */
+.notes__body[data-typing='true'] {
+  display: grid;
+}
+
+.typed__text,
+.typed__cover {
+  grid-area: 1 / 1;
+}
+
 .typed-char {
-  opacity: 0;
+  color: transparent;
+  background: var(--panel-dark);
+  box-shadow: 0 0 0 1px var(--panel-dark); /* no hairline gaps between patches */
   animation: type-in 1ms linear forwards;
   animation-delay: calc(var(--page-delay) + 520ms + var(--c) * 19ms);
 }
 
 @keyframes type-in {
   to {
-    opacity: 1;
+    opacity: 0;
   }
 }
 
