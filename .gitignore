@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Raw scraped data (other people's usernames and comments): never commit or ship
+/data

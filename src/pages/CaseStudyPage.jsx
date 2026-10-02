@@ -44,7 +44,12 @@ function BarChart({ chart }) {
           <div key={bar.label} className="bar-chart__row" data-highlight={bar.highlight ? 'true' : undefined}>
             <dt>{bar.label}</dt>
             <dd>
-              <span className="bar-chart__bar" style={{ '--v': bar.value / max }} aria-hidden="true" />
+              <span
+                className="bar-chart__bar"
+                style={{ '--v': bar.value / max }}
+                data-zero={bar.value === 0 ? 'true' : undefined}
+                aria-hidden="true"
+              />
               <span className="bar-chart__value num">{bar.display ?? `${bar.value}${chart.unit ?? ''}`}</span>
             </dd>
           </div>
@@ -55,10 +60,23 @@ function BarChart({ chart }) {
   )
 }
 
+/* One piece of media with its caption. With `href` (a video's cover that
+   links to the original post), the picture is the link, with a play
+   badge, and opens in a new tab. */
 function Figure({ item }) {
   return (
     <figure className="media-figure">
-      <Media item={item} />
+      {item.href ? (
+        <a className="case__post" href={item.href} target="_blank" rel="noreferrer">
+          <Media item={item} />
+          <span className="case__post-badge" aria-hidden="true">
+            ▶
+          </span>
+          <span className="sr-only">{item.linkLabel ?? 'Watch the original post'} (opens in a new tab)</span>
+        </a>
+      ) : (
+        <Media item={item} />
+      )}
       {item.caption ? <figcaption>{item.caption}</figcaption> : null}
     </figure>
   )
@@ -132,7 +150,7 @@ export default function CaseStudyPage() {
             {paragraphs(block.text)}
             {block.chart ? <BarChart chart={block.chart} /> : null}
             {block.media?.length ? (
-              <div className="case__media" data-count={Math.min(block.media.length, 3)}>
+              <div className="case__media" data-count={Math.min(block.media.length, 4)}>
                 {block.media.map((item, j) => (
                   <Figure key={j} item={item} />
                 ))}
@@ -141,6 +159,23 @@ export default function CaseStudyPage() {
           </Reveal>
         ))}
       </section>
+
+      {caseStudy.findings?.length ? (
+        <section className="case__part" aria-labelledby="case-findings">
+          <Reveal>
+            <h2 className="case__heading" id="case-findings">
+              What worked
+            </h2>
+          </Reveal>
+          {caseStudy.findings.map((finding, i) => (
+            <Reveal key={i} className="case__block">
+              {finding.title ? <h3 className="case__subheading">{finding.title}</h3> : null}
+              {paragraphs(finding.text)}
+              {finding.chart ? <BarChart chart={finding.chart} /> : null}
+            </Reveal>
+          ))}
+        </section>
+      ) : null}
 
       {caseStudy.decisions?.length ? (
         <Reveal as="section" className="case__part" aria-labelledby="case-decisions">
@@ -163,11 +198,12 @@ export default function CaseStudyPage() {
           Outcome
         </h2>
         {paragraphs(caseStudy.outcome)}
-        {caseStudy.differently ? (
-          <p className="case__text">
-            <strong className="case__lead">What I’d do differently:</strong> {caseStudy.differently}
+        {[caseStudy.differently ?? []].flat().map((paragraph, k) => (
+          <p key={k} className="case__text">
+            {k === 0 ? <strong className="case__lead">What I’d do differently: </strong> : null}
+            {paragraph}
           </p>
-        ) : null}
+        ))}
         <Metrics items={caseStudy.outcomeMetrics} className="case__metrics--outcome" />
       </Reveal>
 

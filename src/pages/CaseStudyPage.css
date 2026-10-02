@@ -147,8 +147,49 @@
   gap: var(--sp-1);
 }
 
-.case__media[data-count='3'] figcaption {
+.case__media[data-count='3'] figcaption,
+.case__media[data-count='4'] figcaption {
   font-size: var(--fs-label);
+}
+
+/* Four (e.g. video covers): two across on phones, four when there's room. */
+.case__media[data-count='4'] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2) var(--sp-1);
+}
+
+@container (min-width: 620px) {
+  .case__media[data-count='4'] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* A cover that links to the original post. */
+.case__post {
+  position: relative;
+  display: block;
+  border-radius: var(--r-md);
+  transition: translate var(--dur-base) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .case__post:hover {
+    translate: 0 -3px;
+  }
+}
+
+.case__post-badge {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: color-mix(in srgb, #000 60%, transparent);
+  color: #fff;
+  font-size: 11px;
 }
 
 /* ─── A before/after bar chart ─── */
@@ -176,7 +217,7 @@
 
 .bar-chart__row {
   display: grid;
-  grid-template-columns: 8ch 1fr;
+  grid-template-columns: minmax(6ch, 13ch) 1fr;
   align-items: center;
   gap: var(--sp-2);
 }
@@ -200,6 +241,11 @@
   height: 20px;
   border-radius: 4px;
   background: var(--line-strong);
+}
+
+/* Zero means nothing at all, not a sliver. */
+.bar-chart__bar[data-zero='true'] {
+  width: 0;
 }
 
 .bar-chart__row[data-highlight='true'] .bar-chart__bar {
