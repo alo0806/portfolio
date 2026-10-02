@@ -8,9 +8,9 @@ import { sound } from '../sound/engine'
 
 const MAX_TILT = 7 // degrees
 
-/* A Single as an album: cover, a plain tag, title, role and year, one
-   line, and three metrics — laid out so a recruiter can scan tag and
-   numbers at a glance. The whole card opens its case study: the title is
+/* A Single as an album in a discography row: square cover, title, tag
+   and role, a one-liner (two lines at most), and one headline stat; the
+   full stats live on the case study. The whole card opens its case study: the title is
    the link, stretched over the card, so there's one stop per card for
    keyboard and screen reader users.
 
@@ -18,7 +18,7 @@ const MAX_TILT = 7 // degrees
    sweeps the cover on hover, and it presses in softly. Touch devices and
    reduced motion get a still card. */
 export default function AlbumCard({ number, project }) {
-  const { slug, title, tag, role, year, oneLiner, metrics, cover } = project
+  const { slug, title, tag, role, oneLiner, headline, cover } = project
   const cardRef = useRef(null)
   const fine = useFinePointer()
   const reduced = useReducedMotion()
@@ -53,7 +53,6 @@ export default function AlbumCard({ number, project }) {
     >
       <AlbumCover title={title} number={number} cover={cover} motion="hover" />
       <div className="album__body">
-        <p className="album__tag">{tag}</p>
         <h3 className="album__title">
           <Link
             to={`/work/${slug}`}
@@ -65,18 +64,15 @@ export default function AlbumCard({ number, project }) {
           </Link>
         </h3>
         <p className="album__role">
-          {role}
-          {year && year !== '—' ? ` · ${year}` : ''}
+          <span className="album__tag">{tag}</span> {role}
         </p>
         <p className="album__desc">{oneLiner}</p>
-        <dl className="album__metrics">
-          {metrics.map(({ label, value }) => (
-            <div key={label} className="album__metric">
-              <dt>{label}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
-        </dl>
+        {headline ? (
+          <p className="album__stat">
+            <span className="album__stat-value">{headline.value}</span>{' '}
+            <span className="album__stat-label">{headline.label}</span>
+          </p>
+        ) : null}
       </div>
     </article>
   )
