@@ -89,8 +89,8 @@ export const work = {
 /* Newest first; the Work page shows the first entry. */
 export const linerNotes = [
   {
-    date: '2026-10',
-    text: 'Rebuilt this site as a record player and finally put my work in it. Next up: a Spotify-style widget for the B-sides page and a redesign of my fraternity’s ticket flow. Graduating spring 2027 and looking for design engineering and front-end roles.',
+    date: '2026-09',
+    text: 'This website is still work in progress!',
   },
 ]
 
