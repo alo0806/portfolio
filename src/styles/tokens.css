@@ -27,6 +27,15 @@
   --accent-ink: #a23d17; /* 5.9:1 on paper, 5.3:1 on sidebar */
   --accent-tint: rgba(255, 107, 53, 0.14);
 
+  /* ─── Chart data (case studies). Every mark is ≥3:1 on paper and
+     card, and each venue also has its own shape, so color is never the
+     only cue. ─── */
+  --chart-hi: #d94e1a; /* the accent, deep enough for 4.0:1 on card */
+  --chart-muted: #8a8793; /* 3.4:1 on card */
+  --chart-frat: #6b4fd1; /* frat house ■ 5.5:1 */
+  --chart-roof: #0b7f75; /* rooftop ▲ 4.7:1 */
+  --chart-yard: #b0661a; /* backyard ● 4.2:1 */
+
   /* Dark panels on the pages (liner notes, B-sides). */
   --panel-dark: var(--indigo);
   --panel-dark-line: transparent;
@@ -169,6 +178,12 @@
 
   --accent-ink: #ff8c5a; /* 7.9:1 on paper */
   --accent-tint: rgba(255, 107, 53, 0.18);
+
+  --chart-hi: #ff6b35; /* 5.6:1 on card */
+  --chart-muted: #7f7c8c; /* 3.9:1 on card */
+  --chart-frat: #a993ff; /* 6.3:1 */
+  --chart-roof: #3cc2b0; /* 7.2:1 */
+  --chart-yard: #e9a23b; /* 7.4:1 */
 
   --panel-dark: #242046;
   --panel-dark-line: rgba(237, 235, 245, 0.1);

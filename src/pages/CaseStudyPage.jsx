@@ -1,6 +1,8 @@
+import { Fragment } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import AlbumCover from '../components/AlbumCover'
 import Reveal from '../components/Reveal'
+import Chart from './CaseCharts'
 import Media from '../components/work/Media'
 import { NextIcon, PrevIcon } from '../components/icons'
 import { projects } from '../data/content'
@@ -31,35 +33,6 @@ const paragraphs = (text) =>
     </p>
   ))
 
-/* A small before/after bar chart in plain CSS: each bar's length is its
-   value against the largest one (a tiny value still shows as a sliver).
-   Screen readers get the numbers from the list itself. */
-function BarChart({ chart }) {
-  const max = Math.max(...chart.bars.map((bar) => bar.value))
-  return (
-    <figure className="bar-chart">
-      <figcaption className="bar-chart__title">{chart.title}</figcaption>
-      <dl className="bar-chart__rows">
-        {chart.bars.map((bar) => (
-          <div key={bar.label} className="bar-chart__row" data-highlight={bar.highlight ? 'true' : undefined}>
-            <dt>{bar.label}</dt>
-            <dd>
-              <span
-                className="bar-chart__bar"
-                style={{ '--v': bar.value / max }}
-                data-zero={bar.value === 0 ? 'true' : undefined}
-                aria-hidden="true"
-              />
-              <span className="bar-chart__value num">{bar.display ?? `${bar.value}${chart.unit ?? ''}`}</span>
-            </dd>
-          </div>
-        ))}
-      </dl>
-      {chart.note ? <p className="bar-chart__note">{chart.note}</p> : null}
-    </figure>
-  )
-}
-
 /* One piece of media with its caption. With `href` (a video's cover that
    links to the original post), the picture is the link, with a play
    badge, and opens in a new tab. */
@@ -84,7 +57,8 @@ function Figure({ item }) {
 
 /* A Single's case study, at /work/<slug>: the header (tag, title, role,
    year, metrics), then Context, My role, Process (steps, each with an
-   optional title, one or more paragraphs, then its images and videos)
+   optional title, one or more paragraphs, a chart, then its images and
+   videos, and optionally its own findings, each with a small chart)
    and Outcome. It's part of the My Work track — the
    sidebar keeps My Work lit — and opening it, or the next case study,
    slides forward like changing track; "Back to tracklist" and the
@@ -145,18 +119,27 @@ export default function CaseStudyPage() {
           </h2>
         </Reveal>
         {caseStudy.process.map((block, i) => (
-          <Reveal key={i} className="case__block">
-            {block.title ? <h3 className="case__subheading">{block.title}</h3> : null}
-            {paragraphs(block.text)}
-            {block.chart ? <BarChart chart={block.chart} /> : null}
-            {block.media?.length ? (
-              <div className="case__media" data-count={Math.min(block.media.length, 4)}>
-                {block.media.map((item, j) => (
-                  <Figure key={j} item={item} />
-                ))}
-              </div>
-            ) : null}
-          </Reveal>
+          <Fragment key={i}>
+            <Reveal className="case__block">
+              {block.title ? <h3 className="case__subheading">{block.title}</h3> : null}
+              {paragraphs(block.text)}
+              {block.chart ? <Chart chart={block.chart} /> : null}
+              {block.media?.length ? (
+                <div className="case__media" data-count={Math.min(block.media.length, 4)}>
+                  {block.media.map((item, j) => (
+                    <Figure key={j} item={item} />
+                  ))}
+                </div>
+              ) : null}
+            </Reveal>
+            {block.findings?.map((finding, k) => (
+              <Reveal key={k} className="case__block case__finding">
+                <h4 className="case__finding-title">{finding.title}</h4>
+                {paragraphs(finding.text)}
+                {finding.chart ? <Chart chart={finding.chart} /> : null}
+              </Reveal>
+            ))}
+          </Fragment>
         ))}
       </section>
 
@@ -171,7 +154,7 @@ export default function CaseStudyPage() {
             <Reveal key={i} className="case__block">
               {finding.title ? <h3 className="case__subheading">{finding.title}</h3> : null}
               {paragraphs(finding.text)}
-              {finding.chart ? <BarChart chart={finding.chart} /> : null}
+              {finding.chart ? <Chart chart={finding.chart} /> : null}
             </Reveal>
           ))}
         </section>

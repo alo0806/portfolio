@@ -181,7 +181,7 @@ export const projects = [
     role: 'Marketing Associate (remote)',
     year: '2024',
     oneLiner: 'Short-form videos for an AI study app’s TikTok and Instagram, made in a small team for students studying for exams.',
-    cover: { image: '/work/gizmo/logo.png', alt: 'The Gizmo logo', palette: 'plum', layout: 'framed' },
+    cover: { image: '/work/gizmo/cover.webp', alt: 'Gizmo’s purple axolotl mascot, mid-step with a thumbs up', palette: 'plum', layout: 'framed' },
     // Every figure comes from src/data/gizmo-stats.json (node
     // scripts/gizmo-stats.js): the Gizmo account during my time on the
     // team, Jan 1 – Oct 31 2024 — not only my own posts.
@@ -357,40 +357,184 @@ export const projects = [
     },
   },
   {
-    slug: 'lambda-rush',
-    title: 'Lambda rush & party campaign',
+    slug: 'event-pricing',
+    title: 'Pricing student events with data',
     section: 'singles',
-    tag: 'Campaign',
-    role: 'Creative lead',
-    year: '—',
-    oneLiner: 'Placeholder. Rush videos, posters and socials for a semester of events.',
-    cover: { image: '/work/lambda-rush/cover.webp', palette: 'plum', layout: 'initial' },
+    tag: 'Analysis',
+    role: 'Social chair',
+    year: '2025–26',
+    oneLiner: 'I pulled ten events’ worth of presale data together to figure out how to price our tickets.',
+    cover: { palette: 'citrus', layout: 'stacked' },
+    // Every figure comes from my analysis notes and dashboard (kept out of
+    // the repo with the raw exports in data/, which hold buyers' personal
+    // details). Only aggregated numbers live here, and no money totals:
+    // the chapter's finances stay private.
     metrics: [
-      { label: 'Views', value: '—' },
-      { label: 'Pieces', value: '—' },
-      { label: 'Events', value: '—' },
+      { label: 'Per head, ladder vs flat $10', value: '+40%' },
+      { label: 'Presales in the final 48 h', value: '67%' },
+      { label: 'Backyard event, frat-size crowd', value: '157' },
     ],
     media: [],
     caseStudy: {
-      ...placeholderCaseStudy('plum'),
+      summary: 'I pulled ten events’ worth of presale data together to figure out how to price our tickets.',
+      context: [
+        'As social chair for my fraternity, Lambda Phi Epsilon, I found pricing was mostly guesswork.',
+        'We had about a year of presale forms and payment records, so I put them together to see what actually worked.',
+      ],
+      role: 'Placeholder. What I did on the analysis and the events, who I worked with, and the tools I used.',
       process: [
         {
-          text: 'Placeholder. Fall rush 2026: the identity, the schedule and the rush party.',
-          media: [
-          { type: 'image', src: '/work/lambda-rush/01.webp', alt: 'Poster: UCLA LFE presents Lambdas, Fall Rush 2026', caption: 'Fall rush 2026', ratio: '4/5' },
-          { type: 'image', src: '/work/lambda-rush/02.webp', alt: 'Fall rush 2026 schedule poster: brotherhood BBQ, basketball tourney, rush party', caption: 'Rush schedule', ratio: '4/5' },
-          { type: 'image', src: '/work/lambda-rush/03.webp', alt: 'Poster: After Dark rush party, Friday 9/25 at 10pm', caption: 'After Dark (rush party)', ratio: '4/5' },
+          title: 'Pulling it together',
+          text: [
+            'Every event had a presale form, a payment statement and, for some, a profit sheet. I lined up each purchase with its event and the time it came in, then matched buyers across events by phone number, then by name, to see who came back. Purchases within 10 minutes of each other counted as a group.',
+            'One event, Resurrection, was $35 at an outside venue, so I left it out as an outlier. Halloween was guys only, so it’s out of the venue averages. Two events only had part of their pricing on record, Inferno and After Dark 9/25, so their numbers are estimates. And most forms were guys’ presale lists, so the counts mostly reflect guys’ tickets.',
           ],
         },
         {
-          text: 'Placeholder. The parties through the year, each with its own look.',
+          title: 'What I found',
+          text: 'Four things stood out across the nine events.',
+          findings: [
+            {
+              title: 'Raising the price barely changed turnout',
+              text: 'Going from $10 to $18 didn’t shrink the crowd. The venue moved the numbers, not the price.',
+              chart: {
+                type: 'scatter',
+                title: 'Average price paid vs presales, by event',
+                legend: [
+                  { tone: 'frat', label: 'Frat house' },
+                  { tone: 'roof', label: 'Rooftop' },
+                  { tone: 'yard', label: 'Backyard' },
+                  { tone: 'yard', est: true, label: 'Hollow: price is an estimate' },
+                ],
+                x: { name: 'Average price paid', label: 'Average price paid per ticket', min: 8, max: 20, ticks: [8, 10, 12, 14, 16, 18, 20], prefix: '$' },
+                y: { name: 'Presales', label: 'Presales', min: 0, max: 180, ticks: [0, 50, 100, 150] },
+                points: [
+                  { label: 'Halloween', x: 10, y: 43, tone: 'frat', place: 'right-down' },
+                  { label: 'Drift', x: 10, y: 55, tone: 'yard', place: 'right-up' },
+                  { label: 'Lost in Lambda', x: 13.73, y: 78, tone: 'roof', place: 'above' },
+                  { label: 'After Dark 1/9', x: 14, y: 57, tone: 'roof', place: 'right-down' },
+                  { label: 'Soundwave', x: 14, y: 61, tone: 'yard', place: 'right-up' },
+                  { label: 'W9 Rager', x: 12.5, y: 173, tone: 'frat', place: 'left' },
+                  { label: 'Lucid Dream', x: 12.7, y: 160, tone: 'frat', place: 'left' },
+                  { label: 'After Dark 9/25', x: 12.93, y: 157, tone: 'yard', est: true, place: 'right' },
+                  { label: 'Inferno', x: 18, y: 157, tone: 'frat', est: true, place: 'below' },
+                ],
+                note: 'Nine events. Inferno is plotted at its $18 tier price. W9 Rager’s count includes girls; Halloween was guys only.',
+              },
+            },
+            {
+              title: 'Most people buy in the last two days',
+              text: 'About two thirds of presales came in the final 48 hours, and nearly half on the last day. After Dark 9/25 sold 76% of its tickets on the last day alone.',
+              chart: {
+                title: 'Presales by days before the event',
+                bars: [
+                  { label: '9–10 days', value: 3 },
+                  { label: '8–9', value: 2 },
+                  { label: '7–8', value: 9 },
+                  { label: '6–7', value: 8 },
+                  { label: '5–6', value: 37 },
+                  { label: '4–5', value: 27 },
+                  { label: '3–4', value: 79 },
+                  { label: '2–3', value: 133 },
+                  { label: '1–2 days', value: 184, highlight: true },
+                  { label: 'Last day', value: 422, highlight: true },
+                ],
+                note: 'Tickets, all nine events combined. Days are counted back from a 10pm start.',
+              },
+            },
+            {
+              title: 'Ladders beat flat pricing',
+              text: 'Events with a price ladder, where tickets get pricier as the event gets closer, made about 40% more per head than flat $10 ones, with the same size crowd. The higher tiers still sold: at Lost in Lambda, more than half the tickets went at the top $17 tier.',
+              chart: {
+                title: 'Average paid per ticket',
+                valueWidth: '11ch',
+                legend: [
+                  { tone: 'hi', label: 'Price ladder' },
+                  { tone: 'muted', label: 'Flat price' },
+                  { tone: 'split', label: 'Member / general price' },
+                  { tone: 'muted', est: true, label: 'Outlined: estimate' },
+                ],
+                bars: [
+                  { group: 'Price ladder', label: 'Inferno', value: 18, display: '$18.00', tone: 'hi', est: true },
+                  { group: 'Price ladder', label: 'After Dark 1/9', value: 14, display: '$14.00', tone: 'hi' },
+                  { group: 'Price ladder', label: 'Lost in Lambda', value: 13.73, display: '$13.73', tone: 'hi' },
+                  { group: 'Price ladder', label: 'After Dark 9/25', value: 12.93, display: '$12.93', tone: 'hi', est: true },
+                  { group: 'Member / general price', label: 'Lucid Dream', value: 12.7, display: '$12.70', tone: 'split' },
+                  { group: 'Member / general price', label: 'W9 Rager', value: 12.5, display: '$12.50', tone: 'split' },
+                  { group: 'Flat price', label: 'Soundwave', value: 14, display: '$14.00', tone: 'muted' },
+                  { group: 'Flat price', label: 'Drift', value: 10, display: '$10.00', tone: 'muted' },
+                  { group: 'Flat price', label: 'Halloween', value: 10, display: '$10.00', tone: 'muted' },
+                ],
+                note: 'Inferno counts every ticket at its $18 tier. After Dark 9/25 assumes the first 65 at $10 and the rest at $15.',
+              },
+            },
+            {
+              title: 'A backyard can draw a frat-house crowd',
+              text: 'A frat house reliably draws the biggest crowd, but it costs a lot more than a backyard or a rooftop. After Dark 9/25 drew 157 in a backyard: a frat-house-size crowd at a fraction of the cost.',
+              chart: {
+                title: 'Average presales by venue',
+                bars: [
+                  { label: 'Frat house', value: 163.3, display: '163.3', tone: 'frat' },
+                  { label: 'Backyard', value: 91, display: '91', tone: 'yard' },
+                  { label: 'Rooftop', value: 67.5, display: '67.5', tone: 'roof' },
+                ],
+                note: 'Halloween was guys only, so it’s left out of the frat house average.',
+              },
+            },
+          ],
+        },
+        {
+          title: 'Promotion',
+          text: 'Buying peaks on Thursday and Friday evenings, mostly between 7pm and 1am, and Sunday is dead. So that’s when the flyers went out.',
+          chart: {
+            title: 'Purchases by day of the week',
+            bars: [
+              { label: 'Monday', value: 57 },
+              { label: 'Tuesday', value: 82 },
+              { label: 'Wednesday', value: 137 },
+              { label: 'Thursday', value: 211, highlight: true },
+              { label: 'Friday', value: 296, highlight: true },
+              { label: 'Saturday', value: 114 },
+              { label: 'Sunday', value: 14 },
+            ],
+            note: 'All nine events combined, from the form timestamps.',
+          },
           media: [
-          { type: 'image', src: '/work/lambda-rush/04.webp', alt: 'Poster: After Dark party, Friday 1/9 at 10pm', caption: 'After Dark', ratio: '4/5' },
-          { type: 'image', src: '/work/lambda-rush/05.webp', alt: 'Poster: Drift party, with two cars and a halftone texture', caption: 'Drift', ratio: '4/5' },
-          { type: 'image', src: '/work/lambda-rush/06.webp', alt: 'Poster: Soundwave, UCLA Lambdas x USC Betas, 4/24 at 10pm', caption: 'Soundwave', ratio: '1279/1600' },
+            { type: 'image', src: '/work/flyers/03.webp', alt: 'Flyer: After Dark, Friday 9/25 at 10pm', caption: 'After Dark 9/25', ratio: '4/5' },
+            { type: 'image', src: '/work/flyers/05.webp', alt: 'Flyer: Drift, with two cars and a halftone texture', caption: 'Drift', ratio: '4/5' },
+            { type: 'image', src: '/work/flyers/06.webp', alt: 'Flyer: Soundwave, a collab with another chapter, 4/24 at 10pm', caption: 'Soundwave', ratio: '1279/1600' },
           ],
         },
       ],
+      decisions: [
+        {
+          decision: 'Backyard or rooftop: $12 → $15 → $20, $25 at the door',
+          why: 'Our default. It costs a fraction of a frat house, and the higher tiers haven’t cost us people.',
+        },
+        {
+          decision: 'Frat house, solo: $15 → $18 → $20, $25 at the door',
+          why: 'One or two big themed nights a quarter, not the default. A rented house needs real prices, so no $10 tier. Inferno sold 157 at $18.',
+        },
+        {
+          decision: 'Frat house, collab: $12 member / $18 general, $25 at the door',
+          why: 'The safest way to get a big venue: splitting it halves the risk, but also the take. Lucid Dream drew 160 at $10 / $14, which was too low for a rented house.',
+        },
+        {
+          decision: 'Go biggest the first weekend of the quarter',
+          why: 'After Dark 9/25 was the first weekend of fall, and 89% of its buyers had never bought from us before. That’s the night for the full ladder.',
+        },
+      ],
+      outcome: 'Placeholder. Whether these findings changed how later events were priced, e.g. After Dark 9/25.',
+      differently: 'Placeholder.',
+      numbers: [
+        { value: '10', label: 'Events analyzed', context: 'Nine in the charts; one left out as an outlier' },
+        { value: '812', label: 'Different buyers', context: 'Matched across events by phone, then name' },
+        { value: '97', label: 'Came to 2+ events', context: 'Out of 812' },
+        { value: '40–80%', label: 'Bought in a group', context: 'Per event: purchases within 10 minutes of each other' },
+        { value: '81% → 40%', label: 'Group buying, $15 vs $20 tier', context: 'Groups may split up at $20' },
+        { value: '~2/3', label: 'Referred by a brother', context: 'Soundwave, the only form that asked' },
+      ],
+      numbersNote: 'From ten events’ presale forms and payment records (Oct 2025 – Sep 2026). Presales are form submissions, and a few people paid for friends. Money totals are left out on purpose.',
     },
   },
   {
@@ -423,6 +567,25 @@ export const projects = [
   },
 
   /* ─── Features ─── */
+  {
+    slug: 'fraternity-flyers',
+    title: 'Fraternity flyers',
+    section: 'features',
+    tag: 'Club',
+    role: 'Social chair',
+    year: '2025–26',
+    oneLiner: 'Flyers for fall rush and the chapter’s events.',
+    cover: { image: '/work/flyers/cover.webp', alt: 'The chapter crest: Greek letters over a dragon', palette: 'plum', layout: 'framed' },
+    metrics: [{ label: 'Flyers', value: '6' }],
+    media: [
+      { type: 'image', src: '/work/flyers/01.webp', alt: 'Flyer: Fall Rush 2026, with the chapter’s name in large type', caption: 'Fall rush 2026', ratio: '4/5' },
+      { type: 'image', src: '/work/flyers/02.webp', alt: 'Fall rush 2026 schedule: brotherhood BBQ, basketball tourney, rush event', caption: 'Rush schedule', ratio: '4/5' },
+      { type: 'image', src: '/work/flyers/03.webp', alt: 'Flyer: After Dark, Friday 9/25 at 10pm', caption: 'After Dark 9/25', ratio: '4/5' },
+      { type: 'image', src: '/work/flyers/04.webp', alt: 'Flyer: After Dark, Friday 1/9 at 10pm', caption: 'After Dark 1/9', ratio: '4/5' },
+      { type: 'image', src: '/work/flyers/05.webp', alt: 'Flyer: Drift, with two cars and a halftone texture', caption: 'Drift', ratio: '4/5' },
+      { type: 'image', src: '/work/flyers/06.webp', alt: 'Flyer: Soundwave, a collab with another chapter, 4/24 at 10pm', caption: 'Soundwave', ratio: '1279/1600' },
+    ],
+  },
   {
     slug: 'tsa-creative-media',
     title: 'TSA creative media',
