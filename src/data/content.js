@@ -136,15 +136,6 @@ export const workSections = [
                 paragraph each (or a list of paragraphs); process is a
                 list of steps: { title?, text (one paragraph or a list),
                 media } */
-const placeholderMedia = (palette, count = 3) =>
-  Array.from({ length: count }, (_, i) => ({
-    type: 'image',
-    src: null,
-    palette,
-    alt: '',
-    caption: `Placeholder caption ${i + 1}.`,
-    ratio: i === 1 ? '4/5' : '16/10',
-  }))
 
 /* The nine events in the pricing case study, from my analysis dashboard
    (the raw exports stay in the gitignored data/ folder). `price` is the
@@ -163,30 +154,6 @@ const pricingEvents = [
   { name: 'After Dark', date: '9/25', venue: 'yard', pricing: 'ladder', price: 12.93, sold: 157, est: true, place: 'below', dash: [2, 3], cum: [0, 0, 0, 0, 0, 0, 0, 6.4, 13.4, 24.2, 100] },
 ]
 
-const placeholderCaseStudy = (palette) => ({
-  context: 'Placeholder. What this was, who it was for, and the problem it had to solve.',
-  role: 'Placeholder. What I owned, who I worked with, and the tools I used.',
-  process: [
-    {
-      text: 'Placeholder. Where it started: research, references, the first rough ideas.',
-      media: placeholderMedia(palette, 1),
-    },
-    {
-      text: 'Placeholder. How it changed: the decisions, what got cut, and why.',
-      media: placeholderMedia(palette, 2),
-    },
-    {
-      text: 'Placeholder. How it was built and shipped.',
-      media: [],
-    },
-  ],
-  outcome: 'Placeholder. What happened once it was out, and what I would do differently.',
-  outcomeMetrics: [
-    { label: 'Result', value: '—' },
-    { label: 'Reach', value: '—' },
-    { label: 'Time', value: '—' },
-  ],
-})
 
 export const projects = [
   /* ─── Singles ─── */
@@ -198,7 +165,7 @@ export const projects = [
     role: 'Marketing Associate (remote)',
     year: '2024',
     oneLiner: 'Short-form videos for an AI study app’s TikTok and Instagram, made in a small team for students studying for exams.',
-    cover: { image: '/work/gizmo/cover.webp', alt: 'Gizmo’s purple axolotl mascot, mid-step with a thumbs up', palette: 'plum', layout: 'framed' },
+    cover: { image: '/work/gizmo/cover.webp', alt: 'Gizmo’s purple axolotl mascot, meditating among floating books', palette: 'plum', layout: 'framed' },
     // Every figure comes from src/data/gizmo-stats.json (node
     // scripts/gizmo-stats.js): the Gizmo account during my time on the
     // team, Jan 1 – Oct 31 2024 — not only my own posts.
@@ -512,34 +479,6 @@ export const projects = [
       numbersNote: 'From ten events’ presale forms and payment records (Oct 2025 – Sep 2026). Presales are form submissions, and a few people paid for friends. Money totals are left out on purpose.',
     },
   },
-  {
-    slug: 'spotify-widgets',
-    title: 'Spotify Widgets',
-    section: 'singles',
-    tag: 'Concept',
-    role: 'UI design',
-    year: '—',
-    oneLiner: 'Home-screen widgets for what you are listening to.',
-    cover: { image: '/work/spotify-widgets/cover.webp', palette: 'mint', layout: 'framed' },
-    metrics: [
-      { label: 'Widgets', value: '—' },
-      { label: 'Sizes', value: '—' },
-      { label: 'Tests', value: '—' },
-    ],
-    media: [],
-    caseStudy: {
-      ...placeholderCaseStudy('mint'),
-      process: [
-        {
-          text: 'Placeholder. One player, four sizes: what each size keeps and what it drops.',
-          media: [
-          { type: 'image', src: '/work/spotify-widgets/01.webp', alt: 'Four Spotify widget designs in different sizes, all playing \'Alone in Space\'', caption: 'The widget sizes', ratio: '1/1' },
-          ],
-        },
-        { text: 'Placeholder. How it was built and shipped.', media: [] },
-      ],
-    },
-  },
 
   /* ─── Features ─── */
   {
@@ -630,6 +569,20 @@ export const projects = [
   },
 
   /* ─── Deep cuts ─── */
+  {
+    slug: 'spotify-widgets',
+    title: 'Spotify Widgets',
+    section: 'deepcuts',
+    tag: 'Concept',
+    role: 'UI design',
+    year: '—',
+    oneLiner: 'Home-screen widgets for what you are listening to.',
+    cover: { image: '/work/spotify-widgets/cover.webp', palette: 'mint', layout: 'framed' },
+    metrics: [],
+    media: [
+      { type: 'image', src: '/work/spotify-widgets/01.webp', alt: 'Four Spotify widget designs in different sizes, all playing ‘Alone in Space’', caption: 'The widget sizes', ratio: '1/1' },
+    ],
+  },
   {
     slug: 'yellow-theme-challenge',
     title: 'Yellow Theme Challenge (8 Days)',
