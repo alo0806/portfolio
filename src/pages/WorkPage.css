@@ -82,10 +82,74 @@
   pointer-events: none;
 }
 
+/* ─── Jump to a section ─────────────────────────────────────── */
+
+.work-jump {
+  margin-top: var(--sp-4);
+}
+
+.work-jump__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+
+.work-jump__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 8px 6px 16px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  transition:
+    translate var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) ease;
+}
+
+@media (hover: hover) {
+  .work-jump__chip:hover {
+    translate: 0 -2px;
+    border-color: var(--ink);
+  }
+}
+
+.work-jump__chip:active {
+  translate: 0 0;
+  scale: 0.97;
+}
+
+.work-jump__count {
+  display: grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: var(--r-pill);
+  background: var(--accent-tint);
+  color: var(--accent-ink);
+  font-size: var(--fs-label);
+}
+
 /* ─── Sections ──────────────────────────────────────────────── */
 
+/* Jumped to: lands a little below the top (below the phone top bar). */
 .work-section {
   margin-top: var(--sp-8);
+  scroll-margin-top: var(--sp-4);
+}
+
+.work-section__title:focus {
+  outline: none;
+}
+
+@media (max-width: 899px) {
+  .work-section {
+    scroll-margin-top: calc(var(--topbar-h) + var(--sp-2));
+  }
 }
 
 .work-section__head {

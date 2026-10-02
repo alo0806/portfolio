@@ -91,7 +91,8 @@
 
 /* The stage is a size container, so the item can be as big as fits both
    ways: as wide as the stage, or as tall — whichever runs out first
-   (--r is the item's width/height, set inline). */
+   (--r is the item's width/height, set inline) — but never more than
+   1.5x a small image's own size (--max-w), so it stays crisp. */
 .lightbox__stage {
   container-type: size;
   display: flex;
@@ -103,7 +104,7 @@
 }
 
 .lightbox__media {
-  width: min(100cqw, 100cqh * var(--r, 16 / 9));
+  width: min(100cqw, 100cqh * var(--r, 16 / 9), var(--max-w, 100cqw));
   height: auto;
   background: transparent;
 }

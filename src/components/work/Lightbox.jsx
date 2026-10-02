@@ -156,7 +156,10 @@ export default function Lightbox({ project, card, returnTo, onClosed }) {
             <div
               className="lightbox__stage"
               ref={stageRef}
-              style={{ '--r': (item.ratio ?? '16/9').replace('/', ' / ') }}
+              style={{
+                '--r': (item.ratio ?? '16/9').replace('/', ' / '),
+                '--max-w': item.width ? `${item.width * 1.5}px` : undefined,
+              }}
               onPointerDown={onPointerDown}
               onPointerUp={onPointerUp}
               onPointerCancel={() => {

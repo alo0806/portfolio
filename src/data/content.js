@@ -125,10 +125,11 @@ export const workSections = [
    media      — the gallery (everything but Singles), and what case study
                 process blocks hold:
                 { type: 'image' | 'video', src, poster?, alt, caption?,
-                  ratio?, fullVideo? }
+                  ratio?, width?, fullVideo? }
                 ratio is width/height ('16/9' by default) so nothing jumps
-                while it loads; fullVideo is an optional link to the
-                whole video. A placeholder (src: null) shows a coloured
+                while it loads; width (px, optional) keeps a small image
+                from being blown up past it; fullVideo is an optional
+                link to the whole video. A placeholder (src: null) shows a coloured
                 frame in `palette`.
    caseStudy  — Singles only: { context, role, process: [{ text, media }],
                 outcome, outcomeMetrics } */
@@ -141,18 +142,6 @@ const placeholderMedia = (palette, count = 3) =>
     caption: `Placeholder caption ${i + 1}.`,
     ratio: i === 1 ? '4/5' : '16/10',
   }))
-
-// The one placeholder clip (public/work/placeholder/) — safe to delete
-// once there's real video; see the README there.
-const placeholderClip = {
-  type: 'video',
-  src: '/work/placeholder/clip.mp4',
-  poster: '/work/placeholder/clip-poster.webp',
-  alt: 'Placeholder clip: a slowly shifting colour gradient',
-  caption: 'Placeholder clip. Short, muted and looping, like a rush video cut-down.',
-  ratio: '16/9',
-  fullVideo: null,
-}
 
 const placeholderCaseStudy = (palette) => ({
   context: 'Placeholder. What this was, who it was for, and the problem it had to solve.',
@@ -206,7 +195,7 @@ export const projects = [
     role: 'Creative lead',
     year: '—',
     oneLiner: 'Placeholder. Rush videos, posters and socials for a semester of events.',
-    cover: { video: placeholderClip.src, poster: placeholderClip.poster, alt: placeholderClip.alt, palette: 'plum', layout: 'initial' },
+    cover: { image: '/work/lambda-rush/cover.webp', palette: 'plum', layout: 'initial' },
     metrics: [
       { label: 'Views', value: '—' },
       { label: 'Pieces', value: '—' },
@@ -216,8 +205,22 @@ export const projects = [
     caseStudy: {
       ...placeholderCaseStudy('plum'),
       process: [
-        { text: 'Placeholder. The brief and the first cut.', media: [placeholderClip] },
-        { text: 'Placeholder. Posters and socials that matched it.', media: placeholderMedia('plum', 2) },
+        {
+          text: 'Placeholder. Fall rush 2026: the identity, the schedule and the rush party.',
+          media: [
+          { type: 'image', src: '/work/lambda-rush/01.webp', alt: 'Poster: UCLA LFE presents Lambdas, Fall Rush 2026', caption: 'Fall rush 2026', ratio: '4/5' },
+          { type: 'image', src: '/work/lambda-rush/02.webp', alt: 'Fall rush 2026 schedule poster: brotherhood BBQ, basketball tourney, rush party', caption: 'Rush schedule', ratio: '4/5' },
+          { type: 'image', src: '/work/lambda-rush/03.webp', alt: 'Poster: After Dark rush party, Friday 9/25 at 10pm', caption: 'After Dark (rush party)', ratio: '4/5' },
+          ],
+        },
+        {
+          text: 'Placeholder. The parties through the year, each with its own look.',
+          media: [
+          { type: 'image', src: '/work/lambda-rush/04.webp', alt: 'Poster: After Dark party, Friday 1/9 at 10pm', caption: 'After Dark', ratio: '4/5' },
+          { type: 'image', src: '/work/lambda-rush/05.webp', alt: 'Poster: Drift party, with two cars and a halftone texture', caption: 'Drift', ratio: '4/5' },
+          { type: 'image', src: '/work/lambda-rush/06.webp', alt: 'Poster: Soundwave, UCLA Lambdas x USC Betas, 4/24 at 10pm', caption: 'Soundwave', ratio: '1279/1600' },
+          ],
+        },
       ],
     },
   },
@@ -229,14 +232,25 @@ export const projects = [
     role: 'UI design',
     year: '—',
     oneLiner: 'Placeholder. Home-screen widgets for what you are listening to.',
-    cover: { palette: 'mint', layout: 'framed' },
+    cover: { image: '/work/spotify-widgets/cover.webp', palette: 'mint', layout: 'framed' },
     metrics: [
       { label: 'Widgets', value: '—' },
       { label: 'Sizes', value: '—' },
       { label: 'Tests', value: '—' },
     ],
     media: [],
-    caseStudy: placeholderCaseStudy('mint'),
+    caseStudy: {
+      ...placeholderCaseStudy('mint'),
+      process: [
+        {
+          text: 'Placeholder. One player, four sizes: what each size keeps and what it drops.',
+          media: [
+          { type: 'image', src: '/work/spotify-widgets/01.webp', alt: 'Four Spotify widget designs in different sizes, all playing \'Alone in Space\'', caption: 'The widget sizes', ratio: '1/1' },
+          ],
+        },
+        { text: 'Placeholder. How it was built and shipped.', media: [] },
+      ],
+    },
   },
 
   /* ─── Features ─── */
@@ -248,9 +262,47 @@ export const projects = [
     role: 'Creative media',
     year: '—',
     oneLiner: 'Placeholder. Graphics and video for the chapter.',
-    cover: { palette: 'citrus', layout: 'stacked' },
+    cover: { image: '/work/tsa-creative-media/cover.webp', palette: 'citrus', layout: 'stacked' },
     metrics: [{ label: 'Pieces', value: '—' }],
-    media: [placeholderClip, ...placeholderMedia('citrus', 2)],
+    media: [
+      { type: 'image', src: '/work/tsa-creative-media/01.webp', alt: 'Illustrated poster of a girl and a bear eating grass jelly and aiyu desserts in a meadow', caption: 'BYO 仙草 & 愛玉', ratio: '3/4' },
+      { type: 'image', src: '/work/tsa-creative-media/02.webp', alt: 'Illustrated poster of a girl and a bear at a New Year’s Eve reunion dinner', caption: 'New Year’s Eve reunion dinner', ratio: '3/4' },
+      { type: 'image', src: '/work/tsa-creative-media/03.webp', alt: 'Illustrated poster of a girl and a bear rowing a dragon boat', caption: '端午活動 (Dragon Boat Festival)', ratio: '1147/1427' },
+      { type: 'image', src: '/work/tsa-creative-media/board-01.webp', alt: 'Board intro post introducing the Event planning team', caption: 'Board intro: Event planning', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-02.webp', alt: 'Board intro post for a member of Event planning', caption: 'Board intro: Event planning', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-03.webp', alt: 'Board intro post for a member of Event planning', caption: 'Board intro: Event planning', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-04.webp', alt: 'Board intro post for a member of Event planning', caption: 'Board intro: Event planning', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-05.webp', alt: 'Board intro post for a member of Event planning', caption: 'Board intro: Event planning', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-06.webp', alt: 'Board intro post for a member of Event planning', caption: 'Board intro: Event planning', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-07.webp', alt: 'Board intro post for a member of Event planning', caption: 'Board intro: Event planning', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-08.webp', alt: 'Board intro post introducing the Family team', caption: 'Board intro: Family', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-09.webp', alt: 'Board intro post for a member of Family', caption: 'Board intro: Family', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-10.webp', alt: 'Board intro post for a member of Family', caption: 'Board intro: Family', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-11.webp', alt: 'Board intro post for a member of Family', caption: 'Board intro: Family', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-12.webp', alt: 'Board intro post for a member of Family', caption: 'Board intro: Family', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-13.webp', alt: 'Board intro post introducing the Outreach team', caption: 'Board intro: Outreach', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-14.webp', alt: 'Board intro post for a member of Outreach', caption: 'Board intro: Outreach', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-15.webp', alt: 'Board intro post for a member of Outreach', caption: 'Board intro: Outreach', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-16.webp', alt: 'Board intro post for a member of Outreach', caption: 'Board intro: Outreach', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-17.webp', alt: 'Board intro post introducing the Finance team', caption: 'Board intro: Finance', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-18.webp', alt: 'Board intro post for a member of Finance', caption: 'Board intro: Finance', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-19.webp', alt: 'Board intro post for a member of Finance', caption: 'Board intro: Finance', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-20.webp', alt: 'Board intro post for a member of Finance', caption: 'Board intro: Finance', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-21.webp', alt: 'Board intro post for a member of Finance', caption: 'Board intro: Finance', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-22.webp', alt: 'Board intro post introducing the Creative media team', caption: 'Board intro: Creative media', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-23.webp', alt: 'Board intro post for a member of Creative media', caption: 'Board intro: Creative media', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-24.webp', alt: 'Board intro post for a member of Creative media', caption: 'Board intro: Creative media', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-25.webp', alt: 'Board intro post for a member of Creative media', caption: 'Board intro: Creative media', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-26.webp', alt: 'Board intro post for a member of Creative media', caption: 'Board intro: Creative media', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-27.webp', alt: 'Board intro post introducing the Secretary team', caption: 'Board intro: Secretary', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-28.webp', alt: 'Board intro post for a member of Secretary', caption: 'Board intro: Secretary', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-29.webp', alt: 'Board intro post for a member of Secretary', caption: 'Board intro: Secretary', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-30.webp', alt: 'Board intro post introducing the Graduate advisor team', caption: 'Board intro: Graduate advisor', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-31.webp', alt: 'Board intro post for a member of Graduate advisor', caption: 'Board intro: Graduate advisor', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-32.webp', alt: 'Board intro post introducing the President & EVP team', caption: 'Board intro: President & EVP', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-33.webp', alt: 'Board intro post for a member of President & EVP', caption: 'Board intro: President & EVP', ratio: '1/1' },
+      { type: 'image', src: '/work/tsa-creative-media/board-34.webp', alt: 'Board intro post for a member of President & EVP', caption: 'Board intro: President & EVP', ratio: '1/1' },
+    ],
   },
   {
     slug: 'smc-honor-society',
@@ -260,9 +312,14 @@ export const projects = [
     role: 'Publicity',
     year: '—',
     oneLiner: 'Placeholder. Posters and socials for meetings and drives.',
-    cover: { palette: 'plum', layout: 'framed' },
+    cover: { image: '/work/smc-honor-society/cover.webp', palette: 'plum', layout: 'framed' },
     metrics: [],
-    media: placeholderMedia('plum', 3),
+    media: [
+      { type: 'image', src: '/work/smc-honor-society/01.webp', alt: 'General meeting announcement in a retro computer-window style, pink with a rainbow', caption: 'General meeting', ratio: '1/1' },
+      { type: 'image', src: '/work/smc-honor-society/02.webp', alt: 'General meeting announcement with day and night meeting times', caption: 'General meeting: day & night', ratio: '1/1' },
+      { type: 'image', src: '/work/smc-honor-society/03.webp', alt: 'Black-and-white general meeting announcement with stacked window frames and the society crest', caption: 'General meeting', ratio: '1/1' },
+      { type: 'image', src: '/work/smc-honor-society/04.webp', alt: 'Coming soon teaser for the AGS Fall 2023 banquet, with cartoon eyes', caption: 'Fall banquet teaser', ratio: '1/1' },
+    ],
   },
 
   /* ─── Deep cuts ─── */
@@ -274,9 +331,18 @@ export const projects = [
     role: 'Design',
     year: '—',
     oneLiner: 'Placeholder. One colour, eight days.',
-    cover: { palette: 'citrus', layout: 'initial' },
+    cover: { image: '/work/yellow-theme-challenge/cover.webp', palette: 'citrus', layout: 'initial' },
     metrics: [],
-    media: placeholderMedia('citrus', 3),
+    media: [
+      { type: 'image', src: '/work/yellow-theme-challenge/01.webp', alt: 'Yellow-and-black graphic for practice day 1', caption: 'Day 1', ratio: '1/1' },
+      { type: 'image', src: '/work/yellow-theme-challenge/02.webp', alt: 'Yellow-and-black graphic for practice day 2', caption: 'Day 2', ratio: '1/1' },
+      { type: 'image', src: '/work/yellow-theme-challenge/03.webp', alt: 'Yellow-and-black graphic for practice day 3', caption: 'Day 3', ratio: '1/1' },
+      { type: 'image', src: '/work/yellow-theme-challenge/04.webp', alt: 'Yellow-and-black graphic for practice day 4', caption: 'Day 4', ratio: '1/1' },
+      { type: 'image', src: '/work/yellow-theme-challenge/05.webp', alt: 'Yellow-and-black graphic for practice day 6', caption: 'Day 6', ratio: '1/1' },
+      { type: 'image', src: '/work/yellow-theme-challenge/06.webp', alt: 'Yellow-and-black graphic for practice day 7', caption: 'Day 7', ratio: '1/1' },
+      { type: 'image', src: '/work/yellow-theme-challenge/07.webp', alt: 'Yellow-and-black graphic for practice day 8', caption: 'Day 8', ratio: '1/1' },
+      { type: 'image', src: '/work/yellow-theme-challenge/08.webp', alt: 'Yellow-and-black graphic for practice day 9', caption: 'Day 9', ratio: '1/1' },
+    ],
   },
   {
     slug: 'switch-menu-remake',
@@ -286,9 +352,11 @@ export const projects = [
     role: 'UI & motion',
     year: '—',
     oneLiner: 'Placeholder. The home menu, rebuilt.',
-    cover: { palette: 'sunset', layout: 'framed' },
+    cover: { image: '/work/switch-menu-remake/cover.webp', palette: 'sunset', layout: 'framed' },
     metrics: [],
-    media: placeholderMedia('sunset', 2),
+    media: [
+      { type: 'image', src: '/work/switch-menu-remake/01.webp', alt: 'A recreated Nintendo Switch home menu: game tiles over a blurred Mario background', caption: 'The home menu', ratio: '16/9' },
+    ],
   },
   {
     slug: 'line-emotes',
@@ -298,9 +366,18 @@ export const projects = [
     role: 'Illustration',
     year: '—',
     oneLiner: 'Placeholder. A set of sticker emotes.',
-    cover: { palette: 'mint', layout: 'stacked' },
+    cover: { image: '/work/line-emotes/cover.webp', palette: 'mint', layout: 'stacked' },
     metrics: [],
-    media: placeholderMedia('mint', 3),
+    media: [
+      { type: 'image', src: '/work/line-emotes/01.webp', alt: 'Chibi emote of a girl with a long blue braid: haha', caption: 'Haha', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/02.webp', alt: 'Chibi emote of a girl with a long blue braid: love', caption: 'Love', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/03.webp', alt: 'Chibi emote of a girl with a long blue braid: wow', caption: 'Wow', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/04.webp', alt: 'Chibi emote of a girl with a long blue braid: bashful', caption: 'Bashful', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/05.webp', alt: 'Chibi emote of a girl with a long blue braid: pat', caption: 'Pat', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/06.webp', alt: 'Chibi emote of a girl with a long blue braid: shocked', caption: 'Shocked', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/07.webp', alt: 'Chibi emote of a girl with a long blue braid: cry', caption: 'Cry', ratio: '346/316', width: 346 },
+      { type: 'image', src: '/work/line-emotes/08.webp', alt: 'Chibi emote of a girl with a long blue braid: angry', caption: 'Angry', ratio: '346/316', width: 346 },
+    ],
   },
 
   /* ─── Early work ─── */
@@ -312,9 +389,15 @@ export const projects = [
     role: 'Sculpture',
     year: '2022',
     oneLiner: 'Placeholder. The AP 3D portfolio.',
-    cover: { palette: 'plum', layout: 'initial' },
+    cover: { image: '/work/ap-art-3d/cover.webp', palette: 'plum', layout: 'initial' },
     metrics: [],
-    media: placeholderMedia('plum', 3),
+    media: [
+      { type: 'image', src: '/work/ap-art-3d/01.webp', alt: 'Isometric 3D render of a café interior at night, warm lights over wooden tables', caption: 'Café', ratio: '1/1' },
+      { type: 'image', src: '/work/ap-art-3d/02.webp', alt: 'Isometric illustration of a cozy bedroom in purple and blue, with plants, fairy lights and a teddy bear', caption: 'Coziness', ratio: '1/1' },
+      { type: 'image', src: '/work/ap-art-3d/03.webp', alt: 'Isometric 3D render of a messy bedroom with clothes and papers everywhere', caption: 'Overwhelmed', ratio: '16/9' },
+      { type: 'image', src: '/work/ap-art-3d/04.webp', alt: 'Isometric 3D render of a dark, empty room lit by a single small lamp', caption: 'Loneliness', ratio: '16/9' },
+      { type: 'image', src: '/work/ap-art-3d/05.webp', alt: 'Isometric 3D render of a tiny island with a house and a dock on clear water', caption: 'Island', ratio: '16/9' },
+    ],
   },
   {
     slug: 'house-t-shirts',
@@ -324,9 +407,14 @@ export const projects = [
     role: 'Apparel design',
     year: '—',
     oneLiner: 'Placeholder. Shirts for the house teams.',
-    cover: { palette: 'sunset', layout: 'stacked' },
+    cover: { image: '/work/house-t-shirts/cover.webp', palette: 'sunset', layout: 'stacked' },
     metrics: [],
-    media: placeholderMedia('sunset', 2),
+    media: [
+      { type: 'image', src: '/work/house-t-shirts/01.webp', alt: 'House t-shirt design: Green Dragon house, class of 2023, white line art on green', caption: 'Green Dragon', ratio: '1/1' },
+      { type: 'image', src: '/work/house-t-shirts/02.webp', alt: 'House t-shirt design: Red Phoenix house, class of 2023, white line art on red', caption: 'Red Phoenix', ratio: '1/1' },
+      { type: 'image', src: '/work/house-t-shirts/03.webp', alt: 'House t-shirt design: White Tiger house, class of 2023, black line art on white', caption: 'White Tiger', ratio: '1/1' },
+      { type: 'image', src: '/work/house-t-shirts/04.webp', alt: 'House t-shirt design: Black Turtle house, class of 2023, white line art on black', caption: 'Black Turtle', ratio: '1/1' },
+    ],
   },
 ]
 
