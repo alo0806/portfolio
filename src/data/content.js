@@ -698,6 +698,25 @@ export const projects = [
 
   /* ─── Features ─── */
   {
+    slug: 'acm-ai',
+    title: 'ACM AI',
+    section: 'features',
+    tag: 'Club',
+    role: 'Marketing Chair',
+    year: '2026',
+    oneLiner: 'Event, recruiting and partner graphics for UCLA’s AI club.',
+    cover: { image: '/work/acm-ai/cover.webp', alt: 'Research panel poster styled as a code editor: AI_Research.panel()', palette: 'mint', layout: 'framed' },
+    metrics: [{ label: 'Graphics', value: '6' }],
+    media: [
+      { type: 'image', src: '/work/acm-ai/01.webp', alt: 'Research panel poster styled as a code editor: AI_Research.panel(), with the date, time and room written as a Python dictionary', caption: 'AI research panel', ratio: '4/5' },
+      { type: 'image', src: '/work/acm-ai/02.webp', alt: 'Board Game Social poster in blue pixel lettering on a grid, listing Codenames, GeoGuessr and trivia, with the date and room', caption: 'Board game social', ratio: '4/5' },
+      { type: 'image', src: '/work/acm-ai/03.webp', alt: 'Recruiting poster: “Project apps are open.” beside a circuit-board head, with the due date and the application link', caption: 'Project applications', ratio: '4/5' },
+      { type: 'image', src: '/work/acm-ai/04.webp', alt: 'Fundraiser poster with Sharetea UCLA: a smiling boba cup, 15% of qualified sales going to ACM AI, and the promo code ACM', caption: 'Sharetea fundraiser', ratio: '4/5' },
+      { type: 'image', src: '/work/acm-ai/05.webp', alt: 'Escape Protocol workshop poster with Gemini: two robots on an icy moon, with the date and room', caption: 'Escape Protocol: Gemini workshop', ratio: '4/5' },
+      { type: 'image', src: '/work/acm-ai/06.webp', alt: 'End of the Year Recap title card in glowing blue pixel lettering', caption: 'End of the year recap', ratio: '4/5' },
+    ],
+  },
+  {
     slug: 'fraternity-flyers',
     title: 'Fraternity Flyers',
     section: 'features',
